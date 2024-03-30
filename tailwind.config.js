@@ -1,5 +1,7 @@
+import withMT from "@material-tailwind/html/utils/withMT.js";
+
 /** @type {import('tailwindcss').Config} */
-export default {
+export default withMT({
   content: [
     "./index.html",
     "./src/**/*.{vue,html,css}",
@@ -8,4 +10,4 @@ export default {
     extend: {},
   },
   plugins: [],
-}
+})
