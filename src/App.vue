@@ -13,8 +13,10 @@
     <Select/>
 
   </div>
-  <div class="my-container">
-    <CardItem/>
+  <div class="my-container grid xl:grid-cols-4 xl:gap-y-4  lg:grid-cols-3 grid-cols-1 gap-y-2 " dir="rtl">
+
+
+    <CardItem v-for="index in [0,1,2,3,4,5,6,7,8,9]" :key="index"/>
 
   </div>
 </template>

@@ -8,10 +8,12 @@ export default {
       transitionName: "fade",
       show: false,
       slides: [
-        { className: "blue" },
-        { className: "red" },
-        { className: "yellow" }
-      ]
+        { className: "blue" ,timeOut : 10000},
+        { className: "red" ,timeOut : 2000},
+        { className: "yellow" ,timeOut : 10000}
+      ],
+      timer : null,
+      defaultTimeOut : 10000
     })
     ,
     methods: {
@@ -21,11 +23,27 @@ export default {
             ? (this.transitionName = "slide-next")
             : (this.transitionName = "slide-prev");
         var len = this.slides.length;
+        if(this.timer != null)
+          clearTimeout(this.timer);
+
+
         this.current = (this.current + dir % len + len) % len;
+
+        this.timer = setTimeout(()=>{
+          this.slide(1)
+
+        },(this.slides[this.current].timeOut) ? this.slides[this.current].timeOut : this.defaultTimeOut);
+
+
       }
     },
     mounted() {
       this.show = true;
+      this.timer = setTimeout(()=>{
+        this.slide(1)
+        console.log(1);
+      },(this.slides[this.current].timeOut) ? this.slides[this.current].timeOut : this.defaultTimeOut);
+
     }
   }
 
@@ -34,7 +52,7 @@ export default {
 <template>
   <div id="slider" class="block w-full max-w-screen-xl px-6 py-3 mx-auto my-2 h-80 overflow-hidden rounded-xl">
     <transition-group tag="div" :name="transitionName" class="slides-group">
-      <div v-if="show" :key="current" class="slide h-80" :class="slides[current].className">
+      <div v-if="show" :key="current"  class="slide h-80" :class="slides[current].className" :style="{background:`url('https://static.honarticket.com/resource/files/cache/24689_jujetiqi2_cover.951409.jpeg')` ,backgroundSize:'cover'}">
         <p>I'm {{slides[current].className}}!</p>
       </div>
     </transition-group>
