@@ -8,9 +8,13 @@ import router from './router'
 import {addIcons, OhVueIcon} from "oh-vue-icons";
 import {OiLocation} from "oh-vue-icons/icons/oi";
 import {RiCalendarEventFill} from "oh-vue-icons/icons/ri/index.js";
+import {FaSearch, FaTicketAlt} from "oh-vue-icons/icons/fa/index.js";
+import {IoTicketSharp} from "oh-vue-icons/icons/io/index.js";
 
 
-addIcons(OiLocation,RiCalendarEventFill);
+
+
+addIcons(OiLocation,RiCalendarEventFill,FaSearch,FaTicketAlt,IoTicketSharp);
 const app = createApp(App)
 
 

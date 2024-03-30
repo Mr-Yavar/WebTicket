@@ -7,7 +7,7 @@
     <nav class=" block w-full max-w-screen-xl px-4 py-2 mx-auto text-white bg-white border shadow-md rounded-xl border-white/80 bg-opacity-80 backdrop-blur-2xl backdrop-saturate-200 lg:px-8 lg:py-4">
 
     <div class="flex items-center justify-between text-blue-gray-900">
-        <a href="#" class="block antialiased font-sans text-base leading-relaxed text-inherit mr-4 cursor-pointer py-1.5 font-medium">Material Tailwind</a>
+        <a href="#" class="block antialiased font-sans text-base leading-relaxed text-inherit mr-4 cursor-pointer py-1.5 font-medium"><v-icon name="io-ticket-sharp" animation="wrench" speed="slow" fill="red"/> تـیـکــتــیوم</a>
         <div class="flex items-center gap-4">
           <div class="mr-4 hidden lg:block">
             <ul class="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
