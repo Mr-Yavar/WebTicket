@@ -19,6 +19,8 @@
     <CardItem v-for="index in [0,1,2,3,4,5,6,7,8,9]" :key="index"/>
 
   </div>
+
+  <Footer/>
 </template>
 
 <script>
@@ -27,9 +29,10 @@ import Carousel from "@/components/Slider/Carousel.vue";
 import Splitter from "@/components/Splitter/Splitter.vue";
 import Select from "@/components/Select/Select.vue";
 import CardItem from "@/components/CardItem.vue";
+import Footer from "@/components/Footer/Footer.vue";
 export default {
   name: "App",
-  components : {CardItem, Select, Header,Carousel,Splitter}
+  components : {Footer, CardItem, Select, Header,Carousel,Splitter}
 }
 </script>
 
