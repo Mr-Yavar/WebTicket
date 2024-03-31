@@ -3,14 +3,16 @@
 
   <Header/>
   <Carousel/>
-  <Splitter title="برنامه ها"/>
+  <div dir="rtl" class="my-container">
+    <Splitter title="برنامه ها" type="middle" border-class="border-gray-500 border-dashed"/>
+  </div>
   <div dir="rtl" class="my-container rtl:fa-font ">
     <div class="flex items-center">
       <div class="flex">
-      <div class="rtl:fa-font w-fit whitespace-pre px-1 leading-10">برنامه ها در</div>
-      <Select/>
-      <div class="rtl:fa-font w-fit whitespace-pre px-1 leading-10"> با موضوع</div>
-      <Select/>
+        <div class="rtl:fa-font w-fit whitespace-pre px-1 leading-10">برنامه ها در</div>
+        <Select/>
+        <div class="rtl:fa-font w-fit whitespace-pre px-1 leading-10"> با موضوع</div>
+        <Select/>
       </div>
       <div class="inline-step h-20 inline-block"></div>
       <SearchBox/>
@@ -44,7 +46,7 @@ export default {
 </script>
 
 <style>
-.inline-step{
+.inline-step {
   border-right: solid 1px rgba(0, 0, 0, 0.15);
 
 

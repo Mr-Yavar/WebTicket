@@ -13,7 +13,8 @@ export default {
         { className: "yellow" ,timeOut : 10000}
       ],
       timer : null,
-      defaultTimeOut : 10000
+      defaultTimeOut : 10000,
+      pause : false
     })
     ,
     methods: {
@@ -29,6 +30,7 @@ export default {
 
         this.current = (this.current + dir % len + len) % len;
 
+        if(!this.pause)
         this.timer = setTimeout(()=>{
           this.slide(1)
 
@@ -39,6 +41,7 @@ export default {
     },
     mounted() {
       this.show = true;
+      if(!this.pause)
       this.timer = setTimeout(()=>{
         this.slide(1)
         console.log(1);
@@ -50,9 +53,9 @@ export default {
 </script>
 
 <template>
-  <div id="slider" class="block w-full max-w-screen-xl px-6 py-3 mx-auto my-2 h-80 overflow-hidden rounded-xl">
-    <transition-group tag="div" :name="transitionName" class="slides-group">
-      <div v-if="show" :key="current"  class="slide h-80" :class="slides[current].className" :style="{background:`url('https://static.honarticket.com/resource/files/cache/24689_jujetiqi2_cover.951409.jpeg')` ,backgroundSize:'cover'}">
+  <div id="slider" class="block w-full max-w-screen-xl px-6 py-3 mx-auto my-2 overflow-hidden rounded-xl" style="height: 320px;">
+    <transition-group tag="div" :name="transitionName" class="slides-group " style="height: 320px;">
+      <div v-if="show" :key="current"  class="slide h" style="height: 320px;" :class="slides[current].className" >
         <p>I'm {{slides[current].className}}!</p>
       </div>
     </transition-group>

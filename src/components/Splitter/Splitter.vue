@@ -1,11 +1,25 @@
 <template>
-  <div dir="rtl" class="block w-full max-w-screen-xl px-2 py-2 mx-auto lg:px-8 lg:py-4">
+
     <div class="flex items-center rtl:fa-font">
-      <div class="flex-1 border-t-2 border-black"></div>
-      <span class="px-3 text-black bg-white">{{ title }}</span>
-      <div class="flex-1 border-t-2 border-black"></div>
+      <template v-if="type.toLowerCase()==='middle'">
+        <div class="flex-1 border-t-2 " :class="borderClass==='' ? 'border-black' : borderClass"></div>
+        <span class="px-3 text-black bg-white">{{ title }}</span>
+        <div class="flex-1 border-t-2 " :class="borderClass==='' ? 'border-black' : borderClass"></div>
+      </template>
+
+      <template v-if="type.toLowerCase()==='right'">
+        <span class="px-3 text-black bg-white">{{ title }}</span>
+        <div class="flex-1 border-t-2 " :class="borderClass==='' ? 'border-black' : borderClass"></div>
+        <div class="flex-1 border-t-2" :class="borderClass==='' ? 'border-black' : borderClass"></div>
+      </template>
+      <template v-if="type.toLowerCase()==='left'">
+
+        <div class="flex-1 border-t-2" :class="borderClass==='' ? 'border-black' : borderClass"></div>
+        <div class="flex-1 border-t-2" :class="borderClass==='' ? 'border-black' : borderClass"></div>
+        <span class="px-3 text-black bg-white">{{ title }}</span>
+      </template>
     </div>
-  </div>
+
 </template>
 <script>
 export default {
@@ -14,8 +28,11 @@ export default {
     title: {
       type: String
     },
-    type:{
-      type:String
+    type: {
+      type: String
+    },
+    borderClass: {
+      type: String
     }
   }
 }
