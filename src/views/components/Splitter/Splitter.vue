@@ -3,12 +3,12 @@
     <div class="flex items-center rtl:fa-font">
       <template v-if="type.toLowerCase()==='middle'">
         <div class="flex-1 border-t-2 " :class="borderClass==='' ? 'border-black' : borderClass"></div>
-        <span class="px-3 text-black bg-white">{{ title }}</span>
+        <span class="px-3 text-black bg-white" :class="titleClass">{{ title }}</span>
         <div class="flex-1 border-t-2 " :class="borderClass==='' ? 'border-black' : borderClass"></div>
       </template>
 
       <template v-if="type.toLowerCase()==='right'">
-        <span class="px-3 text-black bg-white">{{ title }}</span>
+        <span class="px-3 text-black bg-white" :class="titleClass">{{ title }}</span>
         <div class="flex-1 border-t-2 " :class="borderClass==='' ? 'border-black' : borderClass"></div>
         <div class="flex-1 border-t-2" :class="borderClass==='' ? 'border-black' : borderClass"></div>
       </template>
@@ -16,7 +16,7 @@
 
         <div class="flex-1 border-t-2" :class="borderClass==='' ? 'border-black' : borderClass"></div>
         <div class="flex-1 border-t-2" :class="borderClass==='' ? 'border-black' : borderClass"></div>
-        <span class="px-3 text-black bg-white">{{ title }}</span>
+        <span class="px-3 text-black bg-white"  :class="titleClass">{{ title }}</span>
       </template>
     </div>
 
@@ -33,6 +33,9 @@ export default {
     },
     borderClass: {
       type: String
+    },
+    titleClass :{
+      type:String
     }
   }
 }
