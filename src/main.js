@@ -12,6 +12,7 @@ import {FaSearch, FaTicketAlt} from "oh-vue-icons/icons/fa/index.js";
 import {IoTicketSharp} from "oh-vue-icons/icons/io/index.js";
 
 
+import "preline/preline";
 
 
 addIcons(OiLocation,RiCalendarEventFill,FaSearch,FaTicketAlt,IoTicketSharp);

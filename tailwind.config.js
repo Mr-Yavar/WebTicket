@@ -5,9 +5,12 @@ export default withMT({
   content: [
     "./index.html",
     "./src/**/*.{vue,html,css}",
+    'node_modules/preline/dist/*.js',
   ],
   theme: {
     extend: {},
   },
-  plugins: [],
+  plugins: [
+    require('preline/plugin'),
+  ],
 })
