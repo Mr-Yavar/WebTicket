@@ -17,8 +17,7 @@
     "@material-tailwind/html": "^2.2.2",
     "oh-vue-icons": "^1.0.0-rc3",
     "pinia": "^2.1.7",
-    "preline": "^2.0.3",
-    "vue": "^3.4.15",
+    "vue": "^3.4.21",
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
