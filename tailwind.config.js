@@ -9,7 +9,6 @@ export default withMT({
   theme: {
     extend: {},
   },
-  plugins: [
+    plugins: [require("daisyui")],
 
-  ],
 })

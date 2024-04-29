@@ -7,7 +7,18 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: ()=>import("@/views/pages/Home/Index.vue")
+      component: ()=>import("@/views/pages/Home/Index.vue"),
+      meta : {
+        layout : 'Default'
+      }
+    },
+    {
+      path: '/event/:id',
+      name: 'event',
+      component: ()=>import("@/views/pages/Event/Index.vue"),
+      meta : {
+        layout : 'Default'
+      }
     },
   //   {
   //     path: '/about',
@@ -19,11 +30,5 @@ const router = createRouter({
   //   }
   ]
 })
-router.afterEach((to, from, failure) => {
-  if (!failure) {
-    setTimeout(() => {
-      window.HSStaticMethods.autoInit();
-    }, 100)
-  }
-});
+
 export default router

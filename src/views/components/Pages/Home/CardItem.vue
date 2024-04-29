@@ -4,9 +4,22 @@ export default {
   name:"cardItem",
   data(){
     return {
-      image_url : 'https://static.honarticket.com/resource/files/cache/23e896429ee15c8b.2d42c6.jpeg'
+      image_url : 'https://static.honarticket.com/resource/files/cache/23e896429ee15c8b.2d42c6.jpeg',
+      id : 2
+    }
+  },
+  methods:{
+    RedirectToGettingTicket(){
+      let id = this.id;
+      this.$router.push({
+        name : "event",
+        params:{
+          id
+        }
+      });
     }
   }
+
 }
 </script>
 
@@ -34,7 +47,9 @@ export default {
       </h2>
       <button
           class="rtl:fa-font  align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 px-6 rounded-lg bg-gray-300 text-black shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none block w-full"
-          type="button">
+          type="button"
+          @click.prevent="RedirectToGettingTicket"
+      >
         خرید بلیت
       </button>
    </div>

@@ -12,25 +12,23 @@
           <div class="mr-4 hidden lg:block">
             <ul class="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
               <li class="block antialiased font-sans text-sm leading-normal text-blue-gray-900 p-1 font-normal">
-                <a href="#" class="flex items-center">Pages</a>
+                <router-link :to="{name:'home'}" class="flex items-center">صفحه اصلی</router-link>
               </li>
               <li class="block antialiased font-sans text-sm leading-normal text-blue-gray-900 p-1 font-normal">
-                <a href="#" class="flex items-center">Account</a>
+                <a href="#" class="flex items-center">حساب کاربری</a>
               </li>
               <li class="block antialiased font-sans text-sm leading-normal text-blue-gray-900 p-1 font-normal">
-                <a href="#" class="flex items-center">Blocks</a>
+                <a href="#" class="flex items-center">درباره ما</a>
               </li>
-              <li class="block antialiased font-sans text-sm leading-normal text-blue-gray-900 p-1 font-normal">
-                <a href="#" class="flex items-center">Docs</a>
+              <li class="block antialiased font-sans text-sm leading-normal text-blue-gray-900 p-1 font-normal border-2 border-dashed border-dark-400 rounded-md">
+                <a href="#" class="flex items-center">بررسی بلیت</a>
               </li>
             </ul>
           </div>
           <div class="flex items-center gap-x-1">
-            <button class="align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-2 px-4 rounded-lg text-gray-900 hover:bg-gray-900/10 active:bg-gray-900/20 hidden lg:inline-block" type="button">
-              <span>Log In</span>
-            </button>
-            <button class="align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-2 px-4 rounded-lg bg-gradient-to-tr from-gray-900 to-gray-800 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 active:opacity-[0.85] hidden lg:inline-block" type="button">
-              <span>Sign in</span>
+
+            <button class="align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-2 px-4 rounded-lg bg-gradient-to-tr from-gray-900 to-gray-800 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 active:opacity-[0.85] hidden lg:inline-block" type="button" @click.prevent="authModal.toggleMenu()">
+              <span>ثبت نام /  ورود</span>
             </button>
           </div>
           <button class="relative align-middle select-none font-sans font-medium text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none max-w-[40px] max-h-[40px] rounded-lg text-xs ml-auto h-6 w-6 text-inherit hover:bg-transparent focus:bg-transparent active:bg-transparent lg:hidden" type="button">
@@ -44,19 +42,19 @@
         </div>
       </div>
       <transition name="fade">
-      <div v-if="showMenu" class="block w-full basis-full overflow-hidden " style="">
+      <div v-if="showMenu" class="block w-full basis-full overflow-hidden lg:hidden" style="">
         <ul class="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
           <li class="block antialiased font-sans text-sm leading-normal text-blue-gray-900 p-1 font-normal">
-            <a href="#" class="flex items-center">Pages</a>
+            <a href="#" class="flex items-center">صفحه اصلی</a>
           </li>
           <li class="block antialiased font-sans text-sm leading-normal text-blue-gray-900 p-1 font-normal">
-            <a href="#" class="flex items-center">Account</a>
+            <a href="#" class="flex items-center">حساب کاربری</a>
           </li>
           <li class="block antialiased font-sans text-sm leading-normal text-blue-gray-900 p-1 font-normal">
-            <a href="#" class="flex items-center">Blocks</a>
+            <a href="#" class="flex items-center">درباره ما</a>
           </li>
-          <li class="block antialiased font-sans text-sm leading-normal text-blue-gray-900 p-1 font-normal">
-            <a href="#" class="flex items-center">Docs</a>
+          <li class="block antialiased font-sans text-sm leading-normal text-blue-gray-900 p-1 font-normal ">
+            <a href="#" class="flex items-center">بررسی بلیت</a>
           </li>
         </ul>
         <div class="flex items-center gap-x-1">
@@ -72,19 +70,22 @@
     </nav>
   </header>
 </template>
-<script>
-export default {
-  name : "Header",
-  data(){
-    return {
-      showMenu:false
-    }
-  },methods:{
-    toggleMenu(){
+<script setup>
+
+
+      import {ref} from "vue";
+      import {useAuthModalStore} from "@/stores/componentStore/authModal.js"
+
+      const authModal = useAuthModalStore();
+
+      const showMenu = ref(false);
+
+
+    function toggleMenu(){
       this.showMenu =!this.showMenu;
     }
-  }
-}
+
+
 </script>
 <style>
 .fade-enter-from{

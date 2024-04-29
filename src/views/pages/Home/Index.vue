@@ -1,7 +1,7 @@
 <script setup>
 
 import EventPartial from "@/views/ui/Home/EventPartial.vue";
-import CardItem from "@/views/components/CardItem.vue";
+import CardItem from "@/views/components/Pages/Home/CardItem.vue";
 </script>
 
 <template>

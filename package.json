@@ -14,9 +14,14 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@headlessui/vue": "^1.7.20",
     "@material-tailwind/html": "^2.2.2",
+    "@vee-validate/rules": "^4.12.6",
+    "animate.css": "^4.1.1",
+    "lodash": "^4.17.21",
     "oh-vue-icons": "^1.0.0-rc3",
     "pinia": "^2.1.7",
+    "vee-validate": "^4.12.6",
     "vue": "^3.4.21",
     "vue-router": "^4.2.5"
   },
@@ -27,6 +32,7 @@
     "@vue/test-utils": "^2.4.4",
     "autoprefixer": "^10.4.19",
     "cypress": "^13.6.3",
+    "daisyui": "^4.10.1",
     "eslint": "^8.49.0",
     "eslint-plugin-cypress": "^2.15.1",
     "eslint-plugin-vue": "^9.17.0",

@@ -3,7 +3,7 @@
 import Select from "@/views/components/Select/Select.vue";
 import SearchBox from "@/views/components/Select/SearchBox.vue";
 import Splitter from "@/views/components/Splitter/Splitter.vue";
-import CardItem from "@/views/components/CardItem.vue";
+import CardItem from "@/views/components/Pages/Home/CardItem.vue";
 import Carousel from "@/views/components/Slider/Carousel.vue";
 </script>
 

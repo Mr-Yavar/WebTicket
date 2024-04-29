@@ -1,5 +1,8 @@
 import './assets/main.css'
-import '../public/styles/fonts.css'
+
+import 'animate.css';
+
+
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
@@ -8,16 +11,22 @@ import router from './router'
 import {addIcons, OhVueIcon} from "oh-vue-icons";
 import {OiLocation} from "oh-vue-icons/icons/oi";
 import {RiCalendarEventFill} from "oh-vue-icons/icons/ri/index.js";
-import {FaSearch, FaTicketAlt} from "oh-vue-icons/icons/fa/index.js";
-import {IoTicketSharp} from "oh-vue-icons/icons/io/index.js";
+import {FaSearch, FaTicketAlt,FaTimes} from "oh-vue-icons/icons/fa/index.js";
+import {IoTicketSharp,IoArrowForwardOutline} from "oh-vue-icons/icons/io/index.js";
 
 
+import VeeValidatePlugin from "./config/veevalidate.js";
+import registerLayouts from "@/config/_registerLoayouts.js";
+import {PrSpinner} from "oh-vue-icons/icons/pr";
 
-addIcons(OiLocation,RiCalendarEventFill,FaSearch,FaTicketAlt,IoTicketSharp);
+
+addIcons(OiLocation,RiCalendarEventFill,FaSearch,FaTicketAlt,IoTicketSharp,IoArrowForwardOutline,FaTimes,PrSpinner);
 const app = createApp(App)
 
 
+app.use(VeeValidatePlugin);
 app.use(createPinia())
 app.use(router)
+app.use(registerLayouts)
 app.component("v-icon", OhVueIcon);
 app.mount('#app')
