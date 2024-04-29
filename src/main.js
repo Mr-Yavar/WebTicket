@@ -18,9 +18,9 @@ import {IoTicketSharp,IoArrowForwardOutline} from "oh-vue-icons/icons/io/index.j
 import VeeValidatePlugin from "./config/veevalidate.js";
 import registerLayouts from "@/config/_registerLoayouts.js";
 import {PrSpinner} from "oh-vue-icons/icons/pr";
+import { PxCalendarTomorrow,PxClock,PxGps    } from "oh-vue-icons/icons/px";
 
-
-addIcons(OiLocation,RiCalendarEventFill,FaSearch,FaTicketAlt,IoTicketSharp,IoArrowForwardOutline,FaTimes,PrSpinner);
+addIcons(OiLocation,RiCalendarEventFill,FaSearch,FaTicketAlt,IoTicketSharp,IoArrowForwardOutline,FaTimes,PrSpinner,PxCalendarTomorrow,PxClock,PxGps);
 const app = createApp(App)
 
 

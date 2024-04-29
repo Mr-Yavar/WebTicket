@@ -1,11 +1,11 @@
 <template>
 
   <Header/>
-  <div class="min-h-[calc(100vh-430px)] ">
-
+  <div class="AppGap">
+      <div class="AppContainer min-h-[calc(100vh-430px)]">
       <slot></slot>
 
-
+</div>
   </div>
   <AuthModal/>
 

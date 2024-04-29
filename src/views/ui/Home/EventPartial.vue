@@ -33,10 +33,5 @@ import Carousel from "@/views/components/Slider/Carousel.vue";
 </template>
 
 <style scoped>
-.inline-step {
-  border-right: solid 1px rgba(0, 0, 0, 0.15);
 
-
-  margin: 0 5px -4px;
-}
 </style>
