@@ -10,27 +10,27 @@
     </div>
   </div>
   <div class="w-full rounded-lg ">
-    <div class="grid md:grid-cols-2  grid-cols-1 space-y-3">
+    <div class="grid md:grid-cols-2  grid-cols-1 gap-3">
       <div class="col-span-1">
         <div class="flex">
           <div>
               <span class="p-1 text-center align-text-bottom">
-                <v-icon name="px-calendar-tomorrow" scale="1"/>
+                <v-icon name="px-calendar-tomorrow" scale="1" class="dark:text-white text-black"/>
               </span>
-            <span class="leading-6 font-bold pl-1">زمان :</span>
+            <span class="leading-6 font-bold pl-1 dark:text-white text-black">زمان :</span>
           </div>
-          <div> سه شنبه 15 مرداد</div>
+          <div class="dark:text-white text-black"> سه شنبه 15 مرداد</div>
         </div>
       </div>
       <div class="col-span-1">
         <div class="flex">
           <div>
-              <span class="p-1 text-center align-text-bottom">
-                <v-icon name="px-clock" scale="1"/>
+              <span class="p-1 text-center ">
+                <v-icon name="px-clock" scale="1" class="dark:text-white text-black"/>
               </span>
-            <span class="leading-6 font-bold pl-1">ساعت :</span>
+            <span class="leading-6 font-bold pl-1 dark:text-white text-black">ساعت :</span>
           </div>
-          <div> ساعت 18:30 و 21:30</div>
+          <div class="dark:text-white text-black"> ساعت 18:30 و 21:30</div>
         </div>
       </div>
 
@@ -38,14 +38,14 @@
         <div class="flex">
           <div>
               <span class="p-1 text-center align-text-bottom ">
-                <v-icon name="px-gps" scale="1"/>
+                <v-icon name="px-gps" scale="1" class="dark:text-white text-black"/>
               </span>
-            <span class="leading-6 font-bold pl-1">محل برگزاری :</span>
+            <span class="leading-6 font-bold pl-1 dark:text-white text-black">محل برگزاری :</span>
           </div>
           <div class="flex">
-            <span>تهران ، برج میلاد</span>
+            <span class="dark:text-white text-black">تهران ، برج میلاد</span>
             <div class="inline-step h-6 inline-block"></div>
-            <span>تهران ، .................</span>
+            <span class="dark:text-white text-black">تهران ، .................</span>
           </div>
         </div>
       </div>
@@ -92,33 +92,19 @@
         <ConcertTermsModal :show="showTermsModal" :on-close-fn="toggleTermsModal"/>
       </div>
 
-      <div class="col-span-1 md:col-span-2 ">
-        <div class="relative inline-flex">
-          <div class="cardWrap">
-            <div class="card cardLeft relative">
-              <div class="absolute top-3 text-center text-white block w-[85%]"><span class="font-extrabold text-lg">کنسرت ماکان بند</span>
-              </div>
-              <div class="h-full flex flex-col justify-end items-center">
-                <span class="text-center block leading-6"><span class="font-bold">ساعت :</span> 18:30 تا 20:30</span>
-                <span class="text-center block leading-10 mt-5">
-                  <button class="select-none rounded-lg bg-gradient-to-tr from-gray-900 to-gray-800 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" type="button">خرید بلیت</button>
-              </span>
-              </div>
-            </div>
-            <div class="card  cardRight relative ">
-              <div class="absolute top-3 text-center text-white block right-8"> جمعه</div>
-              <div class="h-full flex  flex-col justify-end">
-                <span class="text-center block leading-6"> 26</span>
-                <span class="text-center block leading-10"> اردیبهشت</span>
-                <span class="text-center block leading-10"> 1403</span>
-              </div>
-            </div>
-
+      <div class="col-span-1 md:col-span-2">
+        <div class="grid md:grid-cols-2 grid-cols-1 gap-4">
+          <div class="col-span-full">
+            <span class="font-bold dark:text-white text-black">بلیت های موجود:</span>
           </div>
-          <span class="absolute w-[12px] h-[12px] rounded-full py-1 px-1 text-xl font-medium content-[''] leading-2 grid place-items-center top-[-2%] left-[-1%]  bg-green-400 text-white ">
-   </span>
-          <span class="absolute w-[12px] h-[12px] rounded-full py-1 px-1 text-xl font-medium content-[''] leading-2 grid place-items-center top-[-2%] left-[-1%]  bg-green-300 text-white animate-ping ">
-    </span>
+
+          <Ticket/>
+          <Ticket/>
+          <Ticket/>
+          <Ticket/>
+          <Ticket/>
+          <Ticket/>
+          <Ticket/>
         </div>
 
       </div>
@@ -137,6 +123,7 @@ import {ref} from "vue";
 import mapboxgl from "mapbox-gl";
 import nmp_mapboxgl from "@neshan-maps-platform/mapbox-gl";
 import ConcertTermsModal from "@/views/components/Globals/modal/ConcertTermsModal.vue";
+import Ticket from "@/views/components/Pages/Event/Ticket.vue";
 
 
 const showTermsModal = ref(false);
@@ -174,26 +161,6 @@ function handleStartMap(map) {
 </script>
 
 <style scoped>
-.card {
-  @apply h-[11em] float-left relative p-[1em];
-  background: linear-gradient(to bottom, black 0%, black 26%, whitesmoke 26%, whitesmoke 100%);
-}
-
-.cardLeft {
-  @apply w-[16em] rounded-tl-lg rounded-bl-lg  ;
-
-}
-
-.cardRight {
-  @apply w-[6.5em] rounded-tr-lg rounded-br-lg border-l-[0.18em] border-l-white border-dashed before:top-[-0.4em] after:bottom-[-0.4em] ;
-
-}
-
-.cardRight:before,
-.cardRight:after {
-  @apply content-[""] absolute block w-[0.9em] h-[0.9em] left-[-0.5em] rounded-[50%];
-  background: #fff;
-}
 
 
 </style>

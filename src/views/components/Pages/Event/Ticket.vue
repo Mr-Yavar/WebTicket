@@ -1,0 +1,60 @@
+<script setup>
+
+</script>
+
+<template>
+  <div class="cardWrap">
+    <div class="card cardLeft relative">
+      <div class="absolute top-3 text-center text-white block w-full"><span class="font-extrabold text-lg">کنسرت ماکان بند</span>
+      </div>
+      <div class="h-full flex flex-col justify-end items-center">
+        <span class="text-center block  text-black"><span class="font-bold ">ساعت :</span> 18:30 تا 20:30</span>
+        <div class="p-1"></div>
+        <span class="text-center block ">
+                  <div class="relative inline-flex">
+                    <button class="select-none rounded-lg bg-blue-gray-700 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" type="button">خرید بلیت</button>
+                    <span class="absolute w-[12px] h-[12px] rounded-full py-1 px-1 text-xl font-medium content-[''] leading-2 grid place-items-center top-[-5%] left-[-2%]  bg-green-400 text-white "></span>
+                    <span class="absolute w-[12px] h-[12px] rounded-full py-1 px-1 text-xl font-medium content-[''] leading-2 grid place-items-center top-[-5%] left-[-2%]  bg-green-300 text-white animate-ping "></span>
+                  </div>
+              </span>
+      </div>
+    </div>
+    <div class="card  cardRight relative ">
+      <div class="absolute top-3 text-center text-white block w-full"> جمعه</div>
+      <div class="h-full flex  flex-col justify-end text-black">
+        <span class="text-center block ">26</span>
+        <span class="text-center block ">اردیبهشت</span>
+        <span class="text-center block "> 1403</span>
+      </div>
+    </div>
+
+  </div>
+</template>
+
+<style scoped>
+.cardWrap{
+  @apply mx-auto my-auto
+}
+
+.card {
+  @apply h-[8em] float-left relative pt-[1em] pb-[0.40em];
+  background: linear-gradient(to bottom, rgba(38, 37, 37, 0.95) 0%, rgba(38, 37, 37, 0.95) 35%, #dcdcdc 35%, #dcdcdc 100%);
+}
+
+.cardLeft {
+  @apply md:w-[22em] sm:w-[16em] w-[15em] rounded-tl-lg rounded-bl-lg  ;
+
+}
+
+.cardRight {
+  @apply md:w-[10em] sm:w-[6em] w-[6em] rounded-tr-lg rounded-br-lg border-l-[0.18em] border-l-white border-dashed before:top-[-0.4em] after:bottom-[-0.4em] ;
+
+}
+
+.cardRight:before,
+.cardRight:after {
+  @apply content-[""] absolute block w-[0.9em] h-[0.9em] left-[-0.5em] rounded-[50%] bg-white dark:!bg-transparent;
+
+}
+
+</style>
