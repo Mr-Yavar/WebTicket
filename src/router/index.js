@@ -19,7 +19,7 @@ const router = createRouter({
       meta : {
         layout : 'Default'
       }
-    },
+    }
   //   {
   //     path: '/about',
   //     name: 'about',

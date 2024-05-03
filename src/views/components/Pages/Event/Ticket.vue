@@ -1,6 +1,3 @@
-<script setup>
-
-</script>
 
 <template>
   <div class="cardWrap">
@@ -12,7 +9,9 @@
         <div class="p-1"></div>
         <span class="text-center block ">
                   <div class="relative inline-flex">
-                    <button class="select-none rounded-lg bg-blue-gray-700 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" type="button">خرید بلیت</button>
+                    <button
+                        @click="handleClick"
+                        class="select-none rounded-lg bg-blue-gray-700 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" type="button">خرید بلیت</button>
                     <span class="absolute w-[12px] h-[12px] rounded-full py-1 px-1 text-xl font-medium content-[''] leading-2 grid place-items-center top-[-5%] left-[-2%]  bg-green-400 text-white "></span>
                     <span class="absolute w-[12px] h-[12px] rounded-full py-1 px-1 text-xl font-medium content-[''] leading-2 grid place-items-center top-[-5%] left-[-2%]  bg-green-300 text-white animate-ping "></span>
                   </div>
@@ -30,6 +29,12 @@
 
   </div>
 </template>
+
+<script setup>
+  defineProps({
+    handleClick:Function
+  });
+</script>
 
 <style scoped>
 .cardWrap{

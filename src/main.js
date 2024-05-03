@@ -1,7 +1,6 @@
 import './assets/main.css'
-
 import 'animate.css';
-
+import 'vue-select/dist/vue-select.css';
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
@@ -19,15 +18,23 @@ import VeeValidatePlugin from "./config/veevalidate.js";
 import registerLayouts from "@/config/_registerLoayouts.js";
 import {PrSpinner} from "oh-vue-icons/icons/pr";
 import { PxCalendarTomorrow,PxClock,PxGps    } from "oh-vue-icons/icons/px";
-import { HiSolidCheckCircle } from "oh-vue-icons/icons";
+import { HiSolidCheckCircle } from "oh-vue-icons/icons/hi";
+import {SiOpenstreetmap} from "oh-vue-icons/icons/si"
 
-addIcons(OiLocation,RiCalendarEventFill,FaSearch,FaTicketAlt,IoTicketSharp,IoArrowForwardOutline,FaTimes,PrSpinner,PxCalendarTomorrow,PxClock,PxGps,HiSolidCheckCircle);
+import { VueQueryPlugin } from '@tanstack/vue-query'
+import {MdCategoryOutlined} from "oh-vue-icons/icons/md";
+
+
+addIcons(MdCategoryOutlined,SiOpenstreetmap,OiLocation,RiCalendarEventFill,FaSearch,FaTicketAlt,IoTicketSharp,IoArrowForwardOutline,FaTimes,PrSpinner,PxCalendarTomorrow,PxClock,PxGps,HiSolidCheckCircle);
 const app = createApp(App)
 
 
+
+
 app.use(VeeValidatePlugin);
-app.use(createPinia())
-app.use(router)
-app.use(registerLayouts)
+app.use(createPinia());
+app.use(VueQueryPlugin)
+app.use(router);
+app.use(registerLayouts);
 app.component("v-icon", OhVueIcon);
 app.mount('#app')

@@ -1,6 +1,6 @@
 <template>
 
-    <div class="flex items-center rtl:fa-font">
+    <div class="flex items-center rtl:fa-font" :class="class">
       <template v-if="type.toLowerCase()==='middle'">
         <div class="flex-1 border-t-2 " :class="borderClass==='' ? 'border-black' : borderClass"></div>
         <span class="px-3 text-black bg-white" :class="titleClass">{{ title }}</span>
@@ -36,6 +36,9 @@ export default {
     },
     titleClass :{
       type:String
+    },
+    class :{
+      type : String
     }
   }
 }

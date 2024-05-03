@@ -5,7 +5,7 @@ export default {
 </script>
 
 <template>
-  <div class="w-full lg:my-0 my-2 mt-3" dir="rtl">
+  <div class="lg:my-0 my-2 mt-3" dir="rtl">
     <div class="relative h-10 w-full min-w-[200px] ">
       <div class="absolute grid w-5 h-5 place-items-center text-blue-gray-500 top-2/4 left-3 -translate-y-2/4">
         <v-icon name="fa-search" aria-hidden="true"></v-icon>
