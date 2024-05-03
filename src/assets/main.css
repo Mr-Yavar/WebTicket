@@ -1,9 +1,10 @@
 @import './base.css';
 @import "./../../public/styles/fonts.css";
+/* purgecss start ignore */
 @tailwind base;
 @tailwind utilities;
 @tailwind components;
-
+/* purgecss end ignore */
 @layer base {
     :where([dir="rtl"]) .fa-font {
         font-family: VazirMatn !important;

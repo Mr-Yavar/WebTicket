@@ -3,7 +3,7 @@
 
     <div class="relative flex items-center justify-between w-full">
         <div class="absolute left-0 top-2/4 h-0.5 w-full -translate-y-2/4 bg-gray-300"></div>
-        <div class="absolute left-0 top-2/4 h-0.5 w-full -translate-y-2/4 bg-gray-900 transition-all duration-500"></div>
+        <div class="absolute left-0 top-2/4 h-0.5 -translate-y-2/4 bg-gray-900 transition-all duration-500 w-[55%]" ></div>
       <div class="relative z-10 grid w-10 h-10 font-bold text-white transition-all duration-300 bg-gray-900 rounded-full place-items-center">
         1
       </div>
@@ -18,7 +18,7 @@
       </div>
     </div>
     <div>
-      <Splitter title="گام اول : انتخاب سانس" type="middle" border-class="border-gray-500 border-dashed" titleClass="font-bold text-md text-gray-900" class="my-3"/>
+      <Splitter :title="stepTitles[step-1]" type="middle" border-class="border-gray-500 border-dashed" titleClass="font-bold text-md text-gray-900" class="my-3"/>
     </div>
 
     <transition>
@@ -59,6 +59,13 @@ import FourthStep from "@/views/ui/Event/FourthStep.vue";
 import useTicketStore from "@/stores/Ticket.js";
 
 const step = ref(1);
+  const stepTitles = [
+      "گام اول : انتخاب سانس",
+    "گام دوم : انتخاب صندلی",
+    "گام سوم : رزرو",
+    "گام چهارم : دریافت بلیت",
+  ]
+
 
 function toNext(){
   step.value++;
