@@ -33,22 +33,22 @@
 
     <transition>
       <FirstStep v-if="step===1" :stepControls="{nextFn:toNext,previousFn:toPrevious}"/>
-      <SecondStep v-else-if="step===2"/>
-      <ThridStep v-else-if="step===3"/>
-      <FourthStep v-else-if="step===4"/>
+      <SecondStep v-else-if="step===2" :stepControls="{nextFn:toNext,previousFn:toPrevious}"/>
+      <ThridStep v-else-if="step===3" :stepControls="{nextFn:toNext,previousFn:toPrevious}"/>
+      <FourthStep v-else-if="step===4" :stepControls="{nextFn:toNext,previousFn:toPrevious}"/>
     </transition>
 
 
     <div class="flex justify-between mt-16" v-if="step!==1">
       <button
           class="select-none rounded-lg bg-gray-900 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-          type="button" disabled>
-        Prev
+          type="button" @click="toPrevious">
+        مرحله قبل
       </button>
       <button
           class="select-none rounded-lg bg-gray-900 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-          type="button">
-        Next
+          type="button" @click="toNext">
+        مرحله بعد
       </button>
     </div>
   </div>
