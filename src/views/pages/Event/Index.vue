@@ -2,23 +2,33 @@
   <div class="w-full px-8 py-4">
 
     <div class="relative flex items-center justify-between w-full">
-        <div class="absolute left-0 top-2/4 h-0.5 w-full -translate-y-2/4 bg-gray-300"></div>
-        <div class="absolute left-0 top-2/4 h-0.5 -translate-y-2/4 bg-gray-900 transition-all duration-500 w-[55%]" ></div>
-      <div class="relative z-10 grid w-10 h-10 font-bold text-white transition-all duration-300 bg-gray-900 rounded-full place-items-center">
+        <div class="absolute rtl:right-0 left-0 top-2/4 h-0.5 w-full -translate-y-2/4 dark:bg-gray-600 bg-gray-300"></div>
+        <div class="absolute rtl:right-0 left-0 top-2/4 h-0.5 -translate-y-2/4 dark:bg-white bg-gray-900 transition-all duration-500"
+          :class="{'w-0' : step===1 , 'w-2/6' : step===2,'w-4/6' : step===3, 'w-full':step===4}"
+        ></div>
+      <div class="relative z-10 grid w-10 h-10 font-bold  transition-all duration-300  rounded-full place-items-center"
+      :class="step>=1 ? 'bg-gray-900 text-white dark:bg-gray-50 dark:text-black' : 'bg-gray-300 dark:bg-gray-600 dark:text-white'"
+      >
         1
       </div>
-      <div class="relative z-10 grid w-10 h-10 font-bold text-gray-900 transition-all duration-300 bg-gray-300 rounded-full place-items-center">
+      <div class="relative z-10 grid w-10 h-10 font-bold transition-all duration-300  rounded-full place-items-center"
+           :class="step>=2 ? 'bg-gray-900 text-white dark:bg-gray-50 dark:text-black' : 'bg-gray-300  dark:bg-gray-600 dark:text-white'"
+      >
         2
       </div>
-      <div class="relative z-10 grid w-10 h-10 font-bold text-gray-900 transition-all duration-300 bg-gray-300 rounded-full place-items-center">
+      <div class="relative z-10 grid w-10 h-10 font-bold  transition-all duration-300  rounded-full place-items-center"
+           :class="step>=3 ? 'bg-gray-900 text-white dark:bg-gray-50 dark:text-black' : 'bg-gray-300  dark:bg-gray-600 dark:text-white'"
+      >
         3
       </div>
-      <div class="relative z-10 grid w-10 h-10 font-bold text-gray-900 transition-all duration-300 bg-gray-300 rounded-full place-items-center">
+      <div class="relative z-10 grid w-10 h-10 font-bold transition-all duration-300  rounded-full place-items-center"
+           :class="step>=4 ? 'bg-gray-900 text-white dark:bg-gray-50 dark:text-black' : 'bg-gray-300  dark:bg-gray-600 dark:text-white'"
+      >
         4
       </div>
     </div>
     <div>
-      <Splitter :title="stepTitles[step-1]" type="middle" border-class="border-gray-500 border-dashed" titleClass="font-bold text-md text-gray-900" class="my-3"/>
+      <Splitter :title="stepTitles[step-1]" type="middle" border-class="border-gray-500 border-dashed" titleClass="font-bold text-md text-gray-900 dark:text-white" class="my-3"/>
     </div>
 
     <transition>

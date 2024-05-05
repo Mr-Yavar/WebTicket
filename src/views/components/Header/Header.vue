@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <header class="AppGap rtl:fa-font">
+  <header class=" !mt-0 rtl:fa-font">
     <nav class="AppContainer text-white bg-white border shadow-md rounded-xl border-white/80 bg-opacity-80 backdrop-blur-2xl backdrop-saturate-200 lg:px-8 lg:py-4">
 
     <div class="flex items-center justify-between text-blue-gray-900">
