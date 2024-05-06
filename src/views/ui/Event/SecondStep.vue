@@ -17,7 +17,7 @@
         <div class="p-2 rounded-2xl shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset]">
           <!-- justify tabs -->
           <TabGroup as="div" class="mb-5">
-            <TabList class="flex flex-wrap justify-between mt-3 w-1/2 mx-auto border-b border-gray-900 dark:border-[#191e3a] text-center bg-gray-600 rounded-t-md text-white dark:text-gray-300">
+            <TabList class="flex flex-wrap justify-between mt-3 w-1/2 mx-auto border-b border-gray-900 dark:border-[#191e3a] text-center bg-gray-400 rounded-t-md text-white dark:text-gray-300">
               <Tab as="template" v-slot="{ selected }">
                 <a
                     href="javascript:;"
@@ -45,15 +45,30 @@
             </TabList>
             <TabPanels class="pt-5 flex-1 text-sm">
               <TabPanel>
-                <h4 class="font-semibold text-2xl mb-4">We move your world!</h4>
-                <p class="mb-4">
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-                  exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                </p>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-                  exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                </p>
+                <div @click.prevent="($event)=>{
+
+                  if($event.target.tagName==='ellipse'){
+                    $event.target.style.fill='red';
+
+                  }
+
+
+                }"
+
+                >
+                  <VueZoomable
+                      class="w-fit mx-auto overflow-hidden"
+                      selector="#zoomable"
+                      :minZoom="1"
+                      :maxZoom="3"
+                      :zoom="1"
+                      :enableControllButton="true"
+                  >
+
+                  <div v-html="SVG" class="w-fit mx-auto " id="zoomable"></div>
+
+                  </VueZoomable>
+                </div>
               </TabPanel>
               <TabPanel>
                 <div class="flex items-start">
@@ -86,8 +101,24 @@
 </template>
 
 <script setup>
-
+import "vue-zoomable/dist/style.css";
+import VueZoomable from "vue-zoomable"
 import {Tab, TabGroup, TabList, TabPanel, TabPanels} from "@headlessui/vue";
+import {onMounted, reactive, ref} from "vue";
+
+
+const SVG = ref("");
+
+
+
+
+onMounted(()=>{
+
+    let t = fetch("http://localhost:5173/public/drawing11.svg").then((res)=>res.text()).then((res)=>{
+      SVG.value = res;
+    })
+
+})
 </script>
 
 <style scoped>
