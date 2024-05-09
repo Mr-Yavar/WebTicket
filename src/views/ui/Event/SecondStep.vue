@@ -45,28 +45,16 @@
             </TabList>
             <TabPanels class="pt-5 flex-1 text-sm">
               <TabPanel>
-                <div @click.prevent="($event)=>{
-
-                  if($event.target.tagName==='ellipse'){
-                    $event.target.style.fill='red';
-
-                  }
-
-
-                }"
-
-                >
+                <div @click.prevent="">
                   <VueZoomable
-                      class="w-fit mx-auto overflow-hidden"
+                      class="w-full mx-auto overflow-hidden"
                       selector="#zoomable"
                       :minZoom="1"
                       :maxZoom="3"
                       :zoom="1"
                       :enableControllButton="true"
                   >
-
                   <div v-html="SVG" class="w-fit mx-auto " id="zoomable"></div>
-
                   </VueZoomable>
                 </div>
               </TabPanel>
@@ -109,6 +97,17 @@ import {onMounted, reactive, ref} from "vue";
 
 const SVG = ref("");
 
+
+function handleClickOnSeat($event){
+
+    if($event.target.tagName==='ellipse'){
+      $event.target.style.fill='red';
+
+    }
+
+
+
+}
 
 
 

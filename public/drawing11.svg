@@ -24,15 +24,15 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      inkscape:lockguides="true"
-     inkscape:zoom="1"
-     inkscape:cx="222.5"
-     inkscape:cy="292.5"
+     inkscape:zoom="2"
+     inkscape:cx="243"
+     inkscape:cy="122.25"
      inkscape:window-width="1600"
      inkscape:window-height="829"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer1" />
+     inkscape:current-layer="g8" />
   <defs
      id="defs1" />
   <g
@@ -49,13 +49,17 @@
          height="57.997486"
          x="49.765583"
          y="25.06988" />
-      <ellipse
-         style="opacity:0.76;fill:#3f3f3f;fill-opacity:1;fill-rule:nonzero;stroke-width:0.264583"
-         id="path7-9-24-9-6-1-5"
+      <circle
+         style="display:inline;opacity:0.76;fill:#3f3f3f;fill-opacity:1;fill-rule:nonzero;stroke-width:0.264583"
+         id="seat-1-1-1"
          cx="51.497925"
          cy="27.206598"
-         rx="1.3096207"
-         ry="1.3099999" />
+         r="1.3099999"
+         inkscape:label="path7-9-24-9-6-1-5">
+        <title
+           id="title1">1
+HelloWorld</title>
+      </circle>
       <ellipse
          style="opacity:0.76;fill:#3f3f3f;fill-opacity:1;fill-rule:nonzero;stroke-width:0.264583"
          id="path7-9-2-7-2-8-7-5"
@@ -5102,15 +5106,16 @@
          ry="1.3099999" />
     </g>
     <rect
-       style="fill:#cd6e53;stroke-width:0.264583;fill-opacity:0.84232366;opacity:0.76;fill-rule:nonzero"
+       style="opacity:0.76;fill:#cd6e53;fill-opacity:0.842324;fill-rule:nonzero;stroke-width:0.264583"
        id="rect7"
        width="54.816978"
        height="14.592916"
        x="47.707607"
-       y="2.4321527" />
+       y="4.0196528" />
     <g
        id="g7"
-       inkscape:label="Section_B2">
+       inkscape:label="Section_B2"
+       transform="translate(1.0583333)">
       <rect
          style="fill:#bcbcbc;fill-opacity:1;stroke-width:0.264583"
          id="rect6-4"
@@ -6200,7 +6205,7 @@
     <g
        id="g7-1"
        inkscape:label="Section_B1"
-       transform="translate(0.18352983,43.305498)">
+       transform="translate(1.2418632,43.305498)">
       <rect
          style="fill:#bcbcbc;fill-opacity:1;stroke-width:0.264583"
          id="rect6-4-7"
