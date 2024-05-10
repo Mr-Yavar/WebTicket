@@ -3,10 +3,20 @@ import { defineStore } from 'pinia'
 
 export const useAuthModalStore = defineStore('authModal', () => {
   const show = ref(false)
-
+  const title = ref("سلام، کدومش؟");
   function toggleMenu() {
     this.show =!this.show;
+     if(this.show)
+       document.body.classList.add("overflow-hidden");
+     else {
+       setTitle("سلام،کدومش؟");
+       document.body.classList.remove("overflow-hidden");
+     }
   }
 
-  return { show,toggleMenu }
+  function setTitle(newTitle){
+    this.title = newTitle;
+  }
+
+  return { show,toggleMenu,title,setTitle }
 })

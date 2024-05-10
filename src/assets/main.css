@@ -31,5 +31,13 @@
 
         margin: 0 5px -4px;
     }
+
+    .direction-rtl {
+        direction: rtl;
+    }
+    
+    .vazir-font *{
+        font-family: VazirMatn ,Tahoma, serif;
+    }
 }
 

@@ -6,12 +6,12 @@
     <!-- Name -->
     <div class="mb-3 grid grid-cols-3">
 
-      <label class="inline-block text-sm leading-9 text-center">نام </label>
+      <label class="inline-block text-sm leading-9 text-center text-gray-800 dark:text-gray-100">نام </label>
       <div class="col-span-2">
         <vee-field
             type="text"
             name="first_name"
-            class="block w-full py-0.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded input-sm input-bordered"
+            class="block w-full py-0.5 px-3 text-gray-800 bg-white dark:bg-gray-600 dark:text-white border border-gray-400 dark:border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded input-sm "
             placeholder="نام"
         />
         <ErrorMessage class="text-red-600 text-sm" name="first_name"/>
@@ -19,12 +19,12 @@
     </div>
     <!-- Family name -->
     <div class="mb-3 grid grid-cols-3">
-      <label class="inline-block  text-sm leading-9 text-center">نام خانوادگی </label>
+      <label class="inline-block  text-sm leading-9 text-center  text-gray-800 dark:text-gray-100">نام خانوادگی </label>
       <div class="col-span-2">
         <vee-field
             type="text"
             name="last_name"
-            class="block w-full py-0.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded input-sm input-bordered"
+            class="block w-full py-0.5 px-3 text-gray-800 bg-white dark:bg-gray-600 dark:text-white border border-gray-400 transition duration-500 focus:outline-none focus:border-black rounded input-sm "
             placeholder="نام خانوادگی"
         />
         <ErrorMessage class="text-red-600 text-sm" name="last_name"/>
@@ -32,12 +32,12 @@
     </div>
     <!-- Family name -->
     <div class="mb-3 grid grid-cols-3">
-      <label class="inline-block text-sm leading-9 text-center">جنسیت</label>
+      <label class="inline-block text-sm leading-9 text-center  text-gray-800 dark:text-gray-100">جنسیت</label>
       <div class="col-span-2">
         <vee-field
             as="select"
             name="gender"
-            class="block w-full py-0.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded input-sm input-bordered"
+            class="block w-full py-0.5 px-3 text-gray-800 bg-white dark:bg-gray-600 dark:text-white border border-gray-400 transition duration-500 focus:outline-none focus:border-black rounded input-sm "
 
         >
           <option value="" disabled selected>--جنسیت--</option>
@@ -50,13 +50,13 @@
     <!-- Family name -->
     <div class="mb-3 grid grid-cols-3">
 
-      <label class="inline-block leading-9 text-sm text-center">نام کاربری</label>
+      <label class="inline-block leading-9 text-sm text-center  text-gray-800 dark:text-gray-100">نام کاربری</label>
 
       <div class="col-span-2">
         <vee-field
             type="text"
             name="username"
-            class="block w-full py-0.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded input-sm input-bordered"
+            class="block w-full py-0.5 px-3 text-gray-800 bg-white dark:bg-gray-600 dark:text-white border border-gray-400 transition duration-500 focus:outline-none focus:border-black rounded input-sm "
             placeholder="نام کاربری"
         />
         <ErrorMessage class="text-red-600 text-sm" name="username"/>
@@ -64,12 +64,12 @@
     </div>
     <!-- Phone number -->
     <div class="mb-3 grid grid-cols-3">
-      <label class="inline-block text-sm leading-9 text-center">شماره همراه </label>
+      <label class="inline-block text-sm leading-9 text-center  text-gray-800 dark:text-gray-100">شماره همراه </label>
       <div class="col-span-2">
         <vee-field
             type="text"
             name="phone_number"
-            class="block w-full py-0.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded input-sm input-bordered"
+            class="block w-full py-0.5 px-3 text-gray-800 bg-white dark:bg-gray-600 dark:text-white border border-gray-400 transition duration-500 focus:outline-none focus:border-black rounded input-sm "
             placeholder="شماره همراه"
         />
         <ErrorMessage class="text-red-600 text-sm" name="phone_number"/>
@@ -77,12 +77,12 @@
     </div>
     <!-- Password -->
     <div class="mb-3 grid grid-cols-3">
-      <label class="inline-block text-sm leading-9 text-center">رمز عبور </label>
+      <label class="inline-block text-sm leading-9 text-center  text-gray-800 dark:text-gray-100" >رمز عبور </label>
       <div class="col-span-2">
         <vee-field
             type="password"
             name="password"
-            class="block w-full py-0.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded input-sm input-bordered"
+            class="block w-full py-0.5 px-3 text-gray-800 bg-white dark:bg-gray-600 dark:text-white border border-gray-400 transition duration-500 focus:outline-none focus:border-black rounded input-sm "
             placeholder="رمز عبور"
         />
         <ErrorMessage class="text-red-600 text-sm" name="password"/>
@@ -90,12 +90,12 @@
     </div>
     <!-- confirm_password -->
     <div class="mb-3 grid grid-cols-3">
-      <label class="inline-block  text-sm leading-9 text-center">تکرار </label>
+      <label class="inline-block  text-sm leading-9 text-center  text-gray-800 dark:text-gray-100">تکرار </label>
       <div class="col-span-2">
         <vee-field
             type="password"
             name="confirm_password"
-            class="block w-full py-0.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded input-sm input-bordered"
+            class="block w-full py-0.5 px-3 text-gray-800 bg-white dark:bg-gray-600 dark:text-white border border-gray-400 transition duration-500 focus:outline-none focus:border-black rounded input-sm "
             placeholder="تکرار رمز عبور"
         />
         <ErrorMessage class="text-red-600 text-sm" name="confirm_password"/>

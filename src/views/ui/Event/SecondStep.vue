@@ -1,19 +1,23 @@
-
-
 <template>
-  <div class="text-md text-black dark:text-gray-100 md:!text-right text-center ">کنســــرت <span class="font-extrabold text-xl">ماکان بند</span></div>
-  <div class="grid grid-cols-1 md:grid-cols-2  md:!text-right text-center gap-2">
-    <div class="text-black dark:text-gray-100 mt-2 px-3">
-      <p> <v-icon name="px-calendar-tomorrow" scale="1" class="dark:text-white text-black"/><span class="font-bold text-md"> تاریخ :  </span> <span>1402/02/03</span>   </p>
-      <p> <v-icon name="px-clock" scale="1" class="dark:text-white text-black"/><span class="font-bold text-md">ساعت : </span> <span>18:30 - 20:30</span>   </p>
-    </div>
-    <div class="text-black dark:text-gray-100 mt-2 px-3">
-      <v-icon name="px-gps" scale="1" class="dark:text-white text-black"/>
-      <span class="font-bold text-md"> مکان برگزاری : </span>
-      <span>تهران ، .......</span>
-    </div>
+  <div>
+    <div class="text-md text-black dark:text-gray-100 md:!text-right text-center ">کنســــرت
+      <span class="font-extrabold text-xl">ماکان بند</span></div>
+    <div class="grid grid-cols-1 md:grid-cols-2  md:!text-right text-center gap-2">
+      <div class="text-black dark:text-gray-100 mt-2 px-3">
+        <p>
+          <v-icon name="px-calendar-tomorrow" scale="1" class="dark:text-white text-black"/>
+          <span class="font-bold text-md"> تاریخ :  </span> <span>1402/02/03</span></p>
+        <p>
+          <v-icon name="px-clock" scale="1" class="dark:text-white text-black"/>
+          <span class="font-bold text-md">ساعت : </span> <span>18:30 - 20:30</span></p>
+      </div>
+      <div class="text-black dark:text-gray-100 mt-2 px-3">
+        <v-icon name="px-gps" scale="1" class="dark:text-white text-black"/>
+        <span class="font-bold text-md"> مکان برگزاری : </span>
+        <span>تهران ، .......</span>
+      </div>
 
-    <div class="col-span-full">
+      <div class="col-span-full">
         <div class="p-2 rounded-2xl shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset]">
           <!-- justify tabs -->
           <TabGroup as="div" class="mb-5">
@@ -45,7 +49,7 @@
             </TabList>
             <TabPanels class="pt-5 flex-1 text-sm">
               <TabPanel>
-                <div @click.prevent="">
+                <div @click.prevent="handleClickOnSeat">
                   <VueZoomable
                       class="w-full mx-auto overflow-hidden"
                       selector="#zoomable"
@@ -54,37 +58,24 @@
                       :zoom="1"
                       :enableControllButton="true"
                   >
-                  <div v-html="SVG" class="w-fit mx-auto " id="zoomable"></div>
+                    <div v-html="SVG" class="w-fit mx-auto " id="zoomable"></div>
                   </VueZoomable>
                 </div>
               </TabPanel>
-              <TabPanel>
-                <div class="flex items-start">
-                  <div class="w-20 h-20 ltr:mr-4 rtl:ml-4 flex-none">
-                    <img src="" alt="" class="w-20 h-20 m-0 rounded-full ring-2 ring-[#ebedf2] dark:ring-white-dark object-cover" />
-                  </div>
-                  <div class="flex-auto">
-                    <h5 class="text-xl font-medium mb-4">Media heading</h5>
-                    <p class="text-white-dark">
-                      Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra
-                      turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                    </p>
-                  </div>
-                </div>
-              </TabPanel>
-              <TabPanel>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-                  exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-                  pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                </p>
-              </TabPanel>
+
+
             </TabPanels>
           </TabGroup>
 
         </div>
+      </div>
+
     </div>
 
+    <div class="grid md:grid-cols-2 grid-cols-1 mt-2 gap-2">
+      <div class="col-span-full dark:text-gray-200 text-black">بلیت های انتخابی شما:</div>
+      <SelectedTicket v-for="item in TicketStore.Tickets" :seatInfo="item" :handleDelete="handleClickOnDeleteSeat" key="item"/>
+    </div>
   </div>
 </template>
 
@@ -92,30 +83,47 @@
 import "vue-zoomable/dist/style.css";
 import VueZoomable from "vue-zoomable"
 import {Tab, TabGroup, TabList, TabPanel, TabPanels} from "@headlessui/vue";
-import {onMounted, reactive, ref} from "vue";
+import {onMounted, reactive, ref, vModelSelect} from "vue";
+import SelectedTicket from "@/views/components/Pages/Event/SelectedTicket.vue";
+import useTicketStore from "@/stores/Ticket.js";
 
+
+const props = defineProps({
+  stepControls: Object
+})
 
 const SVG = ref("");
 
 
-function handleClickOnSeat($event){
+const TicketStore = useTicketStore();
 
-    if($event.target.tagName==='ellipse'){
-      $event.target.style.fill='red';
+function handleClickOnSeat($event) {
 
-    }
+  if ($event.target.tagName === 'ellipse' || $event.target.tagName === 'circle') {
+    if ($event.target.style.fill !== 'red')
+      TicketStore.addToTicket($event.target.id)
+    else
+      TicketStore.removeTicket($event.target.id)
 
+    $event.target.style.fill = $event.target.style.fill === 'red' ? 'black' : 'red';
+  }
+
+}
+
+function handleClickOnDeleteSeat(seatId) {
+
+  TicketStore.removeTicket(seatId)
+  document.querySelector("#" + seatId).style.fill = 'black';
 
 
 }
 
 
+onMounted(() => {
 
-onMounted(()=>{
-
-    let t = fetch("http://localhost:5173/public/drawing11.svg").then((res)=>res.text()).then((res)=>{
-      SVG.value = res;
-    })
+  let t = fetch("http://localhost:5173/public/drawing.svg").then((res) => res.text()).then((res) => {
+    SVG.value = res;
+  })
 
 })
 </script>

@@ -9,12 +9,12 @@
 
   <modal :show="authModal.show" :on-close-fn="authModal.toggleMenu" >
     <template #title>
-      <h3 class="font-bold text-lg mb-4 rtl:text-right">سلام! کدومـــش؟</h3>
+      <h3 class="font-bold text-lg mb-4 rtl:text-right">{{authModal.title}}</h3>
     </template>
     <template #body>
-      <div role="tablist" class="tabs tabs-boxed mb-2">
-        <a role="tab" class="tab " :class="{'tab-active':tab==='signup'}" @click.prevent="tab='signup'">ثبت نام</a>
-        <a role="tab" class="tab " :class="{'tab-active':tab==='signin'}" @click.prevent="tab='signin'">ورود</a>
+      <div role="tablist" class="tabs tabs-boxed mb-2 !bg-gray-100 dark:bg-gray-600 !text-black dark:!text-white">
+        <a role="tab" class="tab !text-black dark:!text-white" :class="{'tab-active':tab==='signup'}" @click.prevent="tab='signup'">ثبت نام</a>
+        <a role="tab" class="tab !text-black dark:!text-white" :class="{'tab-active':tab==='signin'}" @click.prevent="tab='signin'">ورود</a>
 
       </div>
       <transition enter-active-class="animate__animated animate__fadeIn" leave-active-class="animate__animated animate__fadeOut" mode="out-in">

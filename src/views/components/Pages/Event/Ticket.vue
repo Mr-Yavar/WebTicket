@@ -1,13 +1,13 @@
-
 <template>
-  <div class="cardWrap">
-    <div class="card cardLeft relative">
-      <div class="absolute top-3 text-center text-white block w-full"><span class="font-extrabold text-lg">کنسرت ماکان بند</span>
-      </div>
-      <div class="h-full flex flex-col justify-end items-center">
-        <span class="text-center block  text-black"><span class="font-bold ">ساعت :</span> 18:30 تا 20:30</span>
-        <div class="p-1"></div>
-        <span class="text-center block ">
+  <div>
+    <div class="cardWrap">
+      <div class="card cardLeft relative">
+        <div class="absolute top-3 text-center text-white block w-full"><span class="font-extrabold text-lg">کنسرت ماکان بند</span>
+        </div>
+        <div class="h-full flex flex-col justify-end items-center">
+          <span class="text-center block  text-black"><span class="font-bold ">ساعت :</span> 18:30 تا 20:30</span>
+          <div class="p-1"></div>
+          <span class="text-center block ">
                   <div class="relative inline-flex">
                     <button
                         @click="handleClick"
@@ -16,28 +16,29 @@
                     <span class="absolute w-[12px] h-[12px] rounded-full py-1 px-1 text-xl font-medium content-[''] leading-2 grid place-items-center top-[-5%] left-[-2%]  bg-green-300 text-white animate-ping "></span>
                   </div>
               </span>
+        </div>
       </div>
-    </div>
-    <div class="card  cardRight relative ">
-      <div class="absolute top-3 text-center text-white block w-full"> جمعه</div>
-      <div class="h-full flex  flex-col justify-end text-black">
-        <span class="text-center block ">26</span>
-        <span class="text-center block ">اردیبهشت</span>
-        <span class="text-center block "> 1403</span>
+      <div class="card  cardRight relative ">
+        <div class="absolute top-3 text-center text-white block w-full"> جمعه</div>
+        <div class="h-full flex  flex-col justify-end text-black">
+          <span class="text-center block ">26</span>
+          <span class="text-center block ">اردیبهشت</span>
+          <span class="text-center block "> 1403</span>
+        </div>
       </div>
-    </div>
 
+    </div>
   </div>
 </template>
 
 <script setup>
-  defineProps({
-    handleClick:Function
-  });
+defineProps({
+  handleClick: Function
+});
 </script>
 
 <style scoped>
-.cardWrap{
+.cardWrap {
   @apply mx-auto my-auto
 }
 
@@ -47,12 +48,12 @@
 }
 
 .cardLeft {
-  @apply md:w-[22em] sm:w-[16em] w-[15em] rounded-tl-lg rounded-bl-lg  ;
+  @apply w-3/4 rounded-tl-lg rounded-bl-lg  ;
 
 }
 
 .cardRight {
-  @apply md:w-[10em] sm:w-[6em] w-[6em] rounded-tr-lg rounded-br-lg border-l-[0.18em] border-l-white border-dashed before:top-[-0.4em] after:bottom-[-0.4em] ;
+  @apply w-1/4 rounded-tr-lg rounded-br-lg border-l-[0.18em] border-l-white border-dashed before:top-[-0.4em] after:bottom-[-0.4em] ;
 
 }
 
