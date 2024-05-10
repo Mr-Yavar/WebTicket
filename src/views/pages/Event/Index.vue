@@ -77,14 +77,14 @@ const stepTitles = [
 ]
 
 
-function toNext() {
+async function toNext() {
 
-  if (NextActions[step.value]())
+  if (await NextActions[step.value]())
     step.value++;
 }
 
-function toPrevious() {
-  if (BackActions[step.value]())
+async function toPrevious() {
+  if (await BackActions[step.value]())
     step.value--;
 }
 
@@ -110,31 +110,42 @@ const NextActions = {
       AuthModalStore.setTitle("برای ادامه حساب کاربری لازمه!");
       AuthModalStore.toggleMenu();
 
-        return false;
+      return false;
     }
 
-      if (TicketStore.selectedShowing.length === 0){
-        Swal.fire({
-          title: 'خطا جانم!',
-          text: 'اینجا بدون انتخاب سانس چیکار میکنی؟',
-          icon: 'info',
-          showConfirmButton: false,
-          showCloseButton: true,
-          timer: 2000,
-          timerProgressBar: true,
-          showClass: {popup: "direction-rtl vazir-font"},
+    if (TicketStore.selectedShowing.length === 0) {
+      Swal.fire({
+        title: 'خطا جانم!',
+        text: 'اینجا بدون انتخاب سانس چیکار میکنی؟',
+        icon: 'info',
+        showConfirmButton: false,
+        showCloseButton: true,
+        timer: 2000,
+        timerProgressBar: true,
+        showClass: {popup: "direction-rtl vazir-font"},
 
-        });
-        return false;
-      }
-
-
-        if (TicketStore.Tickets.length === 0){
-          return false;
-        }
+      });
+      return false;
+    }
 
 
-          return true;
+    if (TicketStore.Tickets.length === 0) {
+      Swal.fire({
+        title: 'خطا جانم!',
+        text: 'حداقل یدونه بلیت انتخاب کن!',
+        icon: 'info',
+        showConfirmButton: false,
+        showCloseButton: true,
+        timer: 2000,
+        timerProgressBar: true,
+        showClass: {popup: "direction-rtl vazir-font"},
+
+      });
+      return false;
+    }
+
+
+    return true;
 
 
   },
@@ -148,11 +159,35 @@ const BackActions = {
     TicketStore.setSelectedShowing("");
     return true;
   },
-  2: function () {
+  2: async function () {
+
+    if (TicketStore.Tickets.length !== 0) {
+      const {isConfirmed} = await Swal.fire({
+        title: 'سوال',
+        html: 'با برگشتن به مرحله قبل بلیت های انتخاب شده حذف میشن!' +
+            '<br/>' +
+            'از این عمل مطمئن هستی؟',
+        icon: 'info',
+        showConfirmButton: true,
+        showCancelButton: true,
+        showCloseButton: true,
+        confirmButtonText: "مطمئنم",
+        cancelButtonText: "لغو",
+        customClass: {
+          actions: "flex justify-around w-full flex-row-reverse"
+        },
+        showClass: {popup: "direction-rtl vazir-font "},
+
+      });
+
+      if (!isConfirmed)
+        return false;
+    }
     TicketStore.removeAllTickets();
     return true;
   },
   3: function () {
+
     return true;
   },
   4: function () {

@@ -9,7 +9,7 @@ export const useAuthModalStore = defineStore('authModal', () => {
      if(this.show)
        document.body.classList.add("overflow-hidden");
      else {
-       setTitle("سلام،کدومش؟");
+         this.title ="سلام، کدومش؟";
        document.body.classList.remove("overflow-hidden");
      }
   }

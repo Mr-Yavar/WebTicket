@@ -58,7 +58,7 @@
                       :zoom="1"
                       :enableControllButton="true"
                   >
-                    <div v-html="SVG" class="w-fit mx-auto " id="zoomable"></div>
+                    <div v-html="SVG" class="w-fit mx-auto " id="zoomable"  ></div>
                   </VueZoomable>
                 </div>
               </TabPanel>
@@ -72,8 +72,9 @@
 
     </div>
 
-    <div class="grid md:grid-cols-2 grid-cols-1 mt-2 gap-2">
-      <div class="col-span-full dark:text-gray-200 text-black">بلیت های انتخابی شما:</div>
+    <div class="grid md:grid-cols-2 grid-cols-1 mt-2 gap-2 p-4 rounded-2xl shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset] ">
+      <div class="col-span-full dark:text-gray-200 text-black font-bold">بلیت های انتخابی شما:</div>
+      <div v-if=" TicketStore.Tickets.length===0" class="col-span-full text-center dark:text-gray-200 text-black text-md font-bold" >هیچ بلیتی انتخاب نشده است!</div>
       <SelectedTicket v-for="item in TicketStore.Tickets" :seatInfo="item" :handleDelete="handleClickOnDeleteSeat" key="item"/>
     </div>
   </div>
@@ -83,7 +84,7 @@
 import "vue-zoomable/dist/style.css";
 import VueZoomable from "vue-zoomable"
 import {Tab, TabGroup, TabList, TabPanel, TabPanels} from "@headlessui/vue";
-import {onMounted, reactive, ref, vModelSelect} from "vue";
+import {onMounted, reactive, ref, vModelSelect, watch} from "vue";
 import SelectedTicket from "@/views/components/Pages/Event/SelectedTicket.vue";
 import useTicketStore from "@/stores/Ticket.js";
 
@@ -122,10 +123,17 @@ function handleClickOnDeleteSeat(seatId) {
 onMounted(() => {
 
   let t = fetch("http://localhost:5173/public/drawing.svg").then((res) => res.text()).then((res) => {
-    SVG.value = res;
-  })
 
-})
+    let dom =new DOMParser();
+    let tempDoc = dom.parseFromString(res,'text/html');
+    TicketStore.Tickets.forEach(item => {
+      tempDoc.querySelector(`#${item}`).style.fill = "red";
+    });
+    SVG.value = tempDoc.querySelector("svg").outerHTML;
+  });
+
+});
+
 </script>
 
 <style scoped>
