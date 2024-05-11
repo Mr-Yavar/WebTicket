@@ -1,9 +1,12 @@
 import './assets/main.css'
 import 'animate.css';
 import 'vue-select/dist/vue-select.css';
+import "@/assets/hoverSimulation.css"
+import 'tippy.js/dist/tippy.css' // optional for styling
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import VueTippy from 'vue-tippy'
 
 import App from './App.vue'
 import router from './router'
@@ -25,10 +28,22 @@ addIcons(IoTrashOutline,MdCategoryOutlined,SiOpenstreetmap,OiLocation,RiCalendar
 
 const app = createApp(App)
 app.use(VueQueryPlugin)
+app.use(
+    VueTippy,
+    // optional
+    {
+        directive: 'tippy', // => v-tippy
+        component: 'tippy', // => <tippy/>
+        componentSingleton: 'tippy-singleton', // => <tippy-singleton/>,
+        defaultProps: {
+            placement: 'auto-end',
+            allowHTML: true,
+        }, // => Global default options * see all props
+    }
+)
 
 app.use(VeeValidatePlugin);
 app.use(createPinia());
-app.use(VueQueryPlugin)
 app.use(router);
 app.use(registerLayouts);
 app.component("v-icon", OhVueIcon);
