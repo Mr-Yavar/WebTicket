@@ -17,8 +17,8 @@ import {reactive, ref} from "vue";
 
     }
 
-    function removeTicket(ticket){
-        Tickets.splice(Tickets.indexOf(ticket),1);
+    function removeTicket(ticketId){
+        Tickets.splice(Tickets.indexOf(Tickets.filter(ticket=>ticket.id===ticketId)),1);
     }
 
      function removeAllTickets(){

@@ -13,18 +13,20 @@
     </template>
     <template #body>
       <div role="tablist" class="tabs tabs-boxed mb-2 !bg-gray-100 dark:bg-gray-600 !text-black dark:!text-white">
-        <a role="tab" class="tab !text-black dark:!text-white" :class="{'tab-active':tab==='signup'}" @click.prevent="tab='signup'">ثبت نام</a>
-        <a role="tab" class="tab !text-black dark:!text-white" :class="{'tab-active':tab==='signin'}" @click.prevent="tab='signin'">ورود</a>
+        <a role="tab" class="tab " :class="{'tab-active':tab==='signup'}" @click.prevent="tab='signup'">ثبت نام</a>
+        <a role="tab" class="tab " :class="{'tab-active':tab==='signin'}" @click.prevent="tab='signin'">ورود</a>
 
       </div>
+      <div class="formBody">
       <transition enter-active-class="animate__animated animate__fadeIn" leave-active-class="animate__animated animate__fadeOut" mode="out-in">
         <div class="p-1" v-if="tab==='signup'">
           <user-register-form/>
         </div>
         <div class="p-1" v-else-if="tab==='signin'">
-          <user-register-form/>
+          <user-login-form/>
         </div>
       </transition>
+      </div>
     </template>
   </modal>
 </template>
@@ -34,9 +36,21 @@ import {reactive, ref} from "vue";
 import UserRegisterForm from "@/views/ui/Home/user-register-form.vue";
 import Modal from "@/views/components/Globals/modal/modal.vue";
 import {useAuthModalStore} from "@/stores/componentStore/authModal.js"
+import UserLoginForm from "@/views/ui/Home/user-login-form.vue";
 
 const authModal = useAuthModalStore();
 
 const tab = ref("signin");
 
 </script>
+
+<style scoped>
+
+  .tab-active {
+    @apply dark:!text-white !text-white;
+  }
+
+  .formBody{
+    transition: all 0.2s;
+  }
+</style>

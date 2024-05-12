@@ -3,47 +3,46 @@
     <div class="relative overflow-hidden rounded-lg mb-3">
       <div class="w-full event-cover  bg-transparent ">
         <img class="h-fit w-full rounded-lg" src="https://static.honarticket.com/resource/files/cache/fa41b9fa14be3bc8.951409.jpeg" border="0">
-        <h1 class="bg-none bg-transparent rounded-md text-white font-bold absolute bottom-2 right-2 z-10">کنسرت ماکان
+        <h1 class="bg-none bg-transparent rounded-md text-white font-bold absolute bottom-2 right-2 z-10 ">کنسرت ماکان
           بند</h1>
       </div>
     </div>
-    <div class="w-full rounded-lg ">
+    <div class="w-full rounded-lg md:!text-base sm:!text-sm !text-xs">
       <div class="grid md:grid-cols-2  grid-cols-1 gap-3">
         <div class="col-span-1">
           <div class="flex">
             <div>
               <span class="p-1 text-center align-text-bottom">
-                <v-icon name="px-calendar-tomorrow" scale="1" class="dark:text-white text-black"/>
+                <v-icon name="px-calendar-tomorrow" scale="1" class="dark:text-white text-black leading-6"/>
               </span>
-              <span class="leading-6 font-bold pl-1 dark:text-white text-black">زمان :</span>
+              <span class=" font-bold pl-1 dark:text-white text-black leading-6">زمان :</span>
             </div>
-            <div class="dark:text-white text-black"> سه شنبه 15 مرداد</div>
+            <div class="dark:text-white text-black leading-6"> سه شنبه 15 مرداد</div>
           </div>
         </div>
         <div class="col-span-1">
           <div class="flex">
             <div>
               <span class="p-1 text-center ">
-                <v-icon name="px-clock" scale="1" class="dark:text-white text-black"/>
+                <v-icon name="px-clock" scale="1" class="dark:text-white text-black leading-6"/>
               </span>
-              <span class="leading-6 font-bold pl-1 dark:text-white text-black">ساعت :</span>
+              <span class="font-bold pl-1 dark:text-white text-black leading-6">ساعت :</span>
             </div>
-            <div class="dark:text-white text-black"> ساعت 18:30 و 21:30</div>
+            <div class="dark:text-white text-black leading-6"> ساعت 18:30 و 21:30</div>
           </div>
         </div>
 
-        <div class="col-span-1">
+        <div class="col-span-full">
           <div class="flex">
-            <div>
+            <div class="">
               <span class="p-1 text-center align-text-bottom ">
-                <v-icon name="px-gps" scale="1" class="dark:text-white text-black"/>
+                <v-icon name="px-gps" scale="1" class="dark:text-white text-black leading-6"/>
               </span>
-              <span class="leading-6 font-bold pl-1 dark:text-white text-black">محل برگزاری :</span>
-            </div>
-            <div class="flex">
-              <span class="dark:text-white text-black">تهران ، برج میلاد</span>
-              <div class="inline-step h-6 inline-block"></div>
-              <span class="dark:text-white text-black">تهران ، .................</span>
+              <span class="font-bold pl-1 dark:text-white text-black leading-6">محل برگزاری :</span>
+
+              <span class="dark:text-white text-black leading-6">تهران ، برج میلاد</span>
+              <span class="inline-step h-6 inline-block leading-6"></span>
+              <span class="dark:text-white text-black  leading-6">تهران ، .................</span>
             </div>
           </div>
         </div>
@@ -78,9 +77,9 @@
             </span>
             </label>
             <label class="mt-px font-light text-gray-700 cursor-pointer select-none" for="link">
-              <p class="flex font-sans text-base antialiased font-medium leading-relaxed text-blue-gray-900">
+              <p class="flex font-sans  antialiased font-medium leading-relaxed text-blue-gray-900 md:!text-base !text-sm">
                 با
-                <a @click.prevent="toggleTermsModal()" href="#" class="block font-sans text-base antialiased font-medium leading-relaxed text-blue-500 transition-colors hover:text-blue-700">
+                <a @click.prevent="toggleTermsModal()" href="#" class="block font-sans antialiased font-medium leading-relaxed text-blue-500 transition-colors hover:text-blue-700">
                   &nbsp;شرایط و قوانین کنسرت &nbsp;
                 </a>
                 موافقم.

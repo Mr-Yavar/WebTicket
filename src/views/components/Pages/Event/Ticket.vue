@@ -1,12 +1,12 @@
 <template>
   <div>
-    <div class="cardWrap">
+    <div class="cardWrap md:!text-base !text-sm ">
       <div class="card cardLeft relative">
-        <div class="absolute top-3 text-center text-white block w-full"><span class="font-extrabold text-lg">کنسرت ماکان بند</span>
+        <div class="absolute top-2.5 text-center text-white block w-full md:!text-lg !text-base"><span class="font-extrabold ">کنسرت ماکان بند</span>
         </div>
         <div class="h-full flex flex-col justify-end items-center">
-          <span class="text-center block  text-black"><span class="font-bold ">ساعت :</span> 18:30 تا 20:30</span>
-          <div class="p-1"></div>
+          <span class="text-center block  text-black "><span class="font-bold ">ساعت :</span> 18:30 تا 20:30</span>
+          <div class="md:p-1 p-0"></div>
           <span class="text-center block ">
                   <div class="relative inline-flex">
                     <button

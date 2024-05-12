@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div class="cardWrap">
+    <div class="cardWrap md:!text-base sm:!text-sm !text-xs">
       <div class="card cardLeft relative">
-        <div class="absolute top-0.5 text-center text-white block w-full"><span class="font-extrabold text-lg">کنسرت ماکان بند</span>
+        <div class="absolute top-0.5 text-center text-white block w-full md:!text-lg !text-base"><span class="font-extrabold">کنسرت ماکان بند</span>
         </div>
         <div class="h-full w-full grid grid-cols-2 items-end gap-0">
           <div class="text-center block  text-black"><span class="font-bold ">طبقه :</span> {{floor}}</div>
@@ -15,8 +15,8 @@
         </div>
       </div>
       <div class="card  cardRight relative ">
-        <div class="absolute bottom-5 text-center text-white block w-full">
-          <span @click.prevent="handleDelete(seatInfo)">
+        <div class="absolute md:bottom-5 bottom-3  text-center text-white block w-full">
+          <span @click.prevent="handleDelete(seatInfo.id)" >
             <v-icon name="io-trash-outline" scale="1.2" fill="#ffdd44" />
             </span>
         </div>
@@ -35,9 +35,11 @@ const props = defineProps({
 });
 
 
-const floor = computed(()=> " -"+ props.seatInfo.split('_')[0].replace("f","") +"- " )
-const row = computed(()=> " -"+ props.seatInfo.split('_')[1].replace("r","") +"- " )
-const column = computed(()=> " -"+ props.seatInfo.split('_')[2].replace("c","") +"- " )
+const floor = props.seatInfo.floor;
+const row =props.seatInfo.row;
+const column = props.seatInfo.column;
+
+const price = props.seatInfo.price;
 </script>
 
 <style scoped>

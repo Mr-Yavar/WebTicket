@@ -68,8 +68,8 @@
 
             </TabPanels>
 
-            <div class="flex w-full justify-center text-gray-900 dark:text-gray-100">
-              <div class="rtl:ml-4 mr-4 ">راهنما:</div>
+            <div class="grid grid-cols-6 w-full text-center text-gray-900 dark:text-gray-100">
+              <div class="">راهنما:</div>
               <div class="mx-2">
                 <span class="w-[10px] h-[10px]  inline-block border border-black mx-1" :class="TicketsTypes['free-tickets']"></span>آزاد
               </div>
@@ -168,13 +168,22 @@ function handleClickOnSeat($event) {
     if (!$event.target.classList.contains(TicketsTypes["reserved-tickets"]) && !$event.target.classList.contains(TicketsTypes["waiting-tickets"]) && !$event.target.classList.contains(TicketsTypes["not-tickets"])) {
 
       if (!$event.target.classList.contains(TicketsTypes["selected-tickets"])) {
-        TicketStore.addToTicket($event.target.id);
+
+        let [floor,row,column] = $event.target.id.split('_');
+        TicketStore.addToTicket({
+          id : $event.target.id,
+          price : $event.target.getAttribute('price'),
+          floor,
+          row,
+          column
+        });
         $event.target.classList.remove(TicketsTypes["free-tickets"]);
         $event.target.classList.add(TicketsTypes["selected-tickets"]);
       } else {
+
         $event.target.classList.remove(TicketsTypes["selected-tickets"]);
         $event.target.classList.add(TicketsTypes["free-tickets"]);
-        TicketStore.removeTicket($event.target.id)
+        TicketStore.removeTicket($event.target.id);
       }
     }
 
@@ -229,13 +238,13 @@ onMounted(() => {
 
 
 .free-tickets {
-  fill: #28be29 !important;
-  background-color: #28be29 !important;
+  fill: #4eef4f !important;
+  background-color: #4eef4f !important;
 }
 
 .selected-tickets {
-  fill: #1bc6ef !important;
-  background-color: #1bc6ef !important;
+  fill: #63dbfc !important;
+  background-color: #63dbfc !important;
 }
 
 .reserved-tickets {
