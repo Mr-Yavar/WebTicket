@@ -1,7 +1,6 @@
 import './assets/main.css'
 import 'animate.css';
 import 'vue-select/dist/vue-select.css';
-import "@/assets/hoverSimulation.css"
 import 'tippy.js/dist/tippy.css' // optional for styling
 
 import { createApp } from 'vue'

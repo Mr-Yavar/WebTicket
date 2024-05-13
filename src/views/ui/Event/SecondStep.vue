@@ -56,9 +56,10 @@
                       :minZoom="1"
                       :maxZoom="3"
                       :zoom="1"
-                      :touchEnabled="false"
+                      :touchEnabled="true"
                       :enableControllButton="true"
-                      :buttonPanStep="2"
+                      :buttonPanStep="100"
+                      :button-zoom-step="0.5"
                   >
                     <div v-html="SVG" class="w-fit mx-auto " id="seatMap"  ref="seatMap"></div>
                   </VueZoomable>
@@ -205,7 +206,7 @@ const TicketsTypes = useCssModule("TicketsTypes");
 
 onMounted(() => {
 
-  let t = fetch("http://localhost:5173/public/drawing.svg").then((res) => res.text()).then((res) => {
+  let t = fetch("/public/drawing.svg").then((res) => res.text()).then((res) => {
 
     let dom = new DOMParser();
     let tempDoc = dom.parseFromString(res, 'text/html');
