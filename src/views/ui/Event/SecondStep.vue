@@ -20,7 +20,7 @@
       <div class="col-span-full">
         <div class="p-2 rounded-2xl shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset]">
           <!-- justify tabs -->
-          <TabGroup as="div" class="mb-5">
+          <TabGroup as="div" class="mb-5" >
             <TabList class="flex flex-wrap justify-between mt-3 w-1/2 mx-auto border-b border-gray-900 dark:border-[#191e3a] text-center bg-gray-400 rounded-t-md text-white dark:text-gray-300">
               <Tab as="template" v-slot="{ selected }">
                 <a
@@ -49,20 +49,24 @@
             </TabList>
             <TabPanels class="pt-5 flex-1 text-sm">
               <TabPanel>
-                <div @click.prevent="handleClickOnSeat">
-                  <VueZoomable
-                      class="w-full mx-auto overflow-hidden"
-                      selector="#seatMap"
-                      :minZoom="1"
-                      :maxZoom="3"
-                      :zoom="1"
-                      :touchEnabled="true"
-                      :enableControllButton="true"
-                      :buttonPanStep="100"
-                      :button-zoom-step="0.5"
+                1
+                <div @click.prevent="handleClickOnSeat" >
+                  <SvgPanZoom
+                      :zoomEnabled="true"
+                      :controlIconsEnabled="true"
+                      :fit="true"
+                      :center="true"
+                      :preventMouseEventsDefault="false"
+                      :dblClickZoomEnabled="false"
+                      :mouseWheelZoomEnabled="false"
+                      :viewportSelector="'#seatMap svg'"
+                      :min-zoom="0.5"
+                      :key="SVG.length"
                   >
-                    <div v-html="SVG" class="w-fit mx-auto " id="seatMap"  ref="seatMap"></div>
-                  </VueZoomable>
+                    <div id="seatMap" class="w-full mx-auto border-dark-600 border-2" v-tippy="{...tippyOption}">
+                        <template v-html="SVG" v-inline-svg class="w-full mx-auto"></template>
+                    </div>
+                  </SvgPanZoom>
                 </div>
               </TabPanel>
 
@@ -106,7 +110,7 @@
       <div v-if=" TicketStore.Tickets.length===0" class="col-span-full text-center dark:text-gray-200 text-black text-md font-bold">
         هیچ بلیتی انتخاب نشده است!
       </div>
-      <SelectedTicket v-for="item in TicketStore.Tickets" :seatInfo="item" :handleDelete="handleClickOnDeleteSeat" key="item"/>
+      <SelectedTicket v-for="(item,key) in (TicketStore.Tickets ?? [])" :seatInfo="item" :index="key+1" :has-delete="true" :handleDelete="handleClickOnDeleteSeat" key="item"/>
     </div>
   </div>
 </template>
@@ -119,6 +123,8 @@ import {onMounted, reactive, ref, useCssModule, vModelSelect, watch} from "vue";
 import SelectedTicket from "@/views/components/Pages/Event/SelectedTicket.vue";
 import useTicketStore from "@/stores/Ticket.js";
 import {useTippy} from "vue-tippy";
+
+import {SvgPanZoom} from "vue-svg-pan-zoom";
 
 
 const props = defineProps({
@@ -135,7 +141,7 @@ const seat = ref(null);
 const seats = reactive([]);
 
 const TicketStore = useTicketStore();
-useTippy(seatMap,{
+const tippyOption = {
   content: tippyTitle,
   arrow: true,
   theme: 'light',
@@ -157,13 +163,13 @@ useTippy(seatMap,{
       instance.hide();
     },1000);
   }
-});
+};
 function handleClickOnSeat($event) {
 
 
   if (($event.target.tagName === 'ellipse' || $event.target.tagName === 'circle') && $event.target.closest("#seatMap") !== null) {
 
-    console.log($event.target.querySelector("title"));
+    console.log($event.target);
     tippyTitle.value = $event.target.querySelector("title").innerHTML;
     seat.value = $event.target;
     if (!$event.target.classList.contains(TicketsTypes["reserved-tickets"]) && !$event.target.classList.contains(TicketsTypes["waiting-tickets"]) && !$event.target.classList.contains(TicketsTypes["not-tickets"])) {

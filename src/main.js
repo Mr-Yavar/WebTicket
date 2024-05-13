@@ -22,10 +22,33 @@ import {PrSpinner} from "oh-vue-icons/icons/pr";
 import { PxCalendarTomorrow,PxClock,PxGps    } from "oh-vue-icons/icons/px";
 import { HiSolidCheckCircle } from "oh-vue-icons/icons/hi";
 import {SiOpenstreetmap} from "oh-vue-icons/icons/si"
-import {MdCategoryOutlined} from "oh-vue-icons/icons/md";
-addIcons(IoTrashOutline,MdCategoryOutlined,SiOpenstreetmap,OiLocation,RiCalendarEventFill,FaSearch,FaTicketAlt,IoTicketSharp,IoArrowForwardOutline,FaTimes,PrSpinner,PxCalendarTomorrow,PxClock,PxGps,HiSolidCheckCircle);
+import {MdCategoryOutlined,MdDiscountTwotone} from "oh-vue-icons/icons/md";
+
+addIcons(MdDiscountTwotone,IoTrashOutline,MdCategoryOutlined,SiOpenstreetmap,OiLocation,RiCalendarEventFill,FaSearch,FaTicketAlt,IoTicketSharp,IoArrowForwardOutline,FaTimes,PrSpinner,PxCalendarTomorrow,PxClock,PxGps,HiSolidCheckCircle);
 
 const app = createApp(App)
+
+
+app.directive('inline-svg', el => {
+    console.log(el);
+    if (!el) {
+        return
+    }
+
+    // copy attributes to first child
+    const content = el.tagName === 'TEMPLATE' ? el.content : el
+    if (content.children.length === 1) {
+        [...el.attributes].forEach((attr) => content.firstChild.setAttribute(attr.name, attr.value));
+    }
+
+    // replace element with content
+    if (el.tagName === 'TEMPLATE') {
+
+        el.replaceWith(el.content)
+    } else {
+        el.replaceWith(...el.children)
+    }
+});
 app.use(VueQueryPlugin)
 app.use(
     VueTippy,

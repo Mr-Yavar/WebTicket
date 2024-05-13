@@ -16,9 +16,12 @@
       </div>
       <div class="card  cardRight relative ">
         <div class="absolute md:bottom-5 bottom-3  text-center text-white block w-full">
-          <span @click.prevent="handleDelete(seatInfo.id)" >
+          <span @click.prevent="handleDelete(seatInfo.id)" v-if="hasDelete">
             <v-icon name="io-trash-outline" scale="1.2" fill="#ffdd44" />
             </span>
+          <span class="text-gray-900 dark:text-gray-100" v-else>
+            {{index}}
+          </span>
         </div>
       </div>
 
@@ -31,7 +34,12 @@ import {computed,defineProps} from "vue";
 
 const props = defineProps({
   handleDelete: Function,
-  seatInfo : String
+  seatInfo : String,
+  hasDelete : {
+    type : Boolean,
+    default : true
+  },
+  index : Number
 });
 
 
