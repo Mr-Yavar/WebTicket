@@ -25,7 +25,10 @@ import {reactive, ref} from "vue";
          Tickets.splice(0,Tickets.length);
      }
 
-    return {selectedShowing,setSelectedShowing,Tickets,addToTicket,removeTicket,removeAllTickets};
+     function sumOfAllPrice(){
+         return Tickets.reduce((price, item) => price += price + item.price, 0);
+     }
+    return {selectedShowing,setSelectedShowing,Tickets,addToTicket,removeTicket,removeAllTickets,sumOfAllPrice};
 });
 
  export default useTicketStore;

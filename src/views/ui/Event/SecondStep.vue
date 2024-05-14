@@ -113,6 +113,8 @@
       <SelectedTicket v-for="(item,key) in (TicketStore.Tickets ?? [])" :seatInfo="item" :index="key+1" :has-delete="true" :handleDelete="handleClickOnDeleteSeat" key="item"/>
     </div>
   </div>
+
+  <slot name="controlSteps"/>
 </template>
 
 <script setup>

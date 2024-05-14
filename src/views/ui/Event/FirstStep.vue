@@ -109,6 +109,8 @@
       </div>
     </div>
   </div>
+
+  <slot name="controlSteps"/>
 </template>
 
 <script setup>
