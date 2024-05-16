@@ -47,8 +47,9 @@
                 >
               </Tab>
             </TabList>
-            <TabPanels class="pt-5 flex-1 text-sm">
-              <TabPanel>
+            <TabPanels class="pt-5 flex-1 text-sm" >
+
+              <TabPanel :unmount="false">
                 1
                 <div @click.prevent="handleClickOnSeat" >
                   <SvgPanZoom
@@ -64,13 +65,14 @@
                       :key="SVG.length"
                   >
                     <div id="seatMap" class="w-full mx-auto border-dark-600 border-2" v-tippy="{...tippyOption}">
-                        <template v-html="SVG" v-inline-svg class="w-full mx-auto"></template>
+                        <template v-html="SVG" ref="seatMap" v-inline-svg class="w-full mx-auto"></template>
                     </div>
                   </SvgPanZoom>
                 </div>
               </TabPanel>
-
-
+              <TabPanel>
+                222
+              </TabPanel>
             </TabPanels>
 
             <div class="grid grid-cols-6 w-full text-center text-gray-900 dark:text-gray-100">
@@ -119,7 +121,6 @@
 
 <script setup>
 import "vue-zoomable/dist/style.css";
-import VueZoomable from "vue-zoomable"
 import {Tab, TabGroup, TabList, TabPanel, TabPanels} from "@headlessui/vue";
 import {onMounted, reactive, ref, useCssModule, vModelSelect, watch} from "vue";
 import SelectedTicket from "@/views/components/Pages/Event/SelectedTicket.vue";
@@ -194,6 +195,9 @@ function handleClickOnSeat($event) {
         $event.target.classList.add(TicketsTypes["free-tickets"]);
         TicketStore.removeTicket($event.target.id);
       }
+
+
+
     }
 
   }
