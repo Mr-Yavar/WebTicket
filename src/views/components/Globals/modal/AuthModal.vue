@@ -33,10 +33,10 @@
 
 <script setup>
 import {reactive, ref} from "vue";
-import UserRegisterForm from "@/views/ui/Home/user-register-form.vue";
+import UserRegisterForm from "@/views/components/Globals/auth/user-register-form.vue";
 import Modal from "@/views/components/Globals/modal/modal.vue";
 import {useAuthModalStore} from "@/stores/componentStore/authModal.js"
-import UserLoginForm from "@/views/ui/Home/user-login-form.vue";
+import UserLoginForm from "@/views/components/Globals/auth/user-login-form.vue";
 
 const authModal = useAuthModalStore();
 

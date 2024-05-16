@@ -1,7 +1,8 @@
 <template>
   <vee-form
       :validation-schema="schema"
-      @submit="register"
+      @submit="login"
+      autocomplete="off"
   >
 
 
@@ -13,11 +14,11 @@
       <div class="col-span-2">
         <vee-field
             type="text"
-            name="username"
+            name="phone_number"
             class="block w-full py-0.5 px-3 text-gray-800 bg-white dark:bg-gray-600 dark:text-white border border-gray-400 transition duration-500 focus:outline-none focus:border-black rounded input-sm "
-            placeholder="نام کاربری"
+            placeholder="شماره تلفن"
         />
-        <ErrorMessage class="text-red-600 text-sm" name="username"/>
+        <ErrorMessage class="text-red-600 text-sm" name="phone_number"/>
       </div>
     </div>
 
@@ -53,17 +54,14 @@
 import {ErrorMessage} from "vee-validate";
 
 const schema = {
-  first_name: "required|min:3|max:100|persian_text",
-  last_name: "required|min:3|max:100|persian_text",
-  username: "required|min:3|max:100",
-  email: "required|min:3|max:100|email",
-  gender: "required",
-  phone_number: "required|min:10|max:11",
+  phone_number: "required|",
   password: "required|min:9|max:100|excluded:password",
-  confirm_password: "passwords_mismatch:@password"
 };
 
-function register(values){
+
+
+
+function login(values){
   console.log(values);
 }
 </script>
