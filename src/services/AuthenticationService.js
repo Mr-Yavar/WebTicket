@@ -32,7 +32,7 @@ async function loginService(userLoginData){
     if(res.status===200)
         return await res.text();
     else
-        throw new Error('Oh no!')
+        throw new Error(await res.text())
 }
 
 

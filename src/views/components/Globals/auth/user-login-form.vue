@@ -59,11 +59,12 @@
 <script setup>
 import {ErrorMessage} from "vee-validate";
 import {useMutation} from "@tanstack/vue-query";
-import {loginService} from "@/service/AuthenticationService.js";
+import {loginService} from "@/services/AuthenticationService.js";
 import Swal from "sweetalert2";
 import {ref} from "vue";
 import {useAuthModalStore} from "@/stores/componentStore/authModal.js";
 import useUserStore from "@/stores/user.js";
+import {sweetAlertAuthConfigure} from "@/config/alertConfigure.js";
 
 const authModal = useAuthModalStore();
 const userStore = useUserStore();
@@ -72,6 +73,9 @@ const schema = {
   password: "required",
 };
 
+const possibleErrors = {
+  "Failed to fetch": "!خطا در اتصال به سرور",
+}
 
 const loginServiceCall = useMutation({
   mutationKey: "loginService",
@@ -99,21 +103,24 @@ const loginServiceCall = useMutation({
     //
     // });
 
-    authModal.toggleMenu();
+    await authModal.toggleMenu();
+
+    if(authModal.onLoginSuccssed!==null)
+      await authModal.onLoginSuccssed();
+
   },
-  onError: () => {
+  onError: (error) => {
+    console.log(error.message);
     form_in_progress.value = false;
+    let message = "!خطای غیر منتظره";
+    if(possibleErrors[error.message]!==undefined)
+      message = possibleErrors[error.message];
+
     Swal.fire({
       title: "خطا",
       icon: "error",
-      width: '26em',
-      html: "نام کاربری یا رمز عبور وارد شده اشتباه است!",
-      timer: 1500,
-      timerProgressBar: true,
-      customClass: {
-        title: "text-xl vazir-font",
-        container: "text-sm vazir-font"
-      },
+      html: message,
+ ...sweetAlertAuthConfigure,
 
     });
   }

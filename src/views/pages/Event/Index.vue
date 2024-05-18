@@ -99,7 +99,7 @@ async function toPrevious() {
 // موقع رد شدن از اون مرحله اجرا بشه
 const NextActions = {
   1: function () {
-
+    TicketStore.removeAllTickets();
     if (TicketStore.selectedShowing.length !== 0)
       return true;
 
@@ -115,6 +115,7 @@ const NextActions = {
   2: function () {
     if (!userStore.isAuthenticated) {
       AuthModalStore.setTitle("برای ادامه حساب کاربری لازمه!");
+      AuthModalStore.setOnLoginSuccssed(toNext);
       AuthModalStore.toggleMenu();
 
       return false;

@@ -124,11 +124,12 @@
 <script setup>
 import {ErrorMessage} from "vee-validate";
 import {useMutation} from "@tanstack/vue-query";
-import {registerService} from "@/service/AuthenticationService.js";
+import {registerService} from "@/services/AuthenticationService.js";
 import sweatalert2 from "sweetalert2";
 import {ref} from "vue";
 import Swal from "sweetalert2";
 import {useAuthModalStore} from "@/stores/componentStore/authModal.js";
+import {sweetAlertAuthConfigure} from "@/config/alertConfigure.js";
 
 const authModal = useAuthModalStore();
 
@@ -156,15 +157,9 @@ const registerServiceCall = useMutation({
     form_in_progress.value = false;
     await Swal.fire({
       title : "موفقیت آمیز",
-      icon:"success",
-      width : '26em',
-      timer:1500,
-      timerProgressBar:true,
+      ...sweetAlertAuthConfigure,
       html : "!عملیات ثبت نام با موفقیت انجام شد",
-      customClass:{
-        title : "text-xl vazir-font",
-        container : "text-sm vazir-font"
-      },
+
 
     });
 
@@ -182,14 +177,8 @@ const registerServiceCall = useMutation({
     Swal.fire({
       title : "خطا",
       icon:"error",
-      width : '26em',
       html : Error,
-      timer:1500,
-      timerProgressBar:true,
-      customClass:{
-        title : "text-xl vazir-font",
-        container : "text-sm vazir-font"
-      },
+      ...sweetAlertAuthConfigure,
 
     });
   }

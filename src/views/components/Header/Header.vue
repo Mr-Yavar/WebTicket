@@ -23,32 +23,50 @@
               <li class="block antialiased font-sans text-sm leading-normal text-blue-gray-900 p-1 font-normal border-2 border-dashed border-dark-400 rounded-md">
                 <a class="flex items-center" href="#">بررسی بلیت</a>
               </li>
-              <li class="block antialiased font-sans text-sm leading-normal text-blue-gray-900 p-1 font-normal" v-if="userStore.isAuthenticated">
+              <li v-if="userStore.isAuthenticated" class="block antialiased font-sans text-sm leading-normal text-blue-gray-900 p-1 font-normal">
+                <Dropdown @visible-change="change">
+                  <!-- trigger element -->
+                  <template #trigger>
+                    <button
+                        class="w-fit select-none rounded-lg border border-gray-900 py-2 px-1 text-center align-middle font-sans text-xs font-bold uppercase text-gray-900 transition-all hover:opacity-75 focus:ring focus:ring-gray-300 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                        type="button"
+                    >
+                      <a class="flex items-center justify-between" href="#">
+                        <div class="mx-1">
+                          <v-icon name="la-user-circle"/>
+                        </div>
+                        <div class="w-full mx-1"> {{ userStore.FullName }}</div>
+                      </a>
+                    </button>
+                  </template>
 
-                <button
-                    class="w-fit select-none rounded-lg border border-gray-900 py-2 px-1 text-center align-middle font-sans text-xs font-bold uppercase text-gray-900 transition-all hover:opacity-75 focus:ring focus:ring-gray-300 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                    type="button"
-                >
+                  <!-- contents display in dropdown -->
+                  <div>
+                    <div class="px-2 py-2 w-fit vazir-font direction-rtl">
+                      <div  class="my-1 ">
+                        <div>
+                          <v-icon name="oi-location"/>
+                          <span>تست</span>
+                        </div>
+                      </div>
+                      <div class="my-1">
+                        <div class="my-1 border-[1px] border-gray-400 rounded-2xl"></div>
+                        <router-link to="/logout">
+                        <button class="align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 px-4 rounded-lg bg-gradient-to-tr from-gray-900 to-gray-800 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 active:opacity-[0.85] hidden lg:inline-block" title="خدافظی؟؟؟" type="button" >
+                          <span>خروج از حساب</span>
+                        </button>
+                        </router-link>
+                      </div>
+                    </div>
+                  </div>
+                </Dropdown>
 
-                  <a class="flex items-center justify-between" href="#">
-
-                      <div class="mx-1"> <v-icon name="la-user-circle"/></div>
-                      <div class="w-full mx-1"> {{userStore.FullName}}</div>
-
-
-                  </a>
-                </button>
               </li>
             </ul>
           </div>
           <div class="flex items-center gap-x-1">
 
-            <template v-if="userStore.isAuthenticated">
-              <button title="خدافظی؟؟؟" class="align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 px-4 rounded-lg bg-gradient-to-tr from-gray-900 to-gray-800 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 active:opacity-[0.85] hidden lg:inline-block" type="button" @click.prevent="userStore.logOut()">
-                <span>خروج از حساب</span>
-              </button>
-            </template>
-            <template v-else>
+            <template v-if="!userStore.isAuthenticated">
               <button class="align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 px-4 rounded-lg bg-gradient-to-tr from-gray-900 to-gray-800 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 active:opacity-[0.85] hidden lg:inline-block" type="button" @click.prevent="authModal.toggleMenu()">
                 <span>ثبت نام /  ورود</span>
               </button>
@@ -80,14 +98,52 @@
             <li class="block antialiased font-sans text-sm leading-normal text-blue-gray-900 p-1 font-normal ">
               <a class="flex items-center" href="#">بررسی بلیت</a>
             </li>
+            <li v-if="userStore.isAuthenticated" class="block antialiased font-sans text-sm leading-normal text-blue-gray-900 p-1 font-normal">
+              <Dropdown @visible-change="change" :fullWidth="true">
+                <!-- trigger element -->
+                <template #trigger >
+                  <button
+                      class=" select-none rounded-lg border border-gray-900 py-2 px-1 text-center align-middle font-sans text-xs font-bold uppercase text-gray-900 transition-all hover:opacity-75 focus:ring focus:ring-gray-300 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none block w-full"
+                      type="button"
+                  >
+                    <a class="flex items-center justify-between" href="#">
+                      <div class="mx-1">
+                        <v-icon name="la-user-circle"/>
+                      </div>
+                      <div class="w-full mx-1"> {{ userStore.FullName }}</div>
+                    </a>
+                  </button>
+                </template>
+
+                <!-- contents display in dropdown -->
+                <div>
+                  <div class="px-2 py-2 w-fit vazir-font direction-rtl">
+                    <div  class="my-1 ">
+                      <div>
+                        <v-icon name="oi-location"/>
+                        <span>تست</span>
+                      </div>
+                    </div>
+                    <div class="my-1">
+                      <div class="my-1 border-[1px] border-gray-400 rounded-2xl"></div>
+                      <button class="align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-2 px-4 rounded-lg bg-gradient-to-tr from-gray-900 to-gray-800 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 active:opacity-[0.85] block w-full" title="خدافظی؟؟؟" type="button" @click.prevent="userStore.logOut()">
+                        <span>خروج از حساب</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </Dropdown>
+
+            </li>
           </ul>
           <div class="flex items-center gap-x-1">
-            <button class="align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-2 px-4 rounded-lg text-gray-900 hover:bg-gray-900/10 active:bg-gray-900/20 block w-full" type="button">
-              <span>Log In</span>
-            </button>
-            <button class="align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-2 px-4 rounded-lg bg-gradient-to-tr from-gray-900 to-gray-800 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 active:opacity-[0.85] block w-full" type="button">
-              <span>Sign in</span>
-            </button>
+
+            <template v-if="!userStore.isAuthenticated">
+              <button class="align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-2 px-4 rounded-lg bg-gradient-to-tr from-gray-900 to-gray-800 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 active:opacity-[0.85] block w-full" type="button" @click.prevent="authModal.toggleMenu()">
+                <span>ثبت نام /  ورود</span>
+              </button>
+            </template>
+
           </div>
         </div>
       </transition>
@@ -96,7 +152,7 @@
 </template>
 <script setup>
 
-
+import Dropdown from 'v-dropdown'
 import {ref} from "vue";
 import {useAuthModalStore} from "@/stores/componentStore/authModal.js"
 import useUserStore from "@/stores/user.js";
@@ -111,7 +167,9 @@ function toggleMenu() {
   this.showMenu = !this.showMenu;
 }
 
-
+function change(val) {
+  console.log(val)
+}
 </script>
 <style>
 .fade-enter-from {

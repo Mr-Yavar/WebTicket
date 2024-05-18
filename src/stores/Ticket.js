@@ -18,8 +18,10 @@ import {reactive, ref} from "vue";
     }
 
     function removeTicket(ticketId){
+        let index = Tickets.findIndex(ticket=>ticket.id===ticketId);
 
-        Tickets.splice(Tickets.indexOf(Tickets.filter(ticket=>ticket.id===ticketId)[0]),1);
+        if(index!==-1)
+            Tickets.splice(index,1);
     }
 
      function removeAllTickets(){
@@ -27,7 +29,7 @@ import {reactive, ref} from "vue";
      }
 
      function sumOfAllPrice(){
-         return Tickets.reduce((price, item) => price += price + item.price, 0);
+         return Tickets.reduce((price, item) => price += item.price, 0);
      }
     return {selectedShowing,setSelectedShowing,Tickets,addToTicket,removeTicket,removeAllTickets,sumOfAllPrice};
 });
