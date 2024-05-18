@@ -1,10 +1,9 @@
 <template>
   <vee-form
       :validation-schema="schema"
-      @submit="login"
       autocomplete="off"
+      @submit="login"
   >
-
 
 
     <div class="mb-3 grid grid-cols-3">
@@ -13,37 +12,44 @@
 
       <div class="col-span-2">
         <vee-field
-            type="text"
-            name="phone_number"
             class="block w-full py-0.5 px-3 text-gray-800 bg-white dark:bg-gray-600 dark:text-white border border-gray-400 transition duration-500 focus:outline-none focus:border-black rounded input-sm "
-            placeholder="شماره تلفن"
+            name="userName"
+            placeholder="نام کاربری"
+            type="text"
         />
-        <ErrorMessage class="text-red-600 text-sm" name="phone_number"/>
+        <ErrorMessage class="text-red-600 text-sm block rtl:!text-right text-left" name="userName"/>
       </div>
     </div>
 
     <!-- Password -->
     <div class="mb-3 grid grid-cols-3">
-      <label class="inline-block text-sm leading-9 text-center  text-gray-800 dark:text-gray-100" >رمز عبور </label>
+      <label class="inline-block text-sm leading-9 text-center  text-gray-800 dark:text-gray-100">رمز عبور </label>
       <div class="col-span-2">
         <vee-field
-            type="password"
-            name="password"
             class="block w-full py-0.5 px-3 text-gray-800 bg-white dark:bg-gray-600 dark:text-white border border-gray-400 transition duration-500 focus:outline-none focus:border-black rounded input-sm "
+            name="password"
             placeholder="رمز عبور"
+            type="password"
         />
-        <ErrorMessage class="text-red-600 text-sm" name="password"/>
+        <ErrorMessage class="text-red-600 text-sm block rtl:!text-right text-left" name="password"/>
       </div>
     </div>
 
     <div class="mb-3 grid grid-cols-3 ">
-<!--      <div class="col-span-1 py-2 me-1">-->
-<!--        <button type="button" class="rtl:fa-font block w-full select-none rounded-lg border border-gray-900 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-gray-900 transition-all hover:opacity-75 focus:ring focus:ring-gray-300 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"> <v-icon name="io-arrow-forward-outline" scale="0.75" /> برگشت</button>-->
-<!--      </div>-->
+      <!--      <div class="col-span-1 py-2 me-1">-->
+      <!--        <button type="button" class="rtl:fa-font block w-full select-none rounded-lg border border-gray-900 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-gray-900 transition-all hover:opacity-75 focus:ring focus:ring-gray-300 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"> <v-icon name="io-arrow-forward-outline" scale="0.75" /> برگشت</button>-->
+      <!--      </div>-->
       <div class="col-span-1 col-start-1"></div>
 
-      <div class="col-span-1  py-2 ms-1">
-        <button type="submit" class="rtl:fa-font h-full align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 px-6 rounded-lg bg-green-700 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none block w-full">ورود</button>
+      <div class="col-span-1 py-2 ms-1">
+        <button
+            :class="{'hidden' : form_in_progress}"
+            :disabled="form_in_progress" class="rtl:fa-font h-full align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 px-6 rounded-lg bg-green-700 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none block w-full" type="submit">
+          ورود
+        </button>
+        <div v-if="form_in_progress" class="!text-center ">
+          <v-icon animation="spin" fill="green" name="pr-spinner" scale="1.3"/>
+        </div>
       </div>
     </div>
   </vee-form>
@@ -52,16 +58,72 @@
 
 <script setup>
 import {ErrorMessage} from "vee-validate";
+import {useMutation} from "@tanstack/vue-query";
+import {loginService} from "@/service/AuthenticationService.js";
+import Swal from "sweetalert2";
+import {ref} from "vue";
+import {useAuthModalStore} from "@/stores/componentStore/authModal.js";
+import useUserStore from "@/stores/user.js";
 
+const authModal = useAuthModalStore();
+const userStore = useUserStore();
 const schema = {
-  phone_number: "required|",
-  password: "required|min:9|max:100|excluded:password",
+  userName: "required",
+  password: "required",
 };
 
 
+const loginServiceCall = useMutation({
+  mutationKey: "loginService",
+  mutationFn: loginService,
+  onMutate: () => {
+    form_in_progress.value = true;
+  },
+  onSuccess: async (e) => {
+    const data = await JSON.parse(e);
+    await userStore.GetAuthenticated(data);
 
 
-function login(values){
+    form_in_progress.value = false;
+    // await Swal.fire({
+    //   title: "موفقیت آمیز",
+    //   icon: "success",
+    //   width: '26em',
+    //   html: "خوش آمدید!",
+    //   timer: 1500,
+    //   timerProgressBar: true,
+    //   customClass: {
+    //     title: "text-xl vazir-font",
+    //     container: "text-sm vazir-font"
+    //   },
+    //
+    // });
+
+    authModal.toggleMenu();
+  },
+  onError: () => {
+    form_in_progress.value = false;
+    Swal.fire({
+      title: "خطا",
+      icon: "error",
+      width: '26em',
+      html: "نام کاربری یا رمز عبور وارد شده اشتباه است!",
+      timer: 1500,
+      timerProgressBar: true,
+      customClass: {
+        title: "text-xl vazir-font",
+        container: "text-sm vazir-font"
+      },
+
+    });
+  }
+});
+
+
+const form_in_progress = ref(false);
+
+async function login(values) {
   console.log(values);
+  loginServiceCall.mutate(values);
 }
 </script>

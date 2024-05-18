@@ -16,7 +16,7 @@
       </div>
       <div class="card  cardRight relative ">
         <div class="absolute md:bottom-5 bottom-3  text-center text-white block w-full">
-          <span @click.prevent="handleDelete(seatInfo.id)" v-if="hasDelete">
+          <span @click.prevent="handleDelete" v-if="hasDelete">
             <v-icon name="io-trash-outline" scale="1.2" fill="#ffdd44" />
             </span>
           <span class="text-gray-900 dark:text-gray-100" v-else>
@@ -42,7 +42,7 @@ const props = defineProps({
   index : Number
 });
 
-
+console.log(props.seatInfo.id);
 const floor = props.seatInfo.floor;
 const row =props.seatInfo.row;
 const column = props.seatInfo.column;

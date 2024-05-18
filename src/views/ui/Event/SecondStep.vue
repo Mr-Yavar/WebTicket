@@ -112,7 +112,7 @@
       <div v-if=" TicketStore.Tickets.length===0" class="col-span-full text-center dark:text-gray-200 text-black text-md font-bold">
         هیچ بلیتی انتخاب نشده است!
       </div>
-      <SelectedTicket v-for="(item,key) in (TicketStore.Tickets ?? [])" :seatInfo="item" :index="key+1" :has-delete="true" :handleDelete="handleClickOnDeleteSeat" key="item"/>
+      <SelectedTicket v-for="(item,key) in (TicketStore.Tickets ?? [])" :seatInfo="item" :index="item.id" :has-delete="true" :handleDelete="()=> handleClickOnDeleteSeat(item.id)" key="item"/>
     </div>
   </div>
 
@@ -206,8 +206,8 @@ function handleClickOnSeat($event) {
 }
 
 function handleClickOnDeleteSeat(seatId) {
-
-  TicketStore.removeTicket(seatId)
+  console.log(seatId);
+  TicketStore.removeTicket(seatId);
   document.querySelector("#" + seatId).classList.remove(TicketsTypes["selected-tickets"]);
   document.querySelector("#" + seatId).classList.add(TicketsTypes["free-tickets"]);
 
@@ -224,15 +224,15 @@ onMounted(() => {
     let tempDoc = dom.parseFromString(res, 'text/html');
     TicketStore.Tickets.forEach(item => {
 
-      tempDoc.querySelector(`#${item}`).classList.add(TicketsTypes["selected-tickets"]);
+      tempDoc?.querySelector(`#${item}`).classList.add(TicketsTypes["selected-tickets"]);
     });
 
-    tempDoc.querySelectorAll(`*[id^="f"]:not(.${TicketsTypes["selected-tickets"]})`).forEach((seat) => {
+    tempDoc?.querySelectorAll(`*[id^="f"]:not(.${TicketsTypes["selected-tickets"]})`).forEach((seat) => {
       seat.classList.add(TicketsTypes["free-tickets"]);
 
     });
 
-    tempDoc.querySelectorAll(`*[id^="f"]`).forEach((seat) => {
+    tempDoc?.querySelectorAll(`*[id^="f"]`).forEach((seat) => {
       seats.push(seat);
 
     });

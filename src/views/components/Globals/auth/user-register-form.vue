@@ -128,6 +128,9 @@ import {registerService} from "@/service/AuthenticationService.js";
 import sweatalert2 from "sweetalert2";
 import {ref} from "vue";
 import Swal from "sweetalert2";
+import {useAuthModalStore} from "@/stores/componentStore/authModal.js";
+
+const authModal = useAuthModalStore();
 
 const schema = {
   firstName: "required|min:3|max:100|persian_text",
@@ -139,19 +142,50 @@ const schema = {
   confirm_password: "passwords_mismatch:@password"
 };
 
+const possibleErrors={
+  "DuplicateUserName" : "!کاربری با این نام کاربری وجود دارد"
+};
 const registerServiceCall = useMutation({
   mutationKey : "registerService",
   mutationFn : registerService,
   onMutate:()=>{
     form_in_progress.value = true;
   },
-  onSuccess:()=>{
+  onSuccess:async (e)=>{
+    console.log(e);
     form_in_progress.value = false;
-    Swal.fire({
+    await Swal.fire({
       title : "موفقیت آمیز",
       icon:"success",
       width : '26em',
+      timer:1500,
+      timerProgressBar:true,
       html : "!عملیات ثبت نام با موفقیت انجام شد",
+      customClass:{
+        title : "text-xl vazir-font",
+        container : "text-sm vazir-font"
+      },
+
+    });
+
+    authModal.toggleMenu();
+  },
+  onError:(e)=>{
+
+    //possibleErrors
+
+    let messges = JSON.parse(e.message);
+
+    let Error  = Object.keys(messges).map(item=>possibleErrors[item]).join("<br/>") ;
+    Error  = Error==="" ?  "خطا!" :Error;
+    form_in_progress.value = false;
+    Swal.fire({
+      title : "خطا",
+      icon:"error",
+      width : '26em',
+      html : Error,
+      timer:1500,
+      timerProgressBar:true,
       customClass:{
         title : "text-xl vazir-font",
         container : "text-sm vazir-font"

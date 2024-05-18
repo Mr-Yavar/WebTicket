@@ -11,10 +11,29 @@ async function registerService(userData){
     });
 
 
-    if(res.ok)
+    if(res.status===201)
         return await res.text();
-
-    return false;
+    else
+        throw new Error(await res.text())
 }
 
-export {registerService};
+
+async function loginService(userLoginData){
+
+    let res = await fetch(API_BASE_URL+'/api/authentication/login',{
+        method : "POST",
+        headers : {
+            "Content-Type" : "application/json"
+        },
+        body : JSON.stringify(userLoginData)
+    });
+
+
+    if(res.status===200)
+        return await res.text();
+    else
+        throw new Error('Oh no!')
+}
+
+
+export {registerService,loginService};

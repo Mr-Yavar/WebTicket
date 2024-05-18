@@ -23,8 +23,8 @@ import { PxCalendarTomorrow,PxClock,PxGps    } from "oh-vue-icons/icons/px";
 import { HiSolidCheckCircle } from "oh-vue-icons/icons/hi";
 import {SiOpenstreetmap} from "oh-vue-icons/icons/si"
 import {MdCategoryOutlined,MdDiscountTwotone} from "oh-vue-icons/icons/md";
-
-addIcons(MdDiscountTwotone,IoTrashOutline,MdCategoryOutlined,SiOpenstreetmap,OiLocation,RiCalendarEventFill,FaSearch,FaTicketAlt,IoTicketSharp,IoArrowForwardOutline,FaTimes,PrSpinner,PxCalendarTomorrow,PxClock,PxGps,HiSolidCheckCircle);
+import { LaUserCircle } from "oh-vue-icons/icons";
+addIcons(LaUserCircle,MdDiscountTwotone,IoTrashOutline,MdCategoryOutlined,SiOpenstreetmap,OiLocation,RiCalendarEventFill,FaSearch,FaTicketAlt,IoTicketSharp,IoArrowForwardOutline,FaTimes,PrSpinner,PxCalendarTomorrow,PxClock,PxGps,HiSolidCheckCircle);
 
 const app = createApp(App)
 
