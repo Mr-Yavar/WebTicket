@@ -1,5 +1,6 @@
 import {computed, reactive, ref} from 'vue'
 import {defineStore} from 'pinia'
+import {jwtDecode} from "jwt-decode";
 
 const useUserStore = defineStore('user', () => {
     const isAuthenticated = ref(false);
@@ -26,6 +27,7 @@ const useUserStore = defineStore('user', () => {
             refreshToken.value = userData.refreshToken;
             expireTime.value = userData.expireTime;
             user.value = userData.user;
+            user.value.Identity = jwtDecode(userData.accessToken);
             isAuthenticated.value = true;
         } catch (e) {
             isAuthenticated.value = false;
