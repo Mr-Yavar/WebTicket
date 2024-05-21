@@ -144,7 +144,9 @@ const schema = {
 };
 
 const possibleErrors={
-  "DuplicateUserName" : "!کاربری با این نام کاربری وجود دارد"
+  "DuplicateUserName" : "!کاربری با این نام کاربری وجود دارد",
+  "DuplicatePhoneNumber":"!کاربری با این شماره موبایل وجود دارد"
+
 };
 const registerServiceCall = useMutation({
   mutationKey : "registerService",
