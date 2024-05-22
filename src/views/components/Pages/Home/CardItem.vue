@@ -1,7 +1,13 @@
 <script >
 
+
+import {Guid} from "@/config/helper.js";
+
 export default {
   name:"cardItem",
+  props:[
+    'concert'
+  ],
   data(){
     return {
       image_url : 'https://static.honarticket.com/resource/files/cache/23e896429ee15c8b.2d42c6.jpeg',
@@ -10,14 +16,17 @@ export default {
   },
   methods:{
     RedirectToGettingTicket(){
-      let id = this.id;
+
       this.$router.push({
         name : "event",
         params:{
-          id
+          id : Guid( {}).fromFullToCompressed(this.concert.concertid)
         }
       });
     }
+  },
+  computed:{
+    startDate(){return !this.concert.startDate  ? "" : new Date(this.concert?.startDate).toLocaleString('fa-ir',{ day:"2-digit",month:"long",weekday:"long"});}
   }
 
 }
@@ -32,18 +41,18 @@ export default {
     </div>
     <div class="relative w-full p-2">
       <h1 class="block font-sans text-center text-white rtl:fa-font text-2xl mb-1">
-        کنسرت گروه نوشه
+        {{concert.title }}
       </h1>
       <h2 class="block text-center text-white rtl:fa-font text-sm">
         (ویژه بانوان)
       </h2>
       <h2 class="block text-right text-white rtl:fa-font text-sm">
         <v-icon name="oi-location" />
-        <span class="pr-1">تهران ، برج میلاد</span>
+        <span class="pr-1">{{ concert.place?.name }}</span>
       </h2>
       <h2 class="block text-right text-white rtl:fa-font tex-sm mb-2">
         <v-icon name="ri-calendar-event-fill" />
-        <span class="pr-1">شنبه 07 خرداد</span>
+        <span class="pr-1">{{startDate}}</span>
       </h2>
       <button
           class="rtl:fa-font  align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 px-6 rounded-lg bg-gray-300 text-black shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none block w-full"

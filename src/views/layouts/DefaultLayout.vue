@@ -15,8 +15,8 @@
 
 <script setup>
 import {defineComponent} from "vue";
-import Header from "@/views/components/Header/Header.vue";
-import Footer from "@/views/components/Footer/Footer.vue";
+import Header from "@/views/components/DefaultLayout/Header/Header.vue";
+import Footer from "@/views/components/DefaultLayout/Footer/Footer.vue";
 import AuthModal from "@/views/components/Globals/modal/AuthModal.vue";
 
 

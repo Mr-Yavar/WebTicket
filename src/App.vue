@@ -9,12 +9,12 @@
 </template>
 
 <script setup>
-import Header from "@/views/components/Header/Header.vue";
+import Header from "@/views/components/DefaultLayout/Header/Header.vue";
 import Carousel from "@/views/components/Slider/Carousel.vue";
 import Splitter from "@/views/components/Splitter/Splitter.vue";
 import Select from "@/views/components/Select/Select.vue";
 import CardItem from "@/views/components/Pages/Home/CardItem.vue";
-import Footer from "@/views/components/Footer/Footer.vue";
+import Footer from "@/views/components/DefaultLayout/Footer/Footer.vue";
 import SearchBox from "@/views/components/Select/SearchBox.vue";
 import Modal from "@/views/components/Globals/modal/modal.vue";
 import AuthModal from "@/views/components/Globals/modal/AuthModal.vue";

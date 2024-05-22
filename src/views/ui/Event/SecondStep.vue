@@ -112,7 +112,7 @@
       <div v-if=" TicketStore.Tickets.length===0" class="col-span-full text-center dark:text-gray-200 text-black text-md font-bold">
         هیچ بلیتی انتخاب نشده است!
       </div>
-      <SelectedTicket v-for="(item,key) in (TicketStore.Tickets ?? [])" :seatInfo="item" :index="item.id" :has-delete="true" :handleDelete="()=> handleClickOnDeleteSeat(item.id)" key="item"/>
+      <SelectedTicket v-for="(item,key) in (TicketStore.Tickets ?? [])" :seatInfo="item" :index="item.id" :has-delete="true" :handleDelete="()=> handleClickOnDeleteSeat(item.id)" :key="item.id"/>
     </div>
   </div>
 

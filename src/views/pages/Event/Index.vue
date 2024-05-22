@@ -74,7 +74,19 @@ import useUserStore from "@/stores/user.js";
 import Swal from "sweetalert2";
 import {useAuthModalStore} from "@/stores/componentStore/authModal.js";
 import ControlSteps from "@/views/ui/Event/controlSteps.vue";
+import {useQuery} from "@tanstack/vue-query";
+import {GetAllConcertService, GetSpecificConcertService} from "@/services/ConcertsService.js";
+import {Guid} from "@/config/helper.js";
+import {useRoute, useRouter} from "vue-router";
 
+const route = useRoute();
+
+const GetSpecificConcertServiceCall = useQuery({
+  queryKey: ["api/Concerts/GetSpecificConcert",Guid({}).fromCompressedToFull(route.params.id)],
+  queryFn: GetSpecificConcertService,
+
+  enabled:true
+});
 const step = ref(1);
 const stepTitles = [
   "گام اول : انتخاب سانس",
