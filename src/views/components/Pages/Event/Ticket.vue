@@ -5,7 +5,7 @@
         <div class="absolute top-2.5 text-center text-white block w-full md:!text-lg !text-base"><span class="font-extrabold ">کنسرت ماکان بند</span>
         </div>
         <div class="h-full flex flex-col justify-end items-center">
-          <span class="text-center block  text-black "><span class="font-bold ">ساعت :</span> 18:30 تا 20:30</span>
+          <span class="text-center block  text-black "><span class="font-bold ">ساعت : </span>{{executionDate.toLocaleTimeString('fa-ir',{hour:"2-digit",minute:"2-digit",hour12:false})}}</span>
           <div class="md:p-1 p-0"></div>
           <span class="text-center block ">
                   <div class="relative inline-flex">
@@ -19,11 +19,11 @@
         </div>
       </div>
       <div class="card  cardRight relative ">
-        <div class="absolute top-3 text-center text-white block w-full"> جمعه</div>
+        <div class="absolute top-3 text-center text-white block w-full"> {{executionDate.toLocaleDateString('fa-ir',{weekday:"long"})}}</div>
         <div class="h-full flex  flex-col justify-end text-black">
-          <span class="text-center block ">26</span>
-          <span class="text-center block ">اردیبهشت</span>
-          <span class="text-center block "> 1403</span>
+          <span class="text-center block ">{{executionDate.toLocaleDateString('fa-ir',{day:"2-digit"})}}</span>
+          <span class="text-center block ">{{executionDate.toLocaleDateString('fa-ir',{month:"long"})}}</span>
+          <span class="text-center block ">{{executionDate.toLocaleDateString('fa-ir',{year:"numeric"})}}</span>
         </div>
       </div>
 
@@ -32,9 +32,15 @@
 </template>
 
 <script setup>
-defineProps({
-  handleClick: Function
+import {computed} from "vue";
+
+const props = defineProps({
+  handleClick: Function,
+  event : Object,
+  concertTitle : String
 });
+
+const executionDate = computed(()=>new Date(props.event.executionDate))
 </script>
 
 <style scoped>

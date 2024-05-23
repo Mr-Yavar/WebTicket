@@ -1,42 +1,10 @@
-<script >
-
-
-import {Guid} from "@/config/helper.js";
-
-export default {
-  name:"cardItem",
-  props:[
-    'concert'
-  ],
-  data(){
-    return {
-      image_url : 'https://static.honarticket.com/resource/files/cache/23e896429ee15c8b.2d42c6.jpeg',
-      id : 2
-    }
-  },
-  methods:{
-    RedirectToGettingTicket(){
-
-      this.$router.push({
-        name : "event",
-        params:{
-          id : Guid( {}).fromFullToCompressed(this.concert.concertid)
-        }
-      });
-    }
-  },
-  computed:{
-    startDate(){return !this.concert.startDate  ? "" : new Date(this.concert?.startDate).toLocaleString('fa-ir',{ day:"2-digit",month:"long",weekday:"long"});}
-  }
-
-}
-</script>
 
 <template>
-  <div id="card"  dir="rtl" style=""
+  <div id="card"  dir="rtl"
+       :style="{background : `url('${cardImg}')`,backgroundSize:'cover'}"
       class="hover:animate-pulse relative mx-auto h-[22rem] w-full max-w-[15rem] flex flex-row items-end justify-center overflow-hidden rounded-xl bg-white bg-clip-border text-center text-gray-700">
     <div
-        class="absolute inset-0 m-0 h-full w-full overflow-hidden rounded-none bg-transparent  bg-cover bg-clip-border bg-center text-gray-700 shadow-none" :class="[`bg-[url('${image_url}')]`]">
+        class="absolute inset-0 m-0 h-full w-full overflow-hidden rounded-none bg-transparent  bg-cover bg-clip-border bg-center text-gray-700 shadow-none" >
       <div class="absolute inset-0 w-full h-full to-bg-black-10 bg-gradient-to-t from-black/80 via-black/50"></div>
     </div>
     <div class="relative w-full p-2">
@@ -64,12 +32,46 @@ export default {
    </div>
   </div>
 </template>
+<script >
+
+
+import {Guid} from "@/config/helper.js";
+import {FILE_PROVIDER} from "@/config/appConfig.js";
+
+export default {
+  name:"cardItem",
+  props:[
+    'concert'
+  ],
+  data(){
+
+  },
+  methods:{
+    FILE_PROVIDER() {
+      return FILE_PROVIDER
+    },
+    RedirectToGettingTicket(){
+
+      this.$router.push({
+        name : "event",
+        params:{
+          id : Guid( {}).fromFullToCompressed(this.concert.concertid)
+        }
+      });
+    }
+  },
+  computed:{
+    startDate(){return !this.concert.startDate  ? "" : new Date(this.concert?.startDate).toLocaleString('fa-ir',{ day:"2-digit",month:"long",weekday:"long"});}
+    ,cardImg(){return FILE_PROVIDER + this.concert?.img_Url}
+
+  }
+
+}
+</script>
+
 
 <style scoped>
-#card{
-  background:  url('https://static.honarticket.com/resource/files/cache/23e896429ee15c8b.2d42c6.jpeg');
-  background-size:cover ;
-}
+
 
 #card::before,#card::after{
   content: '';

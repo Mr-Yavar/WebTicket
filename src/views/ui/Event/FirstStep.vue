@@ -1,10 +1,12 @@
 <template>
+
   <div>
     <div class="relative overflow-hidden rounded-lg mb-3">
       <div class="w-full event-cover  bg-transparent ">
-        <img class="h-fit w-full rounded-lg" src="https://static.honarticket.com/resource/files/cache/fa41b9fa14be3bc8.951409.jpeg" border="0">
-        <h1 class="bg-none bg-transparent rounded-md text-white font-bold absolute bottom-2 right-2 z-10 ">کنسرت ماکان
-          بند</h1>
+        <img class="h-fit w-full rounded-lg" :src="FILE_PROVIDER+concert?.poster" border="0">
+        <h1 class="bg-none bg-transparent rounded-md text-white font-bold absolute bottom-2 right-2 z-10 ">
+           کنسرت {{ concert?.title}}
+        </h1>
       </div>
     </div>
     <div class="w-full rounded-lg md:!text-base sm:!text-sm !text-xs">
@@ -17,7 +19,7 @@
               </span>
               <span class=" font-bold pl-1 dark:text-white text-black leading-6">زمان :</span>
             </div>
-            <div class="dark:text-white text-black leading-6"> سه شنبه 15 مرداد</div>
+            <div class="dark:text-white text-black leading-6">{{eventsDate["dates"]?.join(", ")}}</div>
           </div>
         </div>
         <div class="col-span-1">
@@ -28,7 +30,7 @@
               </span>
               <span class="font-bold pl-1 dark:text-white text-black leading-6">ساعت :</span>
             </div>
-            <div class="dark:text-white text-black leading-6"> ساعت 18:30 و 21:30</div>
+            <div class="dark:text-white text-black leading-6">  {{eventsDate["times"]?.join(" و ")}}</div>
           </div>
         </div>
 
@@ -40,9 +42,9 @@
               </span>
               <span class="font-bold pl-1 dark:text-white text-black leading-6">محل برگزاری :</span>
 
-              <span class="dark:text-white text-black leading-6">تهران ، برج میلاد</span>
+              <span class="dark:text-white text-black leading-6">{{concert?.place.name}}</span>
               <span class="inline-step h-6 inline-block leading-6"></span>
-              <span class="dark:text-white text-black  leading-6">تهران ، .................</span>
+              <span class="dark:text-white text-black  leading-6">{{concert?.place.address}}</span>
             </div>
           </div>
         </div>
@@ -95,13 +97,8 @@
               <span class="font-bold dark:text-white text-black">بلیت های موجود:</span>
             </div>
 
-            <Ticket :handleClick="()=>{TicketStore.setSelectedShowing(1);stepControls.nextFn();}"/>
-            <Ticket/>
-            <Ticket/>
-            <Ticket/>
-            <Ticket/>
-            <Ticket/>
-            <Ticket/>
+            <Ticket v-for="event in concert?.events.items"  :concertTitle="concert.title" :event="event" :key="event.eventId" :handleClick="()=>{TicketStore.setSelectedShowing(event.eventId);stepControls.nextFn();}"/>
+
           </div>
 
         </div>
@@ -121,13 +118,45 @@ import Ticket from "@/views/components/Pages/Event/Ticket.vue";
 
 import {MapComponent, MapTypes} from "@neshan-maps-platform/mapbox-gl-vue";
 import "@neshan-maps-platform/mapbox-gl-vue/dist/style.css";
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import nmp_mapboxgl from "@neshan-maps-platform/mapbox-gl";
 import useTicketStore from "@/stores/Ticket.js";
+import {useRoute} from "vue-router";
+import {useQuery} from "@tanstack/vue-query";
+import {Guid} from "@/config/helper.js";
+import {GetSpecificConcertService} from "@/services/ConcertsService.js";
+import {FILE_PROVIDER} from "@/config/appConfig.js";
 
-defineProps({
-  stepControls: Object
+const props = defineProps({
+  stepControls: Object,
+  concert :Object
 })
+
+
+
+const eventsDate = computed(() => {
+
+
+  let DateTimes = props.concert?.events.items.map(e => new Date(e.executionDate));
+
+  let res = {};
+
+  res['dates'] = DateTimes?.reduce((acc, item) => {
+    acc.push(item.toLocaleString('fa-ir',{ day:"2-digit",month:"long",weekday:"long"}));
+    return acc;
+  }, []);
+
+  res['times'] = DateTimes?.reduce((acc, item) => {
+    let time =item.toLocaleString('fa-ir',{ hour:"2-digit",minute:"2-digit",hour12:false});
+    if(acc.indexOf(time)===-1)
+      acc.push(time);
+    return acc;
+  }, []).sort();
+
+  return res;
+
+});
+
 
 const TicketStore = useTicketStore();
 
@@ -143,21 +172,21 @@ function handleStartMap(map) {
 
   map.fitBounds(map.getBounds(), {
     padding: {top: 50, bottom: 50, left: 50, right: 50},
-    center: [54.34967466221554, 31.90364059190512],
+    center: [props.concert.value.lng, props.concert.value.lat],
     maxZoom: 20,
     zoom: 15,
     minZoom: 7,
     animate: true,
-    around: [54.34967466221554, 31.90364059190512],
+    around: [props.concert.value.lng, props.concert.value.lat],
 
   });
 
 
   const marker = new nmp_mapboxgl.Marker({
     color: "black",
-    title: "فلان جا",
+    title: props.concert.value.place.name,
     draggable: false,
-  }).setLngLat([54.34967466221554, 31.90364059190512]);
+  }).setLngLat([props.concert.value.lng, props.concert.value.lat]);
 
 
   marker.addTo(map);

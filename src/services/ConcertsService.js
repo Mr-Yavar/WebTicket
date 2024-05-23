@@ -36,3 +36,21 @@ export async function GetSpecificConcertService(data){
     return await res.json();
 
 }
+
+
+export async function GetSpecificEventService(data){
+
+    let res = await fetch(API_BASE_URL+'/api/Concerts/GetSpecificEvent/'+data.queryKey[1],{
+        method : "GET",
+        headers : {
+            "Content-Type" : "application/json",
+            "api-version" : "1.0"
+        }
+
+    });
+
+
+
+    return await res.json();
+
+}

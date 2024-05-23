@@ -32,7 +32,7 @@
     </div>
 
     <transition>
-      <FirstStep v-if="step===1" :stepControls="{nextFn:toNext,previousFn:toPrevious}">
+      <FirstStep v-if="step===1" :stepControls="{nextFn:toNext,previousFn:toPrevious}" :concert="concert">
 
         <template #controlSteps></template>
 
@@ -63,7 +63,7 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import Splitter from "@/views/components/Splitter/Splitter.vue";
 import FirstStep from "@/views/ui/Event/FirstStep.vue";
 import SecondStep from "@/views/ui/Event/SecondStep.vue";
@@ -80,13 +80,16 @@ import {Guid} from "@/config/helper.js";
 import {useRoute, useRouter} from "vue-router";
 
 const route = useRoute();
-
 const GetSpecificConcertServiceCall = useQuery({
-  queryKey: ["api/Concerts/GetSpecificConcert",Guid({}).fromCompressedToFull(route.params.id)],
+  queryKey: ["api/Concerts/GetSpecificConcert", Guid({}).fromCompressedToFull(route.params.id)],
   queryFn: GetSpecificConcertService,
 
-  enabled:true
+  enabled: true
 });
+
+const concert = computed(() => GetSpecificConcertServiceCall.data.value?.concerts[0]);
+
+
 const step = ref(1);
 const stepTitles = [
   "گام اول : انتخاب سانس",
