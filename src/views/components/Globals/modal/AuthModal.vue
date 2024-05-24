@@ -1,8 +1,4 @@
-<style>
-.tab-active {
-  @apply bg-neutral text-white;
-}
-</style>
+
 
 <template>
 
@@ -12,7 +8,7 @@
       <h3 class="font-bold text-lg mb-4 rtl:text-right">{{authModal.title}}</h3>
     </template>
     <template #body>
-      <div role="tablist" class="tabs tabs-boxed mb-2 !bg-gray-100 dark:bg-gray-600 !text-black dark:!text-white">
+      <div role="tablist" class="tabs grid flex-end align-center tabs-boxed mb-2 !bg-gray-100 dark:bg-gray-600 !text-black dark:!text-white">
         <a role="tab" class="tab " :class="{'tab-active':tab==='signup'}" @click.prevent="tab='signup'">ثبت نام</a>
         <a role="tab" class="tab " :class="{'tab-active':tab==='signin'}" @click.prevent="tab='signin'">ورود</a>
 
@@ -47,10 +43,37 @@ const tab = ref("signin");
 <style scoped>
 
   .tab-active {
-    @apply dark:!text-white !text-white;
+    @apply dark:!text-white !text-white !bg-indigo-400;
   }
 
   .formBody{
     transition: all 0.2s;
   }
+  .tab{
+    @apply w-full ;
+    position: relative;
+    grid-row-start: 1;
+    display: block;
+    height: 2rem;
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: .875rem;
+    line-height: 1.25rem;
+    line-height: 2;
+
+    @apply bg-transparent rounded-lg
+  }
+
+  .tabs{
+    @apply bg-gray-50 p-1 rounded-md shadow-inner
+  }
+
 </style>

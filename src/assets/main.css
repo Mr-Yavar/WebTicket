@@ -5,7 +5,10 @@
 @tailwind utilities;
 @tailwind components;
 /* purgecss end ignore */
+
+
 @layer base {
+
     :where([dir="rtl"]) .fa-font {
         font-family: VazirMatn !important;
     }
@@ -38,6 +41,9 @@
     
     .vazir-font *{
         font-family: VazirMatn ,Tahoma, serif;
+    }
+    .bg-neutral{
+        background-color: rgb(229 229 229);
     }
 }
 

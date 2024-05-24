@@ -49,8 +49,21 @@ export async function GetSpecificEventService(data){
 
     });
 
-
-
     return await res.json();
+
+}
+
+export async function GetSeatMapService(fileName){
+
+    let res = await fetch(API_BASE_URL+'/api/FileProvider/File/'+fileName,{
+        method : "GET",
+        headers : {
+            "Content-Type" : "application/json",
+            "api-version" : "1.0"
+        }
+
+    });
+
+    return await res.text();
 
 }

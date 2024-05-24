@@ -32,18 +32,24 @@
     </div>
 
     <transition>
-      <FirstStep v-if="step===1" :stepControls="{nextFn:toNext,previousFn:toPrevious}" :concert="concert">
+      <keep-alive>
+      <div  v-if="step===1">
+      <FirstStep :stepControls="{nextFn:toNext,previousFn:toPrevious}" :concert="concert">
 
         <template #controlSteps></template>
 
       </FirstStep>
-      <SecondStep v-else-if="step===2" :stepControls="{nextFn:toNext,previousFn:toPrevious}">
+      </div>
+      <div  v-else-if="step===2">
+      <SecondStep :stepControls="{nextFn:toNext,previousFn:toPrevious}">
         <template #controlSteps>
           <ControlSteps :to-next="toNext" :to-previous="toPrevious"/>
         </template>
 
       </SecondStep>
-      <ThridStep v-else-if="step===3" :stepControls="{nextFn:toNext,previousFn:toPrevious}">
+      </div>
+        <div v-else-if="step===3">
+      <ThridStep  :stepControls="{nextFn:toNext,previousFn:toPrevious}">
         <template #controlSteps="ThridStepProps">
           <ControlSteps :to-next="toNext" :to-previous="toPrevious">
             <template #nextBtn>
@@ -53,7 +59,11 @@
           </ControlSteps>
         </template>
       </ThridStep>
-      <FourthStep v-else-if="step===4" :stepControls="{nextFn:toNext,previousFn:toPrevious}"/>
+        </div>
+          <div v-else-if="step===4">
+      <FourthStep  :stepControls="{nextFn:toNext,previousFn:toPrevious}"/>
+          </div>
+      </keep-alive>
     </transition>
 
 
