@@ -25,14 +25,14 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      inkscape:zoom="4.5112795"
-     inkscape:cx="18.509162"
-     inkscape:cy="126.01746"
+     inkscape:cx="28.373325"
+     inkscape:cy="102.29914"
      inkscape:window-width="1600"
      inkscape:window-height="829"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g25-8-9-1-1"
+     inkscape:current-layer="layer1"
      showgrid="true">
     <inkscape:grid
        id="grid25"
@@ -563,6 +563,19 @@
         <title
            id="title21-1-4-3-1-1-8-8-0-6-4-3">f1_r6_c8</title>
       </circle>
+      <text
+         xml:space="preserve"
+         style="font-size:2.2745px;opacity:0.76;fill:#d8df00;fill-opacity:1;stroke-width:0.327812"
+         x="1.3178707"
+         y="-10.812909"
+         id="text1"
+         transform="matrix(0.88779678,-0.76697016,0.55721845,0.64500129,0,0)"
+         inkscape:label="text1"><tspan
+           sodipodi:role="line"
+           id="tspan1"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.2745px;font-family:'B Zar';-inkscape-font-specification:'B Zar Bold';fill:#d8df00;fill-opacity:1;stroke-width:0.327812"
+           x="1.3178707"
+           y="-10.812909">1</tspan></text>
     </g>
     <g
        id="g25-0"
@@ -732,6 +745,87 @@
         <title
            id="title21-1-4-3-1-1-8-8-2">f1_r1_c8</title>
       </circle>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.11667px;font-family:'B Zar';-inkscape-font-specification:'B Zar Bold';opacity:0.76;fill:#d8df00;fill-opacity:1;stroke-width:0.264583"
+       x="9.8970671"
+       y="17.272215"
+       id="text2"><tspan
+         sodipodi:role="line"
+         id="tspan2"
+         style="stroke-width:0.264583"
+         x="9.8970671"
+         y="17.272215">2</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.11667px;font-family:'B Zar';-inkscape-font-specification:'B Zar Bold';opacity:0.76;fill:#d8df00;fill-opacity:1;stroke-width:0.264583"
+       x="12.157589"
+       y="19.308163"
+       id="text2-5"><tspan
+         sodipodi:role="line"
+         id="tspan2-2"
+         style="stroke-width:0.264583"
+         x="12.157589"
+         y="19.308163">3</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.11667px;font-family:'B Zar';-inkscape-font-specification:'B Zar Bold';opacity:0.76;fill:#d8df00;fill-opacity:1;stroke-width:0.264583"
+       x="14.501037"
+       y="21.172392"
+       id="text3"><tspan
+         sodipodi:role="line"
+         id="tspan3"
+         style="stroke-width:0.264583"
+         x="14.501037"
+         y="21.172392">4</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.11667px;font-family:'B Zar';-inkscape-font-specification:'B Zar Bold';opacity:0.76;fill:#d8df00;fill-opacity:1;stroke-width:0.264583"
+       x="16.721237"
+       y="23.103529"
+       id="text3-5"><tspan
+         sodipodi:role="line"
+         id="tspan3-0"
+         style="stroke-width:0.264583"
+         x="16.721237"
+         y="23.103529">5</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.11667px;font-family:'B Zar';-inkscape-font-specification:'B Zar Bold';opacity:0.76;fill:#d8df00;fill-opacity:1;stroke-width:0.264583"
+       x="19.017033"
+       y="25.13122"
+       id="text4"><tspan
+         sodipodi:role="line"
+         id="tspan4"
+         style="stroke-width:0.264583"
+         x="19.017033"
+         y="25.13122">6</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.11667px;font-family:'B Zar';-inkscape-font-specification:'B Zar Bold';opacity:0.76;fill:#d8df00;fill-opacity:1;stroke-width:0.264583"
+       x="21.214592"
+       y="27.088705"
+       id="text4-2"><tspan
+         sodipodi:role="line"
+         id="tspan4-9"
+         style="stroke-width:0.264583"
+         x="21.214592"
+         y="27.088705">7</tspan></text>
+    <g
+       id="g1"
+       transform="translate(3.937638,2.401985)">
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.11667px;font-family:'B Zar';-inkscape-font-specification:'B Zar Bold';opacity:0.76;fill:#d8df00;fill-opacity:1;stroke-width:0.264583"
+         x="19.647512"
+         y="26.626778"
+         id="text4-4"><tspan
+           sodipodi:role="line"
+           id="tspan4-8"
+           style="stroke-width:0.264583"
+           x="19.647512"
+           y="26.626778">8</tspan></text>
     </g>
   </g>
 </svg>

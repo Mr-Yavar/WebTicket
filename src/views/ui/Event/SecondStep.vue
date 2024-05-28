@@ -49,7 +49,6 @@
                         <template  v-html="map" v-inline-svg  class="w-full mx-auto"   ></template>
                       </div>
                   </SvgPanZoom>
-
                 </div>
 
 
@@ -171,8 +170,9 @@ const tippyOption = {
 
 function handleClickOnSeat($event) {
 
+  const regex = /f[0-9]{1,3}_r[0-9]{1,3}_c[0-9]{1,9}/gm;
 
-  if (($event.target.tagName === 'ellipse' || $event.target.tagName === 'circle') && $event.target.closest("[id*='seatMap']") !== null) {
+  if ($event.target.closest("[id*='seatMap']") !== null && ($event.target.id.match(regex)!==null)) {
 
 
 
