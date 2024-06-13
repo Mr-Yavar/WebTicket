@@ -85,9 +85,9 @@ import Swal from "sweetalert2";
 import {useAuthModalStore} from "@/stores/componentStore/authModal.js";
 import ControlSteps from "@/views/ui/Event/controlSteps.vue";
 import {useQuery} from "@tanstack/vue-query";
-import {GetAllConcertService, GetSpecificConcertService} from "@/services/ConcertsService.js";
+import { GetSpecificConcertService} from "@/services/ConcertsService.js";
 import {Guid} from "@/config/helper.js";
-import {useRoute, useRouter} from "vue-router";
+import {useRoute} from "vue-router";
 
 const route = useRoute();
 const GetSpecificConcertServiceCall = useQuery({
@@ -98,6 +98,7 @@ const GetSpecificConcertServiceCall = useQuery({
 });
 
 const concert = computed(() => GetSpecificConcertServiceCall.data.value?.concerts[0]);
+
 
 
 const step = ref(1);

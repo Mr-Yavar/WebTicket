@@ -20,6 +20,7 @@ import Modal from "@/views/components/Globals/modal/modal.vue";
 import AuthModal from "@/views/components/Globals/modal/AuthModal.vue";
 import {useRoute} from "vue-router";
 import {computed} from "vue";
+import useSeatMapStore from "@/stores/seatMap.js";
 
 const route = useRoute();
 /**
@@ -35,6 +36,7 @@ const layout = computed(() => {
   return 'div';
 });
 
+const seatmap = useSeatMapStore();
 
 </script>
 

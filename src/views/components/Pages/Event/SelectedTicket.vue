@@ -34,12 +34,12 @@ import {computed,defineProps} from "vue";
 
 const props = defineProps({
   handleDelete: Function,
-  seatInfo : String,
+  seatInfo : Object,
   hasDelete : {
     type : Boolean,
     default : true
   },
-  index : Number
+  index : String
 });
 
 console.log(props.seatInfo.id);

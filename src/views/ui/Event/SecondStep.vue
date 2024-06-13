@@ -114,36 +114,11 @@ import {SvgPanZoom} from "vue-svg-pan-zoom";
 import {useQuery, useQueryClient} from "@tanstack/vue-query";
 
 import {GetSeatMapService, GetSpecificEventService} from "@/services/ConcertsService.js";
+import useSeatMapStore from "@/stores/seatMap.js";
 
-const MapRefs = ref([]);
+
 const tab = ref(0);
-
-const MapKey = reactive([]);
-
-const MapController = reactive([]);
-const SeatMaps  =reactive([]);
-
-const props = defineProps({
-  stepControls: Object
-})
-
-function changeTab(selectedTab){
-  this.tab = selectedTab;
-
-}
-
-watch(tab,()=>{
-  let index = Floors.value.indexOf(tab.value);
-  if(index!==-1 && MapKey[index]%1!==0)
-    MapKey[index] = Math.floor(Math.random()*10000)
-
-
-});
-
 const tippyTitle = ref("");
-
-
-const TicketStore = useTicketStore();
 const tippyOption = {
   content: tippyTitle,
   arrow: true,
@@ -164,9 +139,40 @@ const tippyOption = {
   onShow(instance) {
     setTimeout(() => {
       instance.hide();
-    }, 1000);
+    }, 1500);
   }
 };
+
+const MapKey = reactive([]);
+const TicketStore = useTicketStore();
+const SeatMaps  =reactive([]);
+const TicketsTypes = useCssModule("TicketsTypes");
+
+const seatMapService = useSeatMapStore();
+const GetSpecificEventServiceCall = useQuery({
+  queryKey: ["/api/Concerts/GetSpecificEvent", TicketStore.selectedShowing],
+  queryFn: GetSpecificEventService,
+  enabled: SeatMaps.length===0
+});
+
+
+const props = defineProps({
+  stepControls: Object
+})
+
+function changeTab(selectedTab){
+  this.tab = selectedTab;
+
+}
+
+watch(tab,()=>{
+  let index = Floors.value.indexOf(tab.value);
+  if(index!==-1 && MapKey[index]%1!==0)
+    MapKey[index] = Math.floor(Math.random()*10000)
+
+
+});
+
 
 function handleClickOnSeat($event) {
 
@@ -216,15 +222,6 @@ function handleClickOnDeleteSeat(seatId) {
 
 }
 
-const TicketsTypes = useCssModule("TicketsTypes");
-const queryClient = useQueryClient();
-
-const GetSpecificEventServiceCall = useQuery({
-  queryKey: ["/api/Concerts/GetSpecificEvent", TicketStore.selectedShowing],
-  queryFn: GetSpecificEventService,
-
-  enabled: true
-});
 
 const Floors = computed(() => GetSpecificEventServiceCall.data.value?.events[0].floors.map(x => x.title));
 

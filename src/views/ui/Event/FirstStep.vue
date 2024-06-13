@@ -97,7 +97,7 @@
               <span class="font-bold dark:text-white text-black">بلیت های موجود:</span>
             </div>
 
-            <Ticket v-for="event in concert?.events.items"  :concertTitle="concert.title" :event="event" :key="event.eventId" :handleClick="()=>{TicketStore.setSelectedShowing(event.eventId);stepControls.nextFn();}"/>
+            <Ticket v-for="event in concert?.events.items"  :concertTitle="concert.title" :event="event" :key="event.eventId" :handleClick="()=>{seatMap.JoinGroup(event.eventId);TicketStore.setSelectedShowing(event.eventId);stepControls.nextFn();}"/>
 
           </div>
 
@@ -126,13 +126,14 @@ import {useQuery} from "@tanstack/vue-query";
 import {Guid} from "@/config/helper.js";
 import {GetSpecificConcertService} from "@/services/ConcertsService.js";
 import {FILE_PROVIDER} from "@/config/appConfig.js";
+import useSeatMapStore from "@/stores/seatMap.js";
 
 const props = defineProps({
   stepControls: Object,
   concert :Object
 })
 
-
+const seatMap = useSeatMapStore();
 
 const eventsDate = computed(() => {
 

@@ -3,6 +3,20 @@ import {reactive, ref} from "vue";
 
 
  const useTicketStore = defineStore('Ticket',()=>{
+
+     const LockedTickets = reactive([]);
+
+     function addLockedTicket(ticketId){
+         this.LockedTickets.push(ticketId);
+     }
+
+     function removeLockedTicket(ticketId){
+         this.LockedTickets = [...LockedTickets.filter(x=>x===ticketId)];
+     }
+     function setLockedTickets(ticketIds){
+         this.LockedTickets = ticketIds;
+     }
+
     const selectedShowing = ref("");
 
     const Tickets = reactive([]);
@@ -31,7 +45,9 @@ import {reactive, ref} from "vue";
      function sumOfAllPrice(){
          return Tickets.reduce((price, item) => price += item.price, 0);
      }
-    return {selectedShowing,setSelectedShowing,Tickets,addToTicket,removeTicket,removeAllTickets,sumOfAllPrice};
+    return {selectedShowing,setSelectedShowing,Tickets,addToTicket,removeTicket,removeAllTickets,sumOfAllPrice,
+        addLockedTicket,removeLockedTicket,setLockedTickets,LockedTickets
+    };
 });
 
  export default useTicketStore;
