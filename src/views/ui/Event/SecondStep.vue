@@ -5,49 +5,51 @@
     <div class="grid grid-cols-1 md:grid-cols-2  md:!text-right text-center gap-2">
       <div class="text-black dark:text-gray-100 mt-2 px-3">
         <p>
-          <v-icon name="px-calendar-tomorrow" scale="1" class="dark:text-white text-black"/>
+          <v-icon class="dark:text-white text-black" name="px-calendar-tomorrow" scale="1"/>
           <span class="font-bold text-md"> تاریخ :  </span> <span>1402/02/03</span></p>
         <p>
-          <v-icon name="px-clock" scale="1" class="dark:text-white text-black"/>
+          <v-icon class="dark:text-white text-black" name="px-clock" scale="1"/>
           <span class="font-bold text-md">ساعت : </span> <span>18:30 - 20:30</span></p>
       </div>
       <div class="text-black dark:text-gray-100 mt-2 px-3">
-        <v-icon name="px-gps" scale="1" class="dark:text-white text-black"/>
+        <v-icon class="dark:text-white text-black" name="px-gps" scale="1"/>
         <span class="font-bold text-md"> مکان برگزاری : </span>
         <span>تهران ، .......</span>
       </div>
 
       <div class="col-span-full">
         <div class="p-2 rounded-2xl shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset]">
-          <div role="tablist" class="tabs grid flex-end align-center tabs-boxed mb-2 !bg-gray-100 dark:bg-gray-600 !text-black dark:!text-white">
-            <template v-for="(floor,index) in Floors" :key="`tab`+floor" >
-              <a role="tab" class="tab " :class="{'tab-active':tab===floor}" @click.prevent="changeTab(floor)">{{ floor }}</a>
+          <div class="tabs grid flex-end align-center tabs-boxed mb-2 !bg-gray-100 dark:bg-gray-600 !text-black dark:!text-white" role="tablist">
+            <template v-for="(floor,index) in Floors" :key="`tab`+floor">
+              <a :class="{'tab-active':tab===floor}" class="tab " role="tab" @click.prevent="changeTab(floor)">{{
+                  floor
+                }}</a>
             </template>
           </div>
           <div class="body">
 
             <template v-for="(map,index) in SeatMaps" :key="`tabcontent`+Floors[index]">
-              <div class="p-1" :class="{'hidden' : tab!==Floors[index] }"  >
+              <div :class="{'hidden' : tab!==Floors[index] }" class="p-1">
 
-                <div   @click.prevent="handleClickOnSeat" >
+                <div @click.prevent="handleClickOnSeat">
                   <SvgPanZoom
 
-                      :zoomEnabled="true"
-                      :controlIconsEnabled="true"
-                      :fit="true"
-                      :center="true"
-                      :preventMouseEventsDefault="false"
-                      :dblClickZoomEnabled="false"
-                      :mouseWheelZoomEnabled="true"
-                      :viewportSelector="'#seatMap'+index+' svg'"
-                      :min-zoom="0.5"
-
                       :key="'map'+MapKey[index]"
+                      :center="true"
+                      :controlIconsEnabled="true"
+                      :dblClickZoomEnabled="false"
+                      :fit="true"
+                      :min-zoom="0.5"
+                      :mouseWheelZoomEnabled="true"
+                      :preventMouseEventsDefault="false"
+                      :viewportSelector="'#seatMap'+index+' svg'"
+
+                      :zoomEnabled="true"
 
                   >
-                      <div  :id="'seatMap'+index" class="w-full mx-auto border-dark-600 border-2" v-tippy="{...tippyOption}">
-                        <template  v-html="map" v-inline-svg  class="w-full mx-auto"   ></template>
-                      </div>
+                    <div :id="'seatMap'+index" v-tippy="{...tippyOption}" class="w-full mx-auto border-dark-600 border-2" v-html="map">
+
+                    </div>
                   </SvgPanZoom>
                 </div>
 
@@ -62,24 +64,24 @@
           <div class="grid grid-cols-6 w-full text-center text-gray-900 dark:text-gray-100">
             <div class="">راهنما:</div>
             <div class="mx-2">
-              <span class="w-[10px] h-[10px]  inline-block border border-black mx-1" :class="TicketsTypes['free-tickets']"></span>آزاد
+              <span :class="TicketsTypes['free-tickets']" class="w-[10px] h-[10px]  inline-block border border-black mx-1"></span>آزاد
             </div>
             <div class="mx-2">
-              <span class="w-[10px] h-[10px]  inline-block border border-black mx-1" :class="TicketsTypes['selected-tickets']"></span>انتخاب
+              <span :class="TicketsTypes['selected-tickets']" class="w-[10px] h-[10px]  inline-block border border-black mx-1"></span>انتخاب
               شما
             </div>
             <div class="mx-2">
-              <span class="w-[10px] h-[10px]  inline-block border border-black mx-1" :class="TicketsTypes['waiting-tickets']"></span>در
+              <span :class="TicketsTypes['waiting-tickets']" class="w-[10px] h-[10px]  inline-block border border-black mx-1"></span>در
               انتظار
               پرداخت
             </div>
             <div class="mx-2">
-              <span class="w-[10px] h-[10px]  inline-block border border-black mx-1" :class="TicketsTypes['reserved-tickets']"></span>رزرو
+              <span :class="TicketsTypes['reserved-tickets']" class="w-[10px] h-[10px]  inline-block border border-black mx-1"></span>رزرو
               شده
             </div>
 
             <div class="mx-2">
-              <span class="w-[10px] h-[10px]  inline-block border border-black mx-1" :class="TicketsTypes['not-tickets']"></span>
+              <span :class="TicketsTypes['not-tickets']" class="w-[10px] h-[10px]  inline-block border border-black mx-1"></span>
               غیر قابل خرید
             </div>
 
@@ -96,7 +98,7 @@
       <div v-if=" TicketStore.Tickets.length===0" class="col-span-full text-center dark:text-gray-200 text-black text-md font-bold">
         هیچ بلیتی انتخاب نشده است!
       </div>
-      <SelectedTicket v-for="(item,key) in (TicketStore.Tickets ?? [])" :seatInfo="item" :index="item.id" :has-delete="true" :handleDelete="()=> handleClickOnDeleteSeat(item.id)" :key="item.id"/>
+      <SelectedTicket v-for="(item,key) in (TicketStore.Tickets ?? [])" :key="item.id" :handleDelete="()=> handleClickOnDeleteSeat(item.id)" :has-delete="true" :index="item.id" :seatInfo="item"/>
     </div>
   </div>
 
@@ -111,13 +113,15 @@ import SelectedTicket from "@/views/components/Pages/Event/SelectedTicket.vue";
 import useTicketStore from "@/stores/Ticket.js";
 
 import {SvgPanZoom} from "vue-svg-pan-zoom";
-import {useQuery, useQueryClient} from "@tanstack/vue-query";
+import {useQuery} from "@tanstack/vue-query";
 
 import {GetSeatMapService, GetSpecificEventService} from "@/services/ConcertsService.js";
 import useSeatMapStore from "@/stores/seatMap.js";
+import Swal from "sweetalert2";
 
 
 const tab = ref(0);
+
 const tippyTitle = ref("");
 const tippyOption = {
   content: tippyTitle,
@@ -145,14 +149,20 @@ const tippyOption = {
 
 const MapKey = reactive([]);
 const TicketStore = useTicketStore();
-const SeatMaps  =reactive([]);
+const SeatMaps = reactive([]);
 const TicketsTypes = useCssModule("TicketsTypes");
 
 const seatMapService = useSeatMapStore();
 const GetSpecificEventServiceCall = useQuery({
   queryKey: ["/api/Concerts/GetSpecificEvent", TicketStore.selectedShowing],
   queryFn: GetSpecificEventService,
-  enabled: SeatMaps.length===0
+  enabled: SeatMaps.length === 0,
+  refetchInterval: false,
+  refetchIntervalInBackground: false,
+  refetchOnMount: false,
+  refetchOnReconnect: false,
+  refetchOnWindowFocus: false,
+
 });
 
 
@@ -160,15 +170,15 @@ const props = defineProps({
   stepControls: Object
 })
 
-function changeTab(selectedTab){
+function changeTab(selectedTab) {
   this.tab = selectedTab;
 
 }
 
-watch(tab,()=>{
+watch(tab, () => {
   let index = Floors.value.indexOf(tab.value);
-  if(index!==-1 && MapKey[index]%1!==0)
-    MapKey[index] = Math.floor(Math.random()*10000)
+  if (index !== -1 && MapKey[index] % 1 !== 0)
+    MapKey[index] = Math.floor(Math.random() * 10000)
 
 
 });
@@ -178,22 +188,26 @@ function handleClickOnSeat($event) {
 
   const regex = /f[0-9]{1,3}_r[0-9]{1,3}_c[0-9]{1,9}/gm;
 
-  if ($event.target.closest("[id*='seatMap']") !== null && ($event.target.id.match(regex)!==null)) {
+  if ($event.target.closest("[id*='seatMap']") !== null && ($event.target.id.match(regex) !== null)) {
+    let ticketId = $event.target.getAttribute("tid");
+    let Ticket = Tickets.value[currentFloor.value].filter(x => x.id === ticketId)[0];
+    tippyTitle.value = JSON.stringify(Ticket);
 
-
-
-    tippyTitle.value = $event.target.querySelector("title").innerHTML;
+    //یعنی این تیکت در حالت قفل است
+    if(seatMapService.Locked_Tickets.indexOf(ticketId)!==-1)
+      return;
 
     if (!$event.target.classList.contains(TicketsTypes["reserved-tickets"]) && !$event.target.classList.contains(TicketsTypes["waiting-tickets"]) && !$event.target.classList.contains(TicketsTypes["not-tickets"])) {
 
       if (!$event.target.classList.contains(TicketsTypes["selected-tickets"])) {
 
+        console.log(Tickets.value, currentFloor.value);
+
         let [floor, row, column] = $event.target.id.split('_');
         $event.target.classList.remove(TicketsTypes["free-tickets"]);
         $event.target.classList.add(TicketsTypes["selected-tickets"]);
         TicketStore.addToTicket({
-          id: $event.target.id,
-          price: $event.target.getAttribute('price'),
+          ...Ticket,
           floor,
           row,
           column
@@ -217,8 +231,8 @@ function handleClickOnSeat($event) {
 function handleClickOnDeleteSeat(seatId) {
   console.log(seatId);
   TicketStore.removeTicket(seatId);
-  document.querySelector("#" + seatId).classList.remove(TicketsTypes["selected-tickets"]);
-  document.querySelector("#" + seatId).classList.add(TicketsTypes["free-tickets"]);
+  document.querySelector("[tid=" + seatId+"]").classList.remove(TicketsTypes["selected-tickets"]);
+  document.querySelector("[tid=" + seatId+"]").classList.add(TicketsTypes["free-tickets"]);
 
 }
 
@@ -239,65 +253,152 @@ const Tickets = computed(() => {
   return res;
 });
 
+const currentFloor = computed(() => (GetSpecificEventServiceCall.data.value?.events[0].floors.filter(x => x.title === tab.value)[0])?.displayOrder);
+watchEffect(async () => {
+  if (GetSpecificEventServiceCall.data.value?.events[0] !== undefined)
+    for (let floor of GetSpecificEventServiceCall.data.value?.events[0]?.floors) {
 
-watchEffect(async ()=>{
-  if(GetSpecificEventServiceCall.data.value?.events[0]!==undefined)
-  for(let floor of GetSpecificEventServiceCall.data.value?.events[0]?.floors) {
+      let res = await GetSeatMapService(floor.seatMap_url);
 
-    let res = await GetSeatMapService(floor.seatMap_url);
+      let dom = new DOMParser();
+      let tempDoc = dom.parseFromString(res, 'text/html');
 
-    let dom = new DOMParser();
-    let tempDoc = dom.parseFromString(res, 'text/html');
+      let CriticalIds = [];
+      tempDoc.body.querySelector("svg").classList.add("w-full", "mx-auto");
+      tempDoc.body.querySelectorAll('defs').forEach(def => {
+        def.querySelectorAll("[id]").forEach(item => CriticalIds.push(item.id))
+      });
 
-    let CriticalIds = [];
-    tempDoc.body.querySelectorAll('defs').forEach(def => {
-      def.querySelectorAll("[id]").forEach(item => CriticalIds.push(item.id))
+      CriticalIds.forEach(id => {
+        let newId = id + '_' + floor.floorId;
+        tempDoc.body.innerHTML = tempDoc.body.innerHTML.replaceAll('id="' + id + '"', 'id="' + newId + '"');
+        tempDoc.body.innerHTML = tempDoc.body.innerHTML.replaceAll('#' + id, "#" + newId);
+      });
+
+      // نوشتن آیدی های بلیت روی صندلی ها و در صورت رزرو بودن قفل کردن آنها
+      Tickets.value[floor.displayOrder].forEach(item => {
+        let temp = tempDoc?.querySelector(`#${item.name}`);
+        temp?.setAttribute("tid", item.id);
+        if (item.isReserved)
+          temp.classList.add(TicketsTypes["reserved-tickets"]);
+      });
+
+      //قفل کردن صندلی ها انتخاب شده و درحال پرداخت
+      seatMapService.Locked_Tickets.forEach(item => {
+        tempDoc?.querySelector(`[tid='${item}']`)?.classList.add(TicketsTypes["waiting-tickets"]);
+
+      });
+
+      tempDoc?.querySelectorAll(`*[id^="f"]:not([tid])`).forEach(item => {
+
+        item?.classList.add(TicketsTypes["not-tickets"]);
+      });
+
+      //نوشتن صندلی ها انتخابی توسط کاربر
+      TicketStore.Tickets.forEach(item => {
+
+        tempDoc?.querySelector(`[tid='${item.id}']`)?.classList.add(TicketsTypes["selected-tickets"]);
+      });
+
+
+
+      let exception = Object.keys(TicketsTypes).map(x=>TicketsTypes[x]).join(",.")
+      tempDoc?.querySelectorAll(`*[id^="f"]:not(.${exception})`).forEach((seat) => {
+        seat.classList.add(TicketsTypes["free-tickets"]);
+
+      });
+
+      tempDoc.body.querySelector('svg').id = floor.floorId;
+
+      SeatMaps.push(tempDoc.body.innerHTML);
+      await nextTick(() => console.log("changed"));
+
+
+    }
+
+
+})
+
+
+watch(seatMapService.Locked_Tickets, () => {
+
+  let userTicketsToLock = [];
+  let tickets = TicketStore.Tickets.map(x=>x.id);
+  seatMapService.Locked_Tickets.forEach(item => {
+    if(tickets.indexOf(item)!==-1) {
+      TicketStore.removeTicket(item);
+      userTicketsToLock.push(item);
+    }
+
+    document.querySelector(`[tid='${item}']`)?.classList.add(TicketsTypes["waiting-tickets"]);
+
+
+
+  });
+
+
+  if(userTicketsToLock.length!==0){
+
+
+
+    let floors =Object.keys(Tickets.value);
+    let msg = userTicketsToLock.map(ticket=>{
+
+
+      for (let i = 0; i < floors.length; i++) {
+        let temp = Tickets.value[floors[i]].filter(item=>{
+          return item.id===ticket;
+        });
+
+        if(!!temp && temp.length===1){
+          let [floor, row, column] = temp[0].name.replace("f","").replace("r","").replace("c","").split('_');
+
+          let txt =  `<br/><p dir="rtl">${column}  ستون : ${row} ردیف : ${Floors.value[floors[i]]}  طبقه : `;
+            txt+="   </p>";
+            return txt;
+        }
+      }
+
+
+
     });
 
-    CriticalIds.forEach(id => {
-      let newId = id + '_' + floor.floorId;
-      tempDoc.body.innerHTML = tempDoc.body.innerHTML.replaceAll('id="' + id + '"', 'id="' + newId + '"');
-      tempDoc.body.innerHTML = tempDoc.body.innerHTML.replaceAll('#' + id, "#" + newId);
-    });
-
-    TicketStore.Tickets.forEach(item => {
-
-      tempDoc?.querySelector(`#${item.id}`).classList.add(TicketsTypes["selected-tickets"]);
-    });
-
-    tempDoc?.querySelectorAll(`*[id^="f"]:not(.${TicketsTypes["selected-tickets"]})`).forEach((seat) => {
-      seat.classList.add(TicketsTypes["free-tickets"]);
+    Swal.fire({
+      title: '',
+      html: 'برخی از صندلیها انتخابی شما توسط شخص دیگری به مرحله پرداخت رفته اند!<br/>'+msg,
+      icon: 'info',
+      showConfirmButton: false,
+      showCloseButton: true,
+      showClass: {popup: "direction-rtl vazir-font"},
 
     });
-
-    tempDoc.body.querySelector('svg').id = floor.floorId;
-
-    SeatMaps.push(tempDoc.body.innerHTML);
-    await nextTick(() => console.log("changed"));
 
 
   }
 
+});
+
+watch(SeatMaps.value?.length, async () => {
+  this.MapKey = GetSpecificEventServiceCall.data.value?.events[0].floors.map((floor) => Math.random());
 
 
 })
 
+watch(TicketStore.Tickets,()=>{
+  TicketStore.Tickets.forEach(item=>{
+    document.querySelector(`[tid='${item.id}']`)?.classList.add(TicketsTypes["selected-tickets"])
+
+  });
+  document.querySelectorAll(`.${TicketsTypes["selected-tickets"]}`).forEach(item=>{
+    if(TicketStore.Tickets.filter(x=>x.id===item.getAttribute("tid"))[0]===undefined) {
+      item.classList.remove(TicketsTypes["selected-tickets"]);
+      item.classList.add(TicketsTypes["free-tickets"]);
+    }
+  });
 
 
 
-
-watch(SeatMaps.value?.length,async ()=>{
-  this.MapKey=GetSpecificEventServiceCall.data.value?.events[0].floors.map((floor) => Math.random());
-
-
-})
-function resetMap(index){
-
-  this.MapKey[index] = Math.floor(Math.random()*1000);
-
-}
-
-
+});
 </script>
 
 <style module="TicketsTypes">
@@ -361,5 +462,10 @@ function resetMap(index){
 
 .tabs {
   @apply bg-gray-50 p-1 rounded-md shadow-inner
+}
+
+
+*[id*="seatMap"] svg {
+  @apply !w-full mx-auto;
 }
 </style>

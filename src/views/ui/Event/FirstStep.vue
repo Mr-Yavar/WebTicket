@@ -118,7 +118,7 @@ import Ticket from "@/views/components/Pages/Event/Ticket.vue";
 
 import {MapComponent, MapTypes} from "@neshan-maps-platform/mapbox-gl-vue";
 import "@neshan-maps-platform/mapbox-gl-vue/dist/style.css";
-import {computed, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import nmp_mapboxgl from "@neshan-maps-platform/mapbox-gl";
 import useTicketStore from "@/stores/Ticket.js";
 import {useRoute} from "vue-router";
@@ -195,6 +195,9 @@ function handleStartMap(map) {
 
 }
 
+onMounted(()=>{
+  seatMap.LeaveGroup();
+})
 </script>
 <style scoped>
 
