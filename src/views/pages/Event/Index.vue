@@ -33,36 +33,38 @@
 
     <transition>
       <keep-alive>
-      <div  v-if="step===1">
-      <FirstStep :stepControls="{nextFn:toNext,previousFn:toPrevious}" :concert="concert">
+        <div v-if="step===1">
+          <FirstStep :stepControls="{nextFn:toNext,previousFn:toPrevious}" :concert="concert">
 
-        <template #controlSteps></template>
+            <template #controlSteps></template>
 
-      </FirstStep>
-      </div>
-      <div  v-else-if="step===2">
-      <SecondStep :stepControls="{nextFn:toNext,previousFn:toPrevious}">
-        <template #controlSteps>
-          <ControlSteps :to-next="toNext" :to-previous="toPrevious"/>
-        </template>
-
-      </SecondStep>
-      </div>
-        <div v-else-if="step===3">
-      <ThridStep  :stepControls="{nextFn:toNext,previousFn:toPrevious}">
-        <template #controlSteps="ThridStepProps">
-          <ControlSteps :to-next="toNext" :to-previous="toPrevious">
-            <template #nextBtn>
-              <button class="select-none rounded-lg bg-green-500 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-green-500/20 transition-all hover:shadow-lg hover:shadow-green-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" @click.prevent="ThridStepProps.payingFn()">پرداخت</button>
+          </FirstStep>
+        </div>
+        <div v-else-if="step===2">
+          <SecondStep :stepControls="{nextFn:toNext,previousFn:toPrevious}">
+            <template #controlSteps>
+              <ControlSteps :to-next="toNext" :to-previous="toPrevious"/>
             </template>
 
-          </ControlSteps>
-        </template>
-      </ThridStep>
+          </SecondStep>
         </div>
-          <div v-else-if="step===4">
-      <FourthStep  :stepControls="{nextFn:toNext,previousFn:toPrevious}"/>
-          </div>
+        <div v-else-if="step===3">
+          <ThridStep :stepControls="{nextFn:toNext,previousFn:toPrevious}">
+            <template #controlSteps="ThridStepProps">
+              <ControlSteps :to-next="toNext" :to-previous="toPrevious">
+                <template #nextBtn>
+                  <button class="select-none rounded-lg bg-green-500 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-green-500/20 transition-all hover:shadow-lg hover:shadow-green-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" @click.prevent="ThridStepProps.payingFn()">
+                    پرداخت
+                  </button>
+                </template>
+
+              </ControlSteps>
+            </template>
+          </ThridStep>
+        </div>
+        <div v-else-if="step===4">
+          <FourthStep :stepControls="{nextFn:toNext,previousFn:toPrevious}"/>
+        </div>
       </keep-alive>
     </transition>
 
@@ -84,10 +86,12 @@ import useUserStore from "@/stores/user.js";
 import Swal from "sweetalert2";
 import {useAuthModalStore} from "@/stores/componentStore/authModal.js";
 import ControlSteps from "@/views/ui/Event/controlSteps.vue";
-import {useQuery} from "@tanstack/vue-query";
-import { GetSpecificConcertService} from "@/services/ConcertsService.js";
+import {useMutation, useQuery} from "@tanstack/vue-query";
+import {GetSpecificConcertService} from "@/services/ConcertsService.js";
 import {Guid} from "@/config/helper.js";
 import {useRoute} from "vue-router";
+import useSeatMapStore from "@/stores/seatMap.js";
+import {SEATMAP_SERVICE_BASE_URL} from "@/config/appConfig.js";
 
 const route = useRoute();
 const GetSpecificConcertServiceCall = useQuery({
@@ -96,9 +100,37 @@ const GetSpecificConcertServiceCall = useQuery({
 
   enabled: true
 });
+const seatMapService = useSeatMapStore();
+const seatMapMutate = useMutation({
+  mutationKey: ["seatMapMutate"],
+  mutationFn: async (variables) => {
+    try {
+      let res = await fetch(variables[0], {
+        headers: {...variables[1].headers},
+        method: variables[1].method,
+        body: !variables[1].body ? null : JSON.stringify(variables[1].body)
+      });
+
+      if(!res.ok){
+        throw new Erorr(await res.text());
+      }else{
+        let data = await res.text();
+
+        if(data.length!==0)
+          return JSON.parse(data);
+        else
+          return data;
+      }
+
+
+
+    }catch (e){
+      throw e;
+    }
+  },
+});
 
 const concert = computed(() => GetSpecificConcertServiceCall.data.value?.concerts[0]);
-
 
 
 const step = ref(1);
@@ -139,6 +171,21 @@ const NextActions = {
 
   },
   2: function () {
+    seatMapMutate.mutate([SEATMAP_SERVICE_BASE_URL + "/api/SeatMap/LockTickets?EventId="+TicketStore.selectedShowing, {
+      method: "POST",
+      body: [...TicketStore.Tickets.map(ticket=>ticket.id)],
+      headers: {
+        "Content-Type" : "application/json; charset=utf-8",
+      }
+    }], {
+
+      onError: () => {
+        alert(222);
+      },
+      onSuccess: () => {
+        alert(1111);
+      }
+    });
     if (!userStore.isAuthenticated) {
       AuthModalStore.setTitle("برای ادامه حساب کاربری لازمه!");
       AuthModalStore.setOnLoginSuccssed(toNext);
@@ -214,8 +261,10 @@ const BackActions = {
 
       });
 
-      if (!isConfirmed)
+      if (!isConfirmed) {
+        seatMapService.LeaveGroup();
         return false;
+      }
     }
     TicketStore.removeAllTickets();
     return true;

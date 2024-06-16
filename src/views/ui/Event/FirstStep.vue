@@ -121,10 +121,7 @@ import "@neshan-maps-platform/mapbox-gl-vue/dist/style.css";
 import {computed, onMounted, ref} from "vue";
 import nmp_mapboxgl from "@neshan-maps-platform/mapbox-gl";
 import useTicketStore from "@/stores/Ticket.js";
-import {useRoute} from "vue-router";
-import {useQuery} from "@tanstack/vue-query";
-import {Guid} from "@/config/helper.js";
-import {GetSpecificConcertService} from "@/services/ConcertsService.js";
+
 import {FILE_PROVIDER} from "@/config/appConfig.js";
 import useSeatMapStore from "@/stores/seatMap.js";
 
