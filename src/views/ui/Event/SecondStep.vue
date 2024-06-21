@@ -377,6 +377,23 @@ watch(seatMapService.Locked_Tickets, () => {
   }
 
 });
+watch(seatMapService.UnLocked_Tickets, () => {
+
+
+
+  seatMapService.UnLocked_Tickets.forEach(item => {
+    let chair =  document.querySelector(`[tid='${item}']`);
+    if(!!chair && chair.classList.contains(TicketsTypes["waiting-tickets"])) {
+      chair.classList.remove(TicketsTypes["waiting-tickets"]);
+    }
+      chair?.classList.add(TicketsTypes["free-tickets"]);
+
+
+
+  });
+
+
+});
 
 watch(SeatMaps.value?.length, async () => {
   this.MapKey = GetSpecificEventServiceCall.data.value?.events[0].floors.map((floor) => Math.random());

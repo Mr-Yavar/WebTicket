@@ -9,18 +9,12 @@
 </template>
 
 <script setup>
-import Header from "@/views/components/DefaultLayout/Header/Header.vue";
-import Carousel from "@/views/components/Slider/Carousel.vue";
-import Splitter from "@/views/components/Splitter/Splitter.vue";
-import Select from "@/views/components/Select/Select.vue";
-import CardItem from "@/views/components/Pages/Home/CardItem.vue";
-import Footer from "@/views/components/DefaultLayout/Footer/Footer.vue";
-import SearchBox from "@/views/components/Select/SearchBox.vue";
-import Modal from "@/views/components/Globals/modal/modal.vue";
-import AuthModal from "@/views/components/Globals/modal/AuthModal.vue";
+
 import {useRoute} from "vue-router";
-import {computed} from "vue";
+import {computed, onMounted} from "vue";
 import useSeatMapStore from "@/stores/seatMap.js";
+import {TicketsRepository} from "@/db/ticketsRepository.js";
+import useTicketStore from "@/stores/Ticket.js";
 
 const route = useRoute();
 /**
@@ -37,7 +31,11 @@ const layout = computed(() => {
 });
 
 const seatmap = useSeatMapStore();
+const TicketStore = useTicketStore();
+onMounted(()=>{
+  new TicketsRepository();
 
+})
 </script>
 
 <style>

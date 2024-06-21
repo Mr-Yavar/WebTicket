@@ -55,7 +55,8 @@ export default {
       this.$router.push({
         name : "event",
         params:{
-          id : Guid( {}).fromFullToCompressed(this.concert.concertid)
+          id : Guid( {}).fromFullToCompressed(this.concert.concertid),
+          step:1
         }
       });
     }

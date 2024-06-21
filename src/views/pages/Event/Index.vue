@@ -74,8 +74,8 @@
 
 </template>
 
-<script setup>
-import {computed, ref} from "vue";
+<script>
+import {computed, ref, watch} from "vue";
 import Splitter from "@/views/components/Splitter/Splitter.vue";
 import FirstStep from "@/views/ui/Event/FirstStep.vue";
 import SecondStep from "@/views/ui/Event/SecondStep.vue";
@@ -89,106 +89,71 @@ import ControlSteps from "@/views/ui/Event/controlSteps.vue";
 import {useMutation, useQuery} from "@tanstack/vue-query";
 import {GetSpecificConcertService} from "@/services/ConcertsService.js";
 import {Guid} from "@/config/helper.js";
-import {useRoute} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import useSeatMapStore from "@/stores/seatMap.js";
 import {SEATMAP_SERVICE_BASE_URL} from "@/config/appConfig.js";
 
-const route = useRoute();
-const GetSpecificConcertServiceCall = useQuery({
-  queryKey: ["api/Concerts/GetSpecificConcert", Guid({}).fromCompressedToFull(route.params.id)],
-  queryFn: GetSpecificConcertService,
-
-  enabled: true
-});
 const seatMapService = useSeatMapStore();
-const seatMapMutate = useMutation({
-  mutationKey: ["seatMapMutate"],
-  mutationFn: async (variables) => {
-    try {
-      let res = await fetch(variables[0], {
-        headers: {...variables[1].headers},
-        method: variables[1].method,
-        body: !variables[1].body ? null : JSON.stringify(variables[1].body)
-      });
-
-      if(!res.ok){
-        throw new Erorr(await res.text());
-      }else{
-        let data = await res.text();
-
-        if(data.length!==0)
-          return JSON.parse(data);
-        else
-          return data;
-      }
-
-
-
-    }catch (e){
-      throw e;
-    }
-  },
-});
-
-const concert = computed(() => GetSpecificConcertServiceCall.data.value?.concerts[0]);
-
-
-const step = ref(1);
-const stepTitles = [
-  "گام اول : انتخاب سانس",
-  "گام دوم : انتخاب صندلی",
-  "گام سوم : رزرو",
-  "گام چهارم : دریافت بلیت",
-]
-
-
-async function toNext() {
-
-  if (await NextActions[step.value]())
-    step.value++;
-}
-
-async function toPrevious() {
-  if (await BackActions[step.value]())
-    step.value--;
-}
-
+const TicketStore = useTicketStore();
+const userStore = useUserStore();
+const AuthModalStore = useAuthModalStore();
 
 // موقع رد شدن از اون مرحله اجرا بشه
 const NextActions = {
-  1: function () {
-    TicketStore.removeAllTickets();
-    if (TicketStore.selectedShowing.length !== 0)
-      return true;
+  0: function ({goNext}) {
+    try {
+      seatMapService.notifyUnLockTickets();
+    } catch (e) {
 
-    Swal.fire({
-      title: 'Error!',
-      text: 'Do you want to continue',
-      icon: 'error',
-      confirmButtonText: 'Cool'
-    })
-    return false;
+    }
+
+    TicketStore.removeAllTickets();
+
+    seatMapService.LeaveGroup();
+
+    if (!goNext)
+      return true;
+    else
+      goNext();
 
   },
-  2: function () {
-    seatMapMutate.mutate([SEATMAP_SERVICE_BASE_URL + "/api/SeatMap/LockTickets?EventId="+TicketStore.selectedShowing, {
-      method: "POST",
-      body: [...TicketStore.Tickets.map(ticket=>ticket.id)],
-      headers: {
-        "Content-Type" : "application/json; charset=utf-8",
-      }
-    }], {
+  1: function ({goNext}) {
+    try {
+      seatMapService.notifyUnLockTickets();
+    } catch (e) {
+    }
 
-      onError: () => {
-        alert(222);
-      },
-      onSuccess: () => {
-        alert(1111);
-      }
-    });
+    TicketStore.removeAllTickets();
+
+
+    if (TicketStore.selectedShowing.length === 0) {
+      Swal.fire({
+        title: 'خطا جانم!',
+        text: 'اینجا بدون انتخاب سانس چیکار میکنی؟',
+        icon: 'info',
+        showConfirmButton: false,
+        showCloseButton: true,
+        timer: 2000,
+        timerProgressBar: true,
+        showClass: {popup: "direction-rtl vazir-font"},
+
+      });
+      return false;
+    }
+
+    seatMapService.JoinGroup(TicketStore.selectedShowing);
+
+    if (!goNext)
+      return true;
+    else
+      goNext();
+
+
+  },
+  2: async function ({context,goNext}) {
+
     if (!userStore.isAuthenticated) {
       AuthModalStore.setTitle("برای ادامه حساب کاربری لازمه!");
-      AuthModalStore.setOnLoginSuccssed(toNext);
       AuthModalStore.toggleMenu();
 
       return false;
@@ -225,13 +190,44 @@ const NextActions = {
       return false;
     }
 
+    await seatMapService.LeaveGroup();
 
-    return true;
+    try {
+      await seatMapService.notifyLockTickets();
+
+    } catch (e) {
+      return false;
+    }
+
+
+    if (!goNext)
+      return true;
+    else
+      goNext();
 
 
   },
-  3: () => userStore.isAuthenticated,
-  4: () => true
+  3: function ({goNext}) {
+    TicketStore.initialize();
+
+    if (TicketStore.selectedShowing.length === 0)
+      return false;
+
+    if (!userStore.isAuthenticated)
+      return false;
+
+    if (TicketStore.Tickets.length === 0)
+      return false;
+
+
+    if (!goNext)
+      return true;
+    else
+      goNext();
+
+
+  },
+  4: ({goNext}) => !goNext ? true : goNext()
 };
 
 // موقع برگشت از اون مرحله اجرا بشه
@@ -262,14 +258,20 @@ const BackActions = {
       });
 
       if (!isConfirmed) {
-        seatMapService.LeaveGroup();
+        await seatMapService.LeaveGroup();
         return false;
       }
     }
     TicketStore.removeAllTickets();
     return true;
   },
-  3: function () {
+  3: async function () {
+
+    try {
+      await seatMapService.notifyUnLockTickets();
+    } catch (e) {
+      return false
+    }
 
     return true;
   },
@@ -278,9 +280,95 @@ const BackActions = {
   }
 };
 
-const TicketStore = useTicketStore();
-const userStore = useUserStore();
-const AuthModalStore = useAuthModalStore();
+
+export default {
+  components: {FirstStep, Splitter, SecondStep, FourthStep, ControlSteps, ThridStep},
+  setup() {
+    const route = useRoute();
+
+    const GetSpecificConcertServiceCall = useQuery({
+      queryKey: ["api/Concerts/GetSpecificConcert", Guid({}).fromCompressedToFull(route.params.id)],
+      queryFn: GetSpecificConcertService,
+
+      enabled: true
+    });
+
+
+    const concert = computed(() => GetSpecificConcertServiceCall.data.value?.concerts[0]);
+    const step = ref(!route.params.step ? 1 : Number(route.params.step));
+
+    const stepTitles = [
+      "گام اول : انتخاب سانس",
+      "گام دوم : انتخاب صندلی",
+      "گام سوم : رزرو",
+      "گام چهارم : دریافت بلیت",
+    ]
+    const router = useRouter();
+
+    async function toNext() {
+
+      let param = {
+        context: {
+          to: {...route, params: {...route.params, step: step.value + 1}}, from: {...route}}
+        , goNext: router.push
+      };
+      if (await NextActions[step.value]({goNext:null})) {
+
+
+        await router.push({
+          name: "event",
+          params: {
+            ...route.params,
+            step: step.value + 1
+          }
+        });
+        step.value++;
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    async function toPrevious() {
+      if (await BackActions[step.value]()) {
+
+        await router.push({
+          name: "event",
+          params: {
+            ...route.params,
+            step: step.value - 1
+          }
+        });
+
+        step.value--;
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+
+    return {stepTitles, step, toPrevious, toNext, concert}
+  },
+  beforeRouteEnter: async (to, from, next) => {
+
+
+    if (await NextActions[to.params.step - 1]({context: {to, from}, goNext: next}))
+      next(to);
+    else
+      next({
+        name: "event",
+        params: {
+          ...to.params,
+          step: to.params.step - 1
+        }
+      });
+  }
+
+
+}
+
+
 </script>
 
 <style scoped>
