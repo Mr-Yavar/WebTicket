@@ -231,8 +231,8 @@ function handleClickOnSeat($event) {
 function handleClickOnDeleteSeat(seatId) {
   console.log(seatId);
   TicketStore.removeTicket(seatId);
-  document.querySelector("[tid=" + seatId+"]").classList.remove(TicketsTypes["selected-tickets"]);
-  document.querySelector("[tid=" + seatId+"]").classList.add(TicketsTypes["free-tickets"]);
+  document.querySelector("[tid='" + seatId+"']").classList.remove(TicketsTypes["selected-tickets"]);
+  document.querySelector("[tid='" + seatId+"']").classList.add(TicketsTypes["free-tickets"]);
 
 }
 
@@ -323,6 +323,7 @@ watchEffect(async () => {
 watch(seatMapService.Locked_Tickets, () => {
 
   let userTicketsToLock = [];
+  let classesToRemove = Object.keys(TicketsTypes).map(x=>TicketsTypes[x]);
   let tickets = TicketStore.Tickets.map(x=>x.id);
   seatMapService.Locked_Tickets.forEach(item => {
     if(tickets.indexOf(item)!==-1) {
@@ -330,6 +331,7 @@ watch(seatMapService.Locked_Tickets, () => {
       userTicketsToLock.push(item);
     }
 
+    document.querySelector(`[tid='${item}']`)?.classList.remove(...(classesToRemove));
     document.querySelector(`[tid='${item}']`)?.classList.add(TicketsTypes["waiting-tickets"]);
 
 

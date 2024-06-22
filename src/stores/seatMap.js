@@ -41,7 +41,7 @@ const useSeatMapStore = defineStore('SeatMap', () => {
     });
 
     async function notifyLockTickets(){
-        console.log("loack to ");
+
         if(TicketStore.selectedShowing===""|| TicketStore.Tickets.length===0)
             return;
         await seatMapMutate.mutateAsync([SEATMAP_SERVICE_BASE_URL + "/api/SeatMap/LockTickets?EventId=" + TicketStore.selectedShowing, {
@@ -110,10 +110,9 @@ const useSeatMapStore = defineStore('SeatMap', () => {
     const UnLocked_Tickets = reactive([]);
     // const seatMapService = new EventSource(SEATMAP_SERVICE_BASE_URL+"/seatmap-sse-endpoint?cid="+user.ClientId);
     const seatMapService = new useEventSource(SEATMAP_SERVICE_BASE_URL + "/seatmap-sse-endpoint?cid=" + user.ClientId, ['All_Locked_Tickets', 'Locked_Ticket', 'UnLocked_Ticket'])
-
     //['All_Locked_Tickets', 'Locked_Ticket', 'UnLocked_Ticket']
 
-    watch(seatMapService.data, () => {
+    watch([seatMapService.lastEventId,seatMapService.data,seatMapService.event], () => {
 
         switch (seatMapService.event.value) {
             case "All_Locked_Tickets" :
@@ -122,13 +121,20 @@ const useSeatMapStore = defineStore('SeatMap', () => {
                 Locked_Tickets.push(...JSON.parse(seatMapService.data.value));
                 break;
             case "Locked_Ticket":
-                Locked_Tickets.push(JSON.parse(seatMapService.data.value).Message);
+                Locked_Tickets.push(...(JSON.parse(seatMapService.data.value).Message));
                 break;
             case "UnLocked_Ticket":
-                let tmep = JSON.parse(seatMapService.data.value).Message;
-                Locked_Tickets.splice(Locked_Tickets.findIndex(item => item === tmep), 1);
+                let temp = JSON.parse(seatMapService.data.value).Message;
+                for(let id of temp){
+
+                    let index =Locked_Tickets.findIndex(x => x === id);
+                    if(index!==-1)
+                    Locked_Tickets.splice(index, 1);
+                }
+
+
                 UnLocked_Tickets.splice(0, UnLocked_Tickets.length);
-                UnLocked_Tickets.push(JSON.parse(seatMapService.data.value).Message);
+                UnLocked_Tickets.push(...(temp));
                 break;
             default:
                 break;
