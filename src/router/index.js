@@ -16,17 +16,17 @@ const router = createRouter({
         {
             path: '/event/:id',
             name: 'event1',
-            redirect: to => ({name  : "event", params : {...to.params,step:1}}),
-            beforeEnter:()=>console.log(41)
+            redirect: to => ({name: "event", params: {...to.params, step: 1}}),
+            beforeEnter: () => console.log(41)
 
         },
         {
             path: '/event/:id/:step',
             name: 'event',
             component: () => import("@/views/pages/Event/Index.vue"),
-            beforeEnter : (to, from, next) => {
-                console.log("df",to.params.step);
-                if(!isNaN(Number(to.params.step))){
+            beforeEnter: (to, from, next) => {
+                console.log("df", to.params.step);
+                if (!isNaN(Number(to.params.step))) {
                     next();
                 }
 
@@ -62,6 +62,22 @@ const router = createRouter({
         //     // which is lazy-loaded when the route is visited.
         //     component: () => import('../views/AboutView.vue')
         //   }
+        {
+            path: '/admin',
+            name: 'adminPanel',
+            component: () => import("@/views/pages/AdminPanel/Index.vue"),
+            meta: {
+                layout: 'Admin'
+            },
+            children:
+                [{
+                        name: "AdminDashboard",
+                        path: "dashboard",
+                        component: () => import("@/views/pages/AdminPanel/Index.vue")
+                    }]
+
+        }
+
     ]
 })
 

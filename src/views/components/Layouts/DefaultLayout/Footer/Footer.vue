@@ -9,7 +9,7 @@ export default {
     <div class="w-full px-8 mx-auto max-w-7xl">
       <div class="grid justify-between grid-cols-1 gap-4 md:grid-cols-2">
         <h5 class="block mb-6 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-inherit">
-          Material Tailwind
+          تیکـــتیوم
         </h5>
         <div class="grid justify-between grid-cols-3 gap-4">
           <ul>

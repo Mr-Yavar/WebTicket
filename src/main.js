@@ -12,19 +12,44 @@ import router from './router'
 import { VueQueryPlugin } from '@tanstack/vue-query'
 import VeeValidatePlugin from "./config/veevalidate.js";
 import registerLayouts from "@/config/_registerLoayouts.js";
-import {addIcons, OhVueIcon} from "oh-vue-icons";
+import {
+    addIcons,
+
+    OhVueIcon
+} from "oh-vue-icons";
 
 import {OiLocation} from "oh-vue-icons/icons/oi";
 import {RiCalendarEventFill} from "oh-vue-icons/icons/ri/index.js";
-import {FaSearch, FaTicketAlt,FaTimes} from "oh-vue-icons/icons/fa/index.js";
-import {IoTicketSharp, IoArrowForwardOutline, IoTrashOutline} from "oh-vue-icons/icons/io/index.js";
+import {FaRegularStar ,FaSearch, FaTicketAlt,FaTimes} from "oh-vue-icons/icons/fa/index.js";
+import {
+    IoSettingsOutline,
+    IoGridOutline,
+    IoDocumentsOutline,
+    IoTicketSharp,
+    IoArrowForwardOutline,
+    IoTrashOutline,
+    IoTicketOutline
+} from "oh-vue-icons/icons/io/index.js";
 import {PrSpinner} from "oh-vue-icons/icons/pr";
 import { PxCalendarTomorrow,PxClock,PxGps    } from "oh-vue-icons/icons/px";
-import { HiSolidCheckCircle } from "oh-vue-icons/icons/hi";
+import {HiChevronDown,HiQuestionMarkCircle,HiSolidCheckCircle, HiTable} from "oh-vue-icons/icons/hi";
 import {SiOpenstreetmap} from "oh-vue-icons/icons/si"
-import {MdCategoryOutlined,MdDiscountTwotone} from "oh-vue-icons/icons/md";
-import { LaUserCircle } from "oh-vue-icons/icons";
-addIcons(LaUserCircle,MdDiscountTwotone,IoTrashOutline,MdCategoryOutlined,SiOpenstreetmap,OiLocation,RiCalendarEventFill,FaSearch,FaTicketAlt,IoTicketSharp,IoArrowForwardOutline,FaTimes,PrSpinner,PxCalendarTomorrow,PxClock,PxGps,HiSolidCheckCircle);
+import {MdCategoryOutlined, MdDashboardOutlined, MdDiscountTwotone,MdAttachmoneyOutlined  } from "oh-vue-icons/icons/md";
+import {
+    BiBarChartLine,
+    BiPencil,
+    BiShieldCheck,
+    CoBell,
+    FaChartPie,
+    LaTimesSolid,
+    BiChevronLeft,
+    LaUserCircle,
+    RiMenu2Line
+} from "oh-vue-icons/icons";
+import {CoHeart} from "oh-vue-icons/icons/co/index.js";
+import {LaFileInvoiceDollarSolid} from "oh-vue-icons/icons/la/index.js";
+
+addIcons(LaFileInvoiceDollarSolid ,IoTicketOutline ,MdAttachmoneyOutlined,CoHeart ,FaRegularStar,BiChevronLeft,HiChevronDown,BiShieldCheck,HiQuestionMarkCircle,RiMenu2Line ,IoGridOutline,IoDocumentsOutline,FaChartPie ,IoSettingsOutline ,BiPencil ,LaTimesSolid ,MdDashboardOutlined ,HiTable,CoBell,BiBarChartLine ,FaSearch,LaUserCircle,MdDiscountTwotone,IoTrashOutline,MdCategoryOutlined,SiOpenstreetmap,OiLocation,RiCalendarEventFill,FaSearch,FaTicketAlt,IoTicketSharp,IoArrowForwardOutline,FaTimes,PrSpinner,PxCalendarTomorrow,PxClock,PxGps,HiSolidCheckCircle);
 
 const app = createApp(App)
 
