@@ -46,7 +46,8 @@
     "vue-select": "^4.0.0-beta.6",
     "vue-svg-pan-zoom": "^2.1.0",
     "vue-tippy": "^6.4.1",
-    "vue-zoomable": "^1.1.9"
+    "vue-zoomable": "^1.1.9",
+    "vue3-perfect-scrollbar": "^2.0.0"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.3.3",

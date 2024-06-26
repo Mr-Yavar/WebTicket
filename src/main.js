@@ -6,7 +6,7 @@ import 'tippy.js/dist/tippy.css' // optional for styling
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import VueTippy from 'vue-tippy'
-
+import 'vue3-perfect-scrollbar/style.css';
 import App from './App.vue'
 import router from './router'
 import { VueQueryPlugin } from '@tanstack/vue-query'
@@ -48,6 +48,7 @@ import {
 } from "oh-vue-icons/icons";
 import {CoHeart} from "oh-vue-icons/icons/co/index.js";
 import {LaFileInvoiceDollarSolid} from "oh-vue-icons/icons/la/index.js";
+import {PerfectScrollbarPlugin} from "vue3-perfect-scrollbar";
 
 addIcons(LaFileInvoiceDollarSolid ,IoTicketOutline ,MdAttachmoneyOutlined,CoHeart ,FaRegularStar,BiChevronLeft,HiChevronDown,BiShieldCheck,HiQuestionMarkCircle,RiMenu2Line ,IoGridOutline,IoDocumentsOutline,FaChartPie ,IoSettingsOutline ,BiPencil ,LaTimesSolid ,MdDashboardOutlined ,HiTable,CoBell,BiBarChartLine ,FaSearch,LaUserCircle,MdDiscountTwotone,IoTrashOutline,MdCategoryOutlined,SiOpenstreetmap,OiLocation,RiCalendarEventFill,FaSearch,FaTicketAlt,IoTicketSharp,IoArrowForwardOutline,FaTimes,PrSpinner,PxCalendarTomorrow,PxClock,PxGps,HiSolidCheckCircle);
 
@@ -88,7 +89,7 @@ app.use(
         }, // => Global default options * see all props
     }
 )
-
+    app.use(PerfectScrollbarPlugin,{componentName: 'Scrollbar'});
 app.use(VeeValidatePlugin);
 app.use(createPinia());
 app.use(router);

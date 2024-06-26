@@ -66,15 +66,47 @@ const router = createRouter({
             path: '/admin',
             name: 'adminPanel',
             component: () => import("@/views/pages/AdminPanel/Index.vue"),
+            redirect: {name: "AdminDashboard"},
             meta: {
                 layout: 'Admin'
             },
             children:
-                [{
+                [
+                    {
+                        name: "ManagePlaces",
+                        path: "managePlaces",
+                        component: () => import("@/views/pages/AdminPanel/Places.vue"),
+                        redirect : to => ({name:"AllPlaces"}),
+                        children: [
+                            {
+                                name:"AllPlaces",
+                                path: "/",
+                                component: () => import("@/views/ui/AdminPanel/Places/AllPlaces.vue")
+                            },
+                            {
+                                path: "create",
+                                name:"createPlace",
+                                component: () => import("@/views/ui/AdminPanel/Places/CreatePlace.vue")
+                            },
+                            {
+                                path: "edit/:id",
+                                name:"editPlace",
+                                component: () => import("@/views/ui/AdminPanel/Places/CreatePlace.vue")
+                            },
+
+                            {
+                                path: "manage/:id",
+                                name:"managePlace",
+                                component: () => import("@/views/ui/AdminPanel/Places/ManagePlace.vue")
+                            }
+                        ]
+                    },
+                    {
                         name: "AdminDashboard",
                         path: "dashboard",
-                        component: () => import("@/views/pages/AdminPanel/Index.vue")
-                    }]
+                        component: () => import("@/views/pages/AdminPanel/dashboard.vue")
+                    }
+                ]
 
         }
 

@@ -13,9 +13,10 @@ import Support from "@/views/components/Layouts/AdminLayout/component/Support.vu
       aria-label="Sidebar"
   >
     <div class="px-2 space-y-1">
-      <RouterLink
+      <router-link
           active-class="active"
-          to="dashboard/"
+          :to="{name:'AdminDashboard'}"
+          replace
           class="text-gray-900 hover:bg-gray-100 group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md"
       >
         <v-icon name="io-grid-outline"
@@ -23,13 +24,13 @@ import Support from "@/views/components/Layouts/AdminLayout/component/Support.vu
                 fill="white"
         />
         داشبورد
-      </RouterLink>
+      </router-link>
       <div class="mx-auto w-full max-w-md rounded-md">
         <Disclosure v-slot="{ open }">
           <DisclosureButton
               class="w-full justify-start rounded-md text-gray-900 hover:bg-gray-100 group flex items-center px-2 py-2 text-sm leading-6 font-medium"
           >
-            <v-icon name="HiTable"
+            <v-icon name="hi-table"
                     class="ml-4 flex-shrink-0 h-7 w-6 text-gray-900"
                     aria-hidden="true"
             />
@@ -58,14 +59,15 @@ import Support from "@/views/components/Layouts/AdminLayout/component/Support.vu
         </Disclosure>
       </div>
       <RouterLink
-          to="/forms"
+          :to="{name:'AllPlaces'}"
+          active-class="active"
           class="text-gray-900 hover:bg-gray-100 group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md"
       >
         <v-icon name="bi-pencil"
                 class="ml-4 flex-shrink-0 h-6 w-6 text-gray-900 group-[.active]:text-white"
                 aria-hidden="true"
         />
-        فرم ها
+          مکانهای برگزاری
       </RouterLink>
       <div class="mx-auto w-full max-w-md rounded-md bg-white">
         <Disclosure v-slot="{ open }">
