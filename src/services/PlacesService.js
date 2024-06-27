@@ -44,3 +44,17 @@ export async function GetPlaceService(id){
     return await res.json();
 
 }
+
+
+export async function GetHallsService(placeId){
+    let res = await fetch(API_BASE_URL+'/api/Place/GetHallsByPlaceId?placeId='+placeId,{
+        method : "GET",
+        headers : {
+            "Content-Type" : "application/json",
+            "api-version" : "1.0"
+        }
+
+    });
+
+    return await res.json();
+}

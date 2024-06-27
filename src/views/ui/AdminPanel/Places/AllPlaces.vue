@@ -22,6 +22,7 @@ const GetAllPlaceServiceCall = useQuery({
 </script>
 
 <template>
+  <template v-if="$route.name === 'AllPlaces'">
   <Splitter title="همه مکانهای برگزاری" border-class=" border-black " type="middle" title-class="text-black"/>
   <div class="grid grid-cols-6 gap-1 my-3">
     <div>
@@ -48,6 +49,8 @@ const GetAllPlaceServiceCall = useQuery({
       <PrSpinner class="animate-spin block w-full mx-auto scale-125 mt-8 " />
     </template>
   </div>
+  </template>
+  <router-view></router-view>
 </template>
 
 <style scoped>

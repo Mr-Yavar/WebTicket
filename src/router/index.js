@@ -67,8 +67,10 @@ const router = createRouter({
             name: 'adminPanel',
             component: () => import("@/views/pages/AdminPanel/Index.vue"),
             redirect: {name: "AdminDashboard"},
+            //alias : '/dashboard',
             meta: {
-                layout: 'Admin'
+                layout: 'Admin',
+                label : "صفحه اصلی"
             },
             children:
                 [
@@ -76,35 +78,60 @@ const router = createRouter({
                         name: "ManagePlaces",
                         path: "managePlaces",
                         component: () => import("@/views/pages/AdminPanel/Places.vue"),
-                        redirect : to => ({name:"AllPlaces"}),
+                        redirect : {name:"AllPlaces"},
                         children: [
                             {
                                 name:"AllPlaces",
-                                path: "/",
-                                component: () => import("@/views/ui/AdminPanel/Places/AllPlaces.vue")
-                            },
-                            {
-                                path: "create",
-                                name:"createPlace",
-                                component: () => import("@/views/ui/AdminPanel/Places/CreatePlace.vue")
-                            },
-                            {
-                                path: "edit/:id",
-                                name:"editPlace",
-                                component: () => import("@/views/ui/AdminPanel/Places/CreatePlace.vue")
+                                path: "",
+                                component: () => import("@/views/ui/AdminPanel/Places/AllPlaces.vue"),
+                                meta:{
+                                    label : "مکانهای برکزاری"
+                                },
+                                children : [
+                                    {
+                                        path: "create",
+                                        name:"createPlace",
+                                        component: () => import("@/views/ui/AdminPanel/Places/CreatePlace.vue"),
+                                        meta:{
+                                            label : "ایجاد ماکن برگزاری"
+                                        }
+                                    },
+                                    {
+                                        path: "edit/:id",
+                                        name:"editPlace",
+                                        component: () => import("@/views/ui/AdminPanel/Places/CreatePlace.vue"),
+                                        meta:{
+                                            label : "ویرایش مکان برگزاری"
+                                        }
+                                    },
+
+                                    {
+                                        path: "manage/:id",
+                                        name:"managePlace",
+                                        component: () => import("@/views/ui/AdminPanel/Places/ManageHalls.vue"),
+                                        meta:{
+                                            label : "مدیریت مکان برگزاری"
+                                        },
+                                        children : [
+                                            {
+                                                path : "create",
+                                                name : "createHall",
+                                                component : () => import("@/views/ui/AdminPanel/Places/CreateHall.vue")
+                                            }
+                                        ]
+                                    }
+                                ]
                             },
 
-                            {
-                                path: "manage/:id",
-                                name:"managePlace",
-                                component: () => import("@/views/ui/AdminPanel/Places/ManagePlace.vue")
-                            }
                         ]
                     },
                     {
                         name: "AdminDashboard",
                         path: "dashboard",
-                        component: () => import("@/views/pages/AdminPanel/dashboard.vue")
+                        component: () => import("@/views/pages/AdminPanel/dashboard.vue"),
+                        meta:{
+                            label : "صفحه اصلی"
+                        }
                     }
                 ]
 

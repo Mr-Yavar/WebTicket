@@ -6,7 +6,7 @@ import {CRPlacesService, GetPlaceService} from "@/services/PlacesService.js";
 import {CiCircleChevLeft} from "@kalimahapps/vue-icons/ci";
 import Swal from "sweetalert2";
 import {useRoute, useRouter} from "vue-router";
-import {onMounted, watch, watchEffect} from "vue";
+import { watch} from "vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -21,7 +21,7 @@ const getPlaceServiceCall = useQuery({
 });
 
 
-const {resetForm,defineField,defineInputBinds,handleSubmit} = useForm({
+const {resetForm,defineField,handleSubmit} = useForm({
   initialValues : {
     place: getPlaceServiceCall.data?.value
   }

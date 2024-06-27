@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-full">
-    <TransitionRoot as="template" :show="sidebarOpen" class="direction-rtl vazir-font">
+    <TransitionRoot :show="sidebarOpen" as="template" class="direction-rtl vazir-font">
       <Dialog
           as="div"
           class="fixed inset-0 flex z-40 lg:hidden"
@@ -39,19 +39,19 @@
             >
               <div class="absolute top-0 right-0 -mr-12 pt-2">
                 <button
-                    type="button"
                     class="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                    type="button"
                     @click="sidebarOpen = false"
                 >
                   <span class="sr-only">Close sidebar</span>
-                  <v-icon name="la-times-solid" fill="red" class="h-6 w-6 text-white" aria-hidden="true"/>
+                  <v-icon aria-hidden="true" class="h-6 w-6 text-white" fill="red" name="la-times-solid"/>
                 </button>
               </div>
             </TransitionChild>
             <SideBar/>
           </div>
         </TransitionChild>
-        <div class="flex-shrink-0 w-14" aria-hidden="true">
+        <div aria-hidden="true" class="flex-shrink-0 w-14">
           <!-- Dummy element to force sidebar to shrink to fit close icon -->
         </div>
       </Dialog>
@@ -68,33 +68,33 @@
           class="relative z-10 flex-shrink-0 flex h-16 bg-white rounded-lg shadow border-b border-gray-200 lg:border-none"
       >
         <button
-            type="button"
             class="px-4 border-r border-gray-200 text-gray-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 lg:hidden"
+            type="button"
             @click="sidebarOpen = true"
         >
           <span class="sr-only">Open sidebar</span>
-          <v-icon name="ri-menu-2-line" flip="both" fill="black" class="h-6 w-6" aria-hidden="true"/>
+          <v-icon aria-hidden="true" class="h-6 w-6" fill="black" flip="both" name="ri-menu-2-line"/>
         </button>
         <!-- Search bar -->
         <div
             class="flex-1 px-4 flex justify-between sm:px-6 lg:max-w-6xl lg:mx-auto lg:px-8"
         >
           <div class="flex-1 flex">
-            <form class="w-full flex md:ml-0" action="#" method="GET">
-              <label for="search-field" class="sr-only">Search</label>
+            <form action="#" class="w-full flex md:ml-0" method="GET">
+              <label class="sr-only" for="search-field">Search</label>
               <div
                   class="relative w-full text-gray-400 focus-within:text-gray-600"
               >
                 <div
-                    class="absolute inset-y-0 right-0 flex items-center pointer-events-none"
                     aria-hidden="true"
+                    class="absolute inset-y-0 right-0 flex items-center pointer-events-none"
                 >
-                  <v-icon name="fa-search" fill="black" class="h-5 w-5" aria-hidden="true"/>
+                  <v-icon aria-hidden="true" class="h-5 w-5" fill="black" name="fa-search"/>
                 </div>
                 <input
                     id="search-field"
-                    name="search-field"
                     class="block w-full h-full pr-8 pl-3 py-2 border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-0 focus:border-transparent sm:text-sm"
+                    name="search-field"
                     placeholder="جستجو"
                     type="search"
                 />
@@ -103,11 +103,11 @@
           </div>
           <div class="mr-4 flex items-center md:mr-6">
             <button
-                type="button"
                 class="bg-white p-1 rounded-full text-gray-400 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                type="button"
             >
               <span class="sr-only">View notifications</span>
-              <v-icon name="co-bell" class="h-6 w-6" aria-hidden="true"/>
+              <v-icon aria-hidden="true" class="h-6 w-6" name="co-bell"/>
             </button>
 
             <!-- Profile dropdown -->
@@ -116,15 +116,15 @@
                 <MenuButton
                     class="max-w-xs bg-white rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 lg:p-2 lg:rounded-md lg:hover:bg-gray-50"
                 >
-                  <img class="h-8 w-8 rounded-full" src="/avatar.jpg" alt=""/>
+                  <img alt="" class="h-8 w-8 rounded-full" src="/avatar.jpg"/>
                   <span
                       class="hidden mr-3 text-gray-700 text-sm font-medium lg:block"
                   ><span class="sr-only">Open user menu for </span>لیندزی
                     والتون</span
                   >
-                  <v-icon name="hi-chevron-down" fill="black"
-                          class="hidden flex-shrink-0 mr-1 h-5 w-5 text-gray-400 lg:block"
-                          aria-hidden="true"
+                  <v-icon aria-hidden="true" class="hidden flex-shrink-0 mr-1 h-5 w-5 text-gray-400 lg:block"
+                          fill="black"
+                          name="hi-chevron-down"
                   />
                 </MenuButton>
               </div>
@@ -141,31 +141,31 @@
                 >
                   <MenuItem v-slot="{ active }">
                     <a
-                        href="#"
                         :class="[
                         active ? 'bg-gray-100' : '',
                         'block px-4 py-2 text-sm text-gray-700',
                       ]"
+                        href="#"
                     >حساب کاربری</a
                     >
                   </MenuItem>
                   <MenuItem v-slot="{ active }">
                     <a
-                        href="/settings"
                         :class="[
                         active ? 'bg-gray-100' : '',
                         'block px-4 py-2 text-sm text-gray-700',
                       ]"
+                        href="/settings"
                     >تنظیمات</a
                     >
                   </MenuItem>
                   <MenuItem v-slot="{ active }">
                     <a
-                        href="#"
                         :class="[
                         active ? 'bg-gray-100' : '',
                         'block px-4 py-2 text-sm text-gray-700',
                       ]"
+                        href="#"
                     >خروج</a
                     >
                   </MenuItem>
@@ -178,7 +178,36 @@
     </div>
   </div>
   <div class="lg:pr-64 mt-8 mx-8 ">
-    <Scrollbar class="h-[calc(100dvh-120px)] " :options="{wheelSpeed:0.7}">
+
+      <nav aria-label="breadcrumb" class="w-max ">
+        <ol class="flex flex-wrap items-center w-full px-4 py-2 rounded-md bg-blue-gray-50 bg-opacity-60">
+          <li class="flex items-center font-sans text-sm antialiased font-normal leading-normal transition-colors duration-300 cursor-pointer text-blue-gray-900 hover:text-light-blue-500">
+            <a class="opacity-60" href="#">
+              Home
+            </a>
+          </li>
+          <li class="flex items-center font-sans text-sm antialiased font-normal leading-normal transition-colors duration-300 cursor-pointer text-blue-gray-900 hover:text-light-blue-500">
+            <a class="opacity-60" href="#">
+        <span>
+          Components
+        </span>
+            </a>
+            <span class="mx-2 font-sans text-sm antialiased font-normal leading-normal pointer-events-none select-none text-blue-gray-500">/</span>
+
+          </li>
+
+          <li class="flex items-center font-sans text-sm antialiased font-normal leading-normal transition-colors duration-300 cursor-pointer text-blue-gray-900 hover:text-light-blue-500">
+            <a href="#">
+              Breadcrumbs
+            </a>
+            <span class="mx-2 font-sans text-sm antialiased font-normal leading-normal pointer-events-none select-none text-blue-gray-500">/</span>
+          </li>
+
+
+        </ol>
+      </nav>
+
+    <Scrollbar :options="{wheelSpeed:0.7}" class="h-[calc(100dvh-120px)] ">
       <slot></slot>
     </Scrollbar>
   </div>
@@ -200,10 +229,14 @@ import {
   TransitionRoot,
 } from '@headlessui/vue';
 import SideBar from "@/views/components/Layouts/AdminLayout/component/SideBar.vue";
-import Dashboard from "@/views/pages/AdminPanel/dashboard.vue";
+import {useRoute} from "vue-router";
 
 
 const sidebarOpen = ref(false);
+
+const route = useRoute();
+
+console.log(route.matched);
 </script>
 
 <style scoped>
