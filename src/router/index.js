@@ -117,6 +117,11 @@ const router = createRouter({
                                                 path : "create",
                                                 name : "createHall",
                                                 component : () => import("@/views/ui/AdminPanel/Places/CreateHall.vue")
+                                            },
+                                            {
+                                                path : "edit/:hallId",
+                                                name : "editHall",
+                                                component : () => import("@/views/ui/AdminPanel/Places/CreateHall.vue")
                                             }
                                         ]
                                     }
