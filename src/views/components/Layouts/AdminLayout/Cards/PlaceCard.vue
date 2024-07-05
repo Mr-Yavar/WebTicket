@@ -6,7 +6,8 @@ import { BsLightningChargeFill } from '@kalimahapps/vue-icons/bs';
 import {useRouter} from "vue-router";
 
 defineProps({
-  place :Object
+  place :Object,
+  togglePlace : Function
 });
 
 const router = useRouter();
@@ -23,7 +24,7 @@ const router = useRouter();
         <dt class="sr-only">وضعیت</dt>
         <dd class="mt-3">
           <span v-if="!place.isDeleted" class="px-2 py-1 text-green-800 text-xs font-medium bg-green-100 rounded-full">فعال</span>
-          <span v-else class="px-2 py-1 text-red-800 text-xs font-medium bg-red-100 rounded-full">غیرفعال</span>
+          <span v-else  class="px-2 py-1 text-red-800 text-xs font-medium bg-red-100 rounded-full">غیرفعال</span>
         </dd>
       </dl>
     </div>
@@ -31,8 +32,8 @@ const router = useRouter();
       <div class="-mt-px flex justify-around py-2">
         <button @click.prevent="router.push({name:'editPlace',params:{id:place.id}})" class="w-fit flex items-center text-white text-sm justify-around rounded px-2 py-1 bg-orange-600 shadow-sm hover:shadow-md"><RePencilLine/>ویرایش</button>
         <button @click.prevent="router.push({name:'managePlace',params:{id:place.id}})" class="w-fit flex items-center text-white text-sm justify-around rounded px-2 py-1 bg-blue-500 shadow-sm hover:shadow-md"><RePencilLine/>مدیریت</button>
-        <button v-if="!place.isDeleted" class="w-fit flex items-center text-white text-sm justify-around rounded px-2 py-1 bg-red-400 shadow-sm hover:shadow-md"> <BsLightningCharge/>غیرفعال</button>
-        <button v-else class="w-fit flex items-center text-white text-sm justify-around rounded px-2 py-1 bg-green-400 shadow-sm hover:shadow-md"> <BsLightningChargeFill/>غیرفعال</button>
+        <button v-if="!place.isDeleted" @click.prevent="togglePlace(place.id)" class="w-fit flex items-center text-white text-sm justify-around rounded px-2 py-1 bg-red-400 shadow-sm hover:shadow-md"> <BsLightningCharge/>غیرفعال</button>
+        <button v-else @click.prevent="togglePlace(place.id)" class="w-fit flex items-center text-white text-sm justify-around rounded px-2 py-1 bg-green-400 shadow-sm hover:shadow-md"> <BsLightningChargeFill/>فعال</button>
       </div>
     </div>
   </div>

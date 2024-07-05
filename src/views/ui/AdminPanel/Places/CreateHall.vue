@@ -4,12 +4,11 @@ import Splitter from '@/views/components/Splitter/Splitter.vue'
 import {useMutation, useQuery} from '@tanstack/vue-query'
 import {CRPlacesService, GetHallService} from '@/services/PlacesService.js'
 import {CiCircleChevLeft} from '@kalimahapps/vue-icons/ci'
-import {LaArrowLeftSolid ,LaArrowRightSolid  } from '@kalimahapps/vue-icons/la'
 import {HuTimesCircle} from '@kalimahapps/vue-icons/hu'
 
 import Swal from 'sweetalert2'
 import {useRoute, useRouter} from 'vue-router'
-import {nextTick, reactive, ref, useCssModule, watch, watchEffect} from 'vue'
+import {reactive, ref, useCssModule, watch} from 'vue'
 import { FILE_PROVIDER } from '@/config/appConfig'
 import {PrSpinner} from "@kalimahapps/vue-icons/pr";
 const router = useRouter()
@@ -28,13 +27,12 @@ const {resetForm, defineField, handleSubmit, values, setFieldValue} = useForm({
  
 })
 
-const floors = reactive([])
 
 const [hallTitle] = defineField('hall.title')
 const [hallDesc] = defineField('hall.description')
 const hallImage = defineField('hall.image')
 const [hallLat] = defineField('hall.lat')
-const {update, push, swap, replace, remove, fields} = useFieldArray('floors')
+const { push, remove, fields} = useFieldArray('floors')
 const [hallLng] = defineField('hall.lng')
 const {mutate} = useMutation({
   mutationKey: ['CU/Places'],
@@ -273,12 +271,21 @@ const formData = {
 
 <template>
   <div>
-    <Splitter border-class=" border-black " title="ایجاد یک مکان برگزاری" title-class="text-black" type="middle"/>
-    <div class="my-2 mx-1 flex flex-row-reverse">
-      <button class="items-center px-4 py-2 w-fit border border-transparent rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" @click="router.push({ name: 'managePlace', params: { id: placeId } })">
-        <CiCircleChevLeft class="scale-125 font-bold"/>
-      </button>
+    <div class="sticky top-0" style="z-index:1000;">
+      <div class="!bg-white h-fit">
+        <Splitter v-if="!hallId" border-class=" border-black " title="ایجاد یک سالن برگزاری" title-class="text-black" type="middle"/>
+        <Splitter v-else border-class=" border-black " title="ویرایش یک سالن برگزاری" title-class="text-black" type="middle"/>
+
+      </div>
+      <div class="my-2 mx-1 flex flex-row-reverse">
+        <button class="items-center px-4 py-2 w-fit border border-transparent rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" @click="router.push({ name: 'managePlace', params: { id: placeId } })">
+          <CiCircleChevLeft class="scale-125 font-bold"/>
+        </button>
+      </div>
     </div>
+
+
+ 
     <form @submit.prevent="onSubmit" :class="!getHallServiceCall.isFetched && getHallServiceCall.isLoading ? 'hidden'  :''" >
       <div class="grid grid-cols-8 gap-2">
         <div class="col-span-2 col-start-2">

@@ -179,33 +179,7 @@
   </div>
   <div class="lg:pr-64 mt-8 mx-8 ">
 
-      <nav aria-label="breadcrumb" class="w-max ">
-        <ol class="flex flex-wrap items-center w-full px-4 py-2 rounded-md bg-blue-gray-50 bg-opacity-60">
-          <li class="flex items-center font-sans text-sm antialiased font-normal leading-normal transition-colors duration-300 cursor-pointer text-blue-gray-900 hover:text-light-blue-500">
-            <a class="opacity-60" href="#">
-              Home
-            </a>
-          </li>
-          <li class="flex items-center font-sans text-sm antialiased font-normal leading-normal transition-colors duration-300 cursor-pointer text-blue-gray-900 hover:text-light-blue-500">
-            <a class="opacity-60" href="#">
-        <span>
-          Components
-        </span>
-            </a>
-            <span class="mx-2 font-sans text-sm antialiased font-normal leading-normal pointer-events-none select-none text-blue-gray-500">/</span>
-
-          </li>
-
-          <li class="flex items-center font-sans text-sm antialiased font-normal leading-normal transition-colors duration-300 cursor-pointer text-blue-gray-900 hover:text-light-blue-500">
-            <a href="#">
-              Breadcrumbs
-            </a>
-            <span class="mx-2 font-sans text-sm antialiased font-normal leading-normal pointer-events-none select-none text-blue-gray-500">/</span>
-          </li>
-
-
-        </ol>
-      </nav>
+    
 
     <Scrollbar :options="{wheelSpeed:0.7}" class="h-[calc(100dvh-120px)] ">
       <slot></slot>
