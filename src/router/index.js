@@ -75,6 +75,14 @@ const router = createRouter({
             children:
                 [
                     {
+                        name: "AdminDashboard",
+                        path: "dashboard",
+                        component: () => import("@/views/pages/AdminPanel/dashboard.vue"),
+                        meta:{
+                            label : "صفحه اصلی"
+                        }
+                    },
+                    {
                         name: "ManagePlaces",
                         path: "managePlaces",
                         component: () => import("@/views/pages/AdminPanel/Places.vue"),
@@ -131,12 +139,31 @@ const router = createRouter({
                         ]
                     },
                     {
-                        name: "AdminDashboard",
-                        path: "dashboard",
-                        component: () => import("@/views/pages/AdminPanel/dashboard.vue"),
-                        meta:{
-                            label : "صفحه اصلی"
-                        }
+                        name : "ManageConcerts",
+                        path : "concerts",
+                        component : ()=>import("@/views/pages/AdminPanel/Concerts.vue"),
+                        redirect : {name:"AllConcerts"},
+                        meta : {
+                            label : "کنسرتها"
+                        },
+                        children:[
+                            {
+                                path: "",
+                                name:"AllConcerts",
+                                component: () => import("@/views/ui/AdminPanel/Concerts/AllConcerts.vue"),
+                                meta:{
+                                    label : "کنسرت ها"
+                                                                }
+                            },
+                            {
+                                path: "createConcert",
+                                name:"createConcert",
+                                component: () => import("@/views/ui/AdminPanel/Places/CreatePlace.vue"),
+                                meta:{
+                                    label : "ایجاد ماکن برگزاری"
+                                }
+                            }
+                        ]
                     }
                 ]
 

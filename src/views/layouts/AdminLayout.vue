@@ -181,7 +181,7 @@
 
     
 
-    <Scrollbar :options="{wheelSpeed:0.7}" class="h-[calc(100dvh-120px)] ">
+    <Scrollbar :options="{wheelSpeed:0.1,}" class="h-[calc(100dvh-120px)] ">
       <slot></slot>
     </Scrollbar>
   </div>

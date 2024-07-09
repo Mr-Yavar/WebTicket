@@ -2,6 +2,7 @@ import './assets/main.css'
 import 'animate.css';
 import 'vue-select/dist/vue-select.css';
 import 'tippy.js/dist/tippy.css' // optional for styling
+import './assets/basic.css';
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'

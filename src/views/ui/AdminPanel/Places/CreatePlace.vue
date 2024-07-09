@@ -32,6 +32,7 @@ watch([getPlaceServiceCall.data], () => {
 
 const [placeTile] = defineField('place.title')
 const [placeDesc] = defineField('place.description')
+const [placeCity] = defineField('place.city')
 const [placeAddress] = defineField('place.address')
 const { mutate } = useMutation({
   mutationKey: ['CU/Places'],
@@ -46,7 +47,8 @@ const onSubmit = handleSubmit(async (data) => {
         body: JSON.stringify({
           title: data.place.title,
           address: data.place.address,
-          description: data.place.description
+          description: data.place.description,
+          city:data.place.city
         }),
         method: 'POST',
         headers: {
@@ -120,6 +122,10 @@ const onSubmit = handleSubmit(async (data) => {
           <input type="text" v-model="placeTile" id="place-name" placeholder="برج میلاد" class="mt-1 py-2 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
         </div>
         <div class="col-span-2 col-start-4">
+          <label for="place-name" class="block text-sm font-medium text-gray-700">شهر</label>
+          <input type="text" v-model="placeCity" id="place-name" placeholder=" تهران " class="mt-1 py-2 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+        </div>
+        <div class="col-span-4 col-start-2">
           <label for="place-name" class="block text-sm font-medium text-gray-700">نشانی</label>
           <input type="text" v-model="placeAddress" id="place-name" placeholder="تهران،بلوار ... " class="mt-1 py-2 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
         </div>

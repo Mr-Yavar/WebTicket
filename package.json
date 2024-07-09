@@ -16,6 +16,7 @@
   "dependencies": {
     "@headlessui/vue": "^1.7.21",
     "@heroicons/vue": "^2.1.4",
+    "@jobinsjp/vue3-datatable": "^1.0.15",
     "@kalimahapps/vue-icons": "^1.7.1",
     "@material-tailwind/html": "^2.2.2",
     "@neshan-maps-platform/mapbox-gl": "^1.1.3",
