@@ -99,7 +99,7 @@ formData.append("Hall",JSON.stringify(Data))
         {
           onSuccess: async (data) => {
             await Swal.fire({
-              text: 'با موقفیت ایجاد شد!',
+              text: 'با موفقیت ایجاد شد!',
               icon: 'success',
               showConfirmButton: false,
               showCloseButton: true,
@@ -121,7 +121,7 @@ formData.append("Hall",JSON.stringify(Data))
         {
           onSuccess: async (data) => {
             await Swal.fire({
-              text: 'با موقفیت بروز شد!',
+              text: 'با موفقیت بروز شد!',
               icon: 'success',
               showConfirmButton: false,
               showCloseButton: true,
