@@ -181,9 +181,9 @@
 
     
 
-    <Scrollbar :options="{wheelSpeed:0.1,}" class="h-[calc(100dvh-120px)] ">
+    <div class="max-h-[calc(100dvh-115px)] min-h-[calc(100dvh-120px)] overflow-y-scroll relative">
       <slot></slot>
-    </Scrollbar>
+    </div>
   </div>
 
 
@@ -213,7 +213,32 @@ const route = useRoute();
 console.log(route.matched);
 </script>
 
-<style scoped>
+<style >
 
+/* width */
+*::-webkit-scrollbar {
+  width: 10px;
+  display: inline;
 
+ 
+}
+
+/* Track */
+*::-webkit-scrollbar-track {
+  background: transparent;
+  position: absolute;
+  left : 100px;
+}
+
+/* Handle */
+*::-webkit-scrollbar-thumb {
+  background: #888;
+  position: absolute;
+   @apply rounded-md;
+}
+
+/* Handle on hover */
+*::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
 </style>
