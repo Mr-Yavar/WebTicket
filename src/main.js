@@ -1,8 +1,8 @@
 import './assets/main.css'
-import 'animate.css';
 import 'vue-select/dist/vue-select.css';
 import 'tippy.js/dist/tippy.css' // optional for styling
-import './assets/basic.css';
+import "@/assets/vpd.css"
+import "@/assets/basic.css"
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
@@ -34,7 +34,7 @@ import {
 import {PrSpinner} from "oh-vue-icons/icons/pr";
 import { PxCalendarTomorrow,PxClock,PxGps    } from "oh-vue-icons/icons/px";
 import {HiChevronDown,HiQuestionMarkCircle,HiSolidCheckCircle, HiTable} from "oh-vue-icons/icons/hi";
-import {SiOpenstreetmap} from "oh-vue-icons/icons/si"
+import {SiOpenstreetmap, SiTruenas} from "oh-vue-icons/icons/si"
 import {MdCategoryOutlined, MdDashboardOutlined, MdDiscountTwotone,MdAttachmoneyOutlined  } from "oh-vue-icons/icons/md";
 import {
     BiBarChartLine,
@@ -50,12 +50,31 @@ import {
 import {CoHeart} from "oh-vue-icons/icons/co/index.js";
 import {LaFileInvoiceDollarSolid} from "oh-vue-icons/icons/la/index.js";
 import {PerfectScrollbarPlugin} from "vue3-perfect-scrollbar";
+import Vue3PersianDatetimePicker from 'vue3-persian-datetime-picker';
 
 addIcons(LaFileInvoiceDollarSolid ,IoTicketOutline ,MdAttachmoneyOutlined,CoHeart ,FaRegularStar,BiChevronLeft,HiChevronDown,BiShieldCheck,HiQuestionMarkCircle,RiMenu2Line ,IoGridOutline,IoDocumentsOutline,FaChartPie ,IoSettingsOutline ,BiPencil ,LaTimesSolid ,MdDashboardOutlined ,HiTable,CoBell,BiBarChartLine ,FaSearch,LaUserCircle,MdDiscountTwotone,IoTrashOutline,MdCategoryOutlined,SiOpenstreetmap,OiLocation,RiCalendarEventFill,FaSearch,FaTicketAlt,IoTicketSharp,IoArrowForwardOutline,FaTimes,PrSpinner,PxCalendarTomorrow,PxClock,PxGps,HiSolidCheckCircle);
 
 const app = createApp(App)
 
 
+app.use(Vue3PersianDatetimePicker, {
+    name: 'DateTimePicker',
+    props: {
+      format: 'YYYY-MM-DD HH:mm',
+      displayFormat: 'jYYYY/jMM/jDD HH:mm',
+        type : "datetime",
+      editable: true,
+      placeholder: 'Please select a date',
+      altFormat: 'YYYY-MM-DD HH:mm',
+      color: '#1e88e5',
+      autoSubmit: true,
+      inputClass : " outline-0 block text-sm "
+      
+      //...
+      //... And whatever you want to set as default.
+      //...
+    }
+  })
 app.directive('inline-svg', el => {
     console.log(el);
     if (!el) {

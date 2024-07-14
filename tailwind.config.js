@@ -7,7 +7,9 @@ export default withMT({
     "./index.html",
     "./src/**/*.{vue,html,css}",
   ],
-
+  plugins: [
+   
+  ],
     theme: {
         container: {
             center: true,

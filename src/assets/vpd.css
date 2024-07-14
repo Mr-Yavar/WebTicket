@@ -1,0 +1,42 @@
+
+.vpd-container{
+
+
+    .vpd-icon-btn{
+        @apply !m-0;
+    }
+    .vpd-addon-list{
+        @apply overflow-hidden;
+    }
+
+    .vpd-addon-list-content{
+
+    }
+
+    .vpd-time svg{
+        @apply block mx-auto;
+    }
+
+    .vpd-month-label{
+        @apply w-fit;
+    }
+    .vpd-controls svg{
+        @apply block mx-auto;
+    }
+
+  
+}
+.vpd-main{
+
+
+    .vpd-input-group{
+        @apply !rounded-md overflow-hidden pe-2;
+    }
+
+    label{
+        @apply !m-0;
+    }
+    input {
+        @apply w-full !rounded-bl-md !rounded-tl-md !py-1;
+    }
+}

@@ -13,14 +13,14 @@
         <div class="flex items-center gap-4">
           <div class="mr-4 hidden lg:block">
             <ul class="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
-              <li class="block antialiased font-sans text-sm leading-normal text-blue-gray-900 p-1 font-normal">
-                <router-link :to="{name:'home'}" class="flex items-center">صفحه اصلی</router-link>
+              <li class="block antialiased font-sans text-sm leading-normal text-blue-gray-900 p-1 font-normal hover:border-b-2">
+                <router-link :to="{name:'home'}" active-class="active" class="flex items-center">صفحه اصلی</router-link>
               </li>
 
-              <li class="block antialiased font-sans text-sm leading-normal text-blue-gray-900 p-1 font-normal">
+              <li class="block antialiased font-sans text-sm leading-normal text-blue-gray-900 p-1 font-normal hover:border-b-2">
                 <a class="flex items-center" href="#">درباره ما</a>
               </li>
-              <li class="block antialiased font-sans text-sm leading-normal text-blue-gray-900 p-1 font-normal border-2 border-dashed border-dark-400 rounded-md">
+              <li class="hover:shadow-md block antialiased font-sans text-sm leading-normal text-blue-gray-900 p-1 font-normal border-2 border-dashed border-dark-400 rounded-sm">
                 <a class="flex items-center" href="#">بررسی بلیت</a>
               </li>
               <li v-if="userStore.isAuthenticated" class="block antialiased font-sans text-sm leading-normal text-blue-gray-900 p-1 font-normal">
@@ -193,5 +193,9 @@ function change(val) {
 .fade-leave-to {
 
   height: 0;
+}
+
+.active{
+  @apply border-b-2 ;
 }
 </style>

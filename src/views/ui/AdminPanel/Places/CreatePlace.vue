@@ -26,7 +26,7 @@ const { resetForm, defineField, handleSubmit } = useForm({
 })
 
 watch([getPlaceServiceCall.data], () => {
-  if (!!placeId) resetForm({ values: { place: { ...getPlaceServiceCall.data?.value } } })
+  if (placeId) resetForm({ values: { place: { ...getPlaceServiceCall.data?.value } } })
   else resetForm({ values: {} })
 })
 
@@ -34,26 +34,45 @@ const [placeTile] = defineField('place.title')
 const [placeDesc] = defineField('place.description')
 const [placeCity] = defineField('place.city')
 const [placeAddress] = defineField('place.address')
+const [placeLat] = defineField('place.lat')
+const placeImage = defineField('place.image')
+const [placeLng] = defineField('place.lng')
+
 const { mutate } = useMutation({
   mutationKey: ['CU/Places'],
   mutationFn: CRPlacesService
 })
 
 const onSubmit = handleSubmit(async (data) => {
+
+  const form = new FormData();
+  console.log(data);
+   
+  form.append("Place", JSON.stringify({
+    Id : placeId ?? undefined,
+          Title: data.place.title,
+          Address: data.place.address,
+          Description: data.place.description,
+          City:data.place.city,
+          lat: Number(data.place.lat),
+          lng:Number(data.place.lng)
+        }));
+  
+  if (data.place.image && data.place.image.length === 1) {
+ 
+    form.append("Files.File", data.place.image[0]);
+  } else {
+    form.append("Files.File", undefined);
+  }
+  form.append("Files.key", "place");
+
+
   if (!placeId) {
     mutate(
       {
         url: '/api/Place/CreatePlace?api-version=1.0',
-        body: JSON.stringify({
-          title: data.place.title,
-          address: data.place.address,
-          description: data.place.description,
-          city:data.place.city
-        }),
+        body: form,
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        }
       },
       {
         onSuccess: async (data) => {
@@ -74,16 +93,8 @@ const onSubmit = handleSubmit(async (data) => {
     mutate(
       {
         url: '/api/Place/UpdatePlace?api-version=1.0',
-        body: JSON.stringify({
-          id: data.place.id,
-          title: data.place.title,
-          address: data.place.address,
-          description: data.place.description
-        }),
+        body: form,
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        }
       },
       {
         onSuccess: async (data) => {
@@ -129,8 +140,28 @@ const onSubmit = handleSubmit(async (data) => {
           <label for="place-name" class="block text-sm font-medium text-gray-700">نشانی</label>
           <input type="text" v-model="placeAddress" id="place-name" placeholder="تهران،بلوار ... " class="mt-1 py-2 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
         </div>
+        <div class="col-span-2 col-start-2">
+          <label class="block text-sm font-medium text-gray-700">lat</label>
+          <input v-model="placeLat" class="appearance-none mt-1 py-2 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" type="number"/>
+        </div>
+        <div class="col-span-2 col-start-4">
+          <label class="block text-sm font-medium text-gray-700">lng</label>
+          <input v-model="placeLng" class="appearance-none mt-1 py-2 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" type="number"/>
+        </div>
+        <div class="col-span-2 col-start-2">
+          <label class="block text-sm font-medium text-gray-700" for="place-name">تصویر مکان برگزاری</label>
+          <input
+              class="mt-1 py-2 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+              type="file"
+              @change="
+              ($event) => {
+                placeImage[0].value = $event.target.files
+              }
+            "
+          />
+        </div>
         <div class="col-span-4 col-start-2">
-          <label for="place-name" class="block text-sm font-medium text-gray-700">نام</label>
+          <label for="place-name" class="block text-sm font-medium text-gray-700">توضیح</label>
           <textarea type="text" v-model="placeDesc" id="place-name" placeholder="درمورد مکان برگزاری و سالن های آن" class="mt-1 py-2 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"></textarea>
         </div>
         <div class="col-span-2 col-start-3">

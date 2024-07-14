@@ -185,7 +185,8 @@ function showSeatMap(files, key, idx) {
     console.log(intersects);
 
     seatMapMessages[idx] = seats.reduce((acc,val)=>{
-      let temp = val.replace("f","").replace("r","").replace("c","").split("_").map(x=>Number(x));
+    
+      let temp = val.Name?.replace("f","").replace("r","").replace("c","").split("_").map(x=>Number(x));
 
       if(!acc[temp[0]])
         acc[temp[0] ] ={};
@@ -292,14 +293,7 @@ const formData = {
           <label class="block text-sm font-medium text-gray-700">نام</label>
           <input v-model="hallTitle" class="mt-1 py-2 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" type="text"/>
         </div>
-        <div class="col-span-2 col-start-4">
-          <label class="block text-sm font-medium text-gray-700">lat</label>
-          <input v-model="hallLat" class="mt-1 py-2 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" type="text"/>
-        </div>
-        <div class="col-span-2 col-start-6">
-          <label class="block text-sm font-medium text-gray-700">lng</label>
-          <input v-model="hallLng" class="mt-1 py-2 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" type="text"/>
-        </div>
+
         <div class="col-span-4 col-start-2">
           <label class="block text-sm font-medium text-gray-700">شرح</label>
           <textarea v-model="hallDesc" class="mt-1 py-2 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" type="text"></textarea>
