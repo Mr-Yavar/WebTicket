@@ -12,7 +12,7 @@
         {{concert.title }}
       </h1>
       <h2 class="block text-center text-white rtl:fa-font text-sm">
-        (ویژه بانوان)
+        
       </h2>
       <h2 class="block text-right text-white rtl:fa-font text-sm">
         <v-icon name="oi-location" />

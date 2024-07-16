@@ -24,7 +24,7 @@ const GetAllConcertsServiceCall = useQuery({
     <template #Events>
 
       <div class="mt-4 grid xl:grid-cols-4 xl:gap-y-4  lg:grid-cols-3   md:grid-cols-2 grid-cols-1 gap-y-2 " dir="rtl" v-if="GetAllConcertsServiceCall.data">
-        <CardItem v-for="item in Concerts" :concert="item" :key="4"/>
+        <CardItem v-for="item in Concerts" :concert="item" :key="item.concertId"/>
       </div>
     </template>
   </EventPartial>
