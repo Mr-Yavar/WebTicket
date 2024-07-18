@@ -14,3 +14,13 @@ export async function sendRequest(data){
     }
 
 }
+
+export async function getFile(data){
+    let res = await fetch((!data.baseUrl ? API_BASE_URL : data.baseUrl)+data.url,{
+        ...data
+    });
+
+    if(res.ok){
+        return await res.blob();
+    }
+}
