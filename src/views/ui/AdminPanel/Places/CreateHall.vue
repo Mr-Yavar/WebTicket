@@ -67,20 +67,21 @@ console.log(data);
   const formData = new FormData();
   let offset = 0;
     if(!!data.hall.image && data.hall.image?.length!=0 ){
-  formData.append("Files.Files["+0+"].File", data.hall.image[0] );
-  formData.append("Files.Files["+0+"].Key","hall");
+  formData.append("Files.Files["+offset+"].File", data.hall.image[0] );
+  formData.append("Files.Files["+offset+"].Key","hall");
   offset++;
   }
+  
   Data.FloorInfoDtos.forEach((item,index)=>{
    if(!item.seatMap)
    return;
-    formData.append("Files.Files["+(index+offset)+"].File",item.seatMap);
-    formData.append("Files.Files["+(index+offset)+"].Key",index);
-
+    formData.append("Files.Files["+offset+"].File",item.seatMap);
+    formData.append("Files.Files["+offset+"].Key",index);
+    offset++;
     delete item.seatMap ;
   });
 
-  if(!formData.has("Files.Files[0].File"))
+  if(offset===0)
   formData.append("Files.Files",null);
 
 
@@ -325,6 +326,8 @@ const formData = {
                         class="text-red-500 tab-active:text-red-900 text-lg"
                         @click.prevent="
                         () => {
+                        if(hallId)
+                          return;
                           if (tab === idx) {
                             tab = -1;
                           }
