@@ -1,15 +1,12 @@
 <script setup>
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
-
 import { PxZoomOut, PxZoomIn } from '@kalimahapps/vue-icons/px'
 import { FlFilledZoomFit } from '@kalimahapps/vue-icons/fl'
-
 import { Field, useFieldArray, useForm } from 'vee-validate'
 import Splitter from '@/views/components/Splitter/Splitter.vue'
 import { useMutation, useQuery } from '@tanstack/vue-query'
 import { CRPlacesService, GetHallService } from '@/services/PlacesService.js'
 import { CiCircleChevLeft } from '@kalimahapps/vue-icons/ci'
-
 import Swal from 'sweetalert2'
 import { useRoute, useRouter } from 'vue-router'
 import { computed, reactive, ref, useCssModule, watch } from 'vue'
@@ -17,9 +14,9 @@ import { FILE_PROVIDER } from '@/config/appConfig'
 import { PrSpinner } from '@kalimahapps/vue-icons/pr'
 import vueSelectUmd from 'vue-select'
 import { sendRequest, getFile } from '@/services/service'
+import randomColor from 'randomcolor'
 import tippy from 'tippy.js'
 import Panzoom from '@panzoom/panzoom'
-
 const router = useRouter()
 const route = useRoute()
 const placeId = !route.params.id ? null : route.params.id
@@ -31,11 +28,9 @@ const [concertTitle] = defineField('concert.title')
 const [concertDesc] = defineField('concert.description')
 const cocertCardImage = defineField('concert.image')
 const cocertPosterImage = defineField('concert.poster')
-
 const [concertCategory] = defineField('concert.catergory')
 const [concertPlace] = defineField('concert.place')
 const [concertPromoter] = defineField('concert.promoter')
-
 const { push, remove, fields } = useFieldArray('events')
 const eventFields = {
     id: null,
@@ -51,7 +46,7 @@ const eventFields = {
     },
     lock: false,
     price: 0,
-    cleaner : false
+    cleaner: false
 }
 const { mutate } = useMutation({
     mutationKey: ['CU/Places'],
@@ -60,7 +55,7 @@ const { mutate } = useMutation({
 
 const onSubmit = handleSubmit(async (data) => {
     console.log(data)
-
+    return
     const Data = {
         ...data.hall,
         Title: data.concert.title,
@@ -151,7 +146,7 @@ const styles = useCssModule('map')
 
 const seatMapErrors = reactive({})
 const seatMapMessages = reactive({})
-
+// SVG مپ های لود شده داخل این قرار میگیره
 const seatMaps = reactive({})
 const getCategoryServiceCall = useQuery({
     queryKey: ['/api/BaseInfo/GetCategories'],
@@ -231,9 +226,10 @@ function showSeatMap(seatMap_url, floorSeats, key, idx, EventId) {
             tempDoc.querySelector('svg').innerHTML = tempDoc.querySelector('svg').innerHTML.replaceAll('#' + tagId, '#' + newId)
         })
 
-        floorSeats.forEach((seat) => {
+        floorSeats.forEach((seat,index) => {
             let seatElem = tempDoc.querySelector(`*[id="${seat.name}"]`)
             seatElem?.setAttribute('tid', seat.floorSeatId)
+            seatElem?.setAttribute('tIndex', index)
             seatElem?.setAttribute('eventIndex', EventId)
 
             seatElem?.classList?.add(styles['recongnized'])
@@ -296,8 +292,7 @@ function setupTippy(map) {
     map.querySelectorAll(`*[id^="f"]`).forEach((item) => {
         tippy(item, {
             onTrigger(instance, event) {
-                if(!event.target.getAttribute('eventIndex'))
-                    setTicket(event,Number(event.target.getAttribute('eventIndex')))
+                if (!event.target.getAttribute('eventIndex')) setTicket(event, Number(event.target.getAttribute('eventIndex')))
                 instance.setContent(`محتواها`)
             }
         })
@@ -347,52 +342,67 @@ const places = computed(() => getPlacesServiceCall.data.value?.map((x) => ({ lab
 const promoters = computed(() => getPromotersServiceCall.data.value?.map((x) => ({ label: x.title, value: x.id, parent: x.categoryName })))
 const halls = computed(() => getHallsServiceCall.data.value?.map((x) => ({ label: x.title, value: x.id, parent: places.value.find((y) => y.value === x.placeId)?.title })))
 
-function setTicket(event, eventId) {
-    console.log(event)
+async function setTicket(event, eventId) {
+    if (event.ctrlKey) return
+
     const regex = /f[0-9]{1,3}_r[0-9]{1,3}_c[0-9]{1,9}/gm
-    if (event.target.id.match(regex) === null) return;
-    console.log(event)
+    if (event.target.id.match(regex) === null) return
 
-    console.log(values.events[`${eventId}`].lock,event.target,event.target.getAttribute("tid"));
-    if(!event.target.getAttribute("tid"))
-        return;
+    if (!event.target.getAttribute('tid')) return
 
-console.log(values.events[`${eventId}`].lock);
+    if (values.events[`${eventId}`].lock && values.events[`${eventId}`].price) {
+        if (!priceClassColor[eventId][values.events[`${eventId}`].price])
+            priceClassColor[eventId][`${values.events[`${eventId}`].price}`] = await randomColor({
+                luminosity: 'bright',
+                format: 'rgb'
+            })
 
-    if(values.events[`${eventId}`].lock){
-        const floorSeatId = event.target.getAttribute("tid");
-        console.log(styles);
-        event.target.classList.remove(...Object.values(styles));
-        event.target.classList.add(styles["test"]);
-        let index = values.events[`${eventId}`].SeatsInfo.Items.findIndex(item=>item.id===floorSeatId);
-        setFieldValue('events.' + eventId + '.SeatsInfo.Items.'+index+".price",values.events[`${eventId}`].price);
-        console.log(values.events[`${eventId}`].price);
+        //const floorSeatId =await  event.target.getAttribute('tid')
+        //let index = await values.events[`${eventId}`].SeatsInfo.Items.findIndex((item) =>{ return  item.floorSeatId === floorSeatId; })
+        let index= event.target.getAttribute('tindex');
+        console.log(values);
+        try{
+        await setFieldValue('events.' + eventId + '.SeatsInfo.Items.' + index + '.price', values.events[`${eventId}`].price);
+        event.target.classList.remove(...Object.values(styles))
+        event.target.style.fill = priceClassColor[eventId][values.events[`${eventId}`].price]
+        }catch(r){
+            console.log(r);
+        }
+
+  
     }
-    if(values.events[`${eventId}`].cleaner){
-        const floorSeatId = event.target.getAttribute("tid");
-        console.log(styles);
-        event.target.classList.remove(...Object.values(styles));
-        event.target.classList.add(styles["test"]);
-        let index = values.events[`${eventId}`].SeatsInfo.Items.findIndex(item=>item.id===floorSeatId);
-        setFieldValue('events.' + eventId + '.SeatsInfo.Items.'+index+".price",0);
-        console.log(values.events[`${eventId}`].price);
-    }
+    if (values.events[`${eventId}`].cleaner) {
+       // const floorSeatId =await event.target.getAttribute('tid')
 
-    
+        event.target.classList.remove(...Object.values(styles))
+        event.target.classList.add(styles['recongnized'])
+        event.target.style.fill = 'unset'
+        //let index = await values.events[`${eventId}`].SeatsInfo.Items.findIndex((item) => item.floorSeatId === floorSeatId)
+        let index= event.target.getAttribute('tindex');
+        await setFieldValue('events.' + eventId + '.SeatsInfo.Items.' + index + '.price', 0)
+    }
 }
+
+const priceClassColor = reactive({})
 </script>
 
 <template>
     <div>
-        <div class="sticky top-0" style="z-index: 1000">
-            <div class="!bg-white h-fit">
-                <Splitter v-if="!hallId" border-class=" border-black " title="کنسرت جدید" title-class="text-black" type="middle" />
-                <Splitter v-else border-class=" border-black " title="ویرایش یک سالن برگزاری" title-class="text-black" type="middle" />
+        <div class="sticky top-0  h-fit z-40">
+            <div class="relative ">
+                <div class="absolute top-0 w-full ">
+                <div class=" h-fit">
+                    <div class="w-full !bg-white">
+                        <Splitter v-if="!hallId" border-class=" border-black " title="کنسرت جدید" title-class="text-black" type="middle" />
+                        <Splitter v-else border-class=" border-black " title="ویرایش یک سالن برگزاری" title-class="text-black" type="middle" />
+                    </div>
+                </div>
+                <div class="my-2 mx-1 flex flex-row-reverse">
+                    <button class="items-center px-4 py-2 w-fit border border-transparent rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" @click="router.push({ name: 'AllConcerts' })">
+                        <CiCircleChevLeft class="scale-125 font-bold" />
+                    </button>
+                </div>
             </div>
-            <div class="my-2 mx-1 flex flex-row-reverse">
-                <button class="items-center px-4 py-2 w-fit border border-transparent rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" @click="router.push({ name: 'AllConcerts' })">
-                    <CiCircleChevLeft class="scale-125 font-bold" />
-                </button>
             </div>
         </div>
 
@@ -559,22 +569,28 @@ console.log(values.events[`${eventId}`].lock);
                                 <div class="text-right"><span class="border-b-2 border-gray-200">تعیین بلیت‌های رویداد</span></div>
                                 <div class="grid grid-cols-4 my-2 mx-6 p-2 rounded-md border-2 border-gray-300 relative">
                                     <span class="block text-center bg-gray-50 col-span-full">ابزار</span>
-                                    <div class=" col-span-2 mt-1 flex justify-around">
+                                    <div class="col-span-2 mt-1 flex justify-around">
                                         <label class="block text-xs w-fit text-nowrap font-medium text-gray-700 leading-10">قیمت :</label>
                                         <Field v-slot="{ field }" :name="`events[${id}].price`">
-                                            <input type="number" :disabled="values.events[id].cleaner"  class=" py-0.5 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" v-bind="field" />
+                                            <input type="number" :disabled="values.events[id].cleaner" class="py-0.5 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" v-bind="field" />
                                         </Field>
                                     </div>
                                     <div class="col-span-1 px-4 mt-1 flex justify-around items-center select-none">
                                         <label class="block text-xs font-medium text-gray-700 text-nowrap">پاک کن:</label>
                                         <Field v-slot="{ field, value }" type="checkbox" :name="`events[${id}].cleaner`" :value="true" :unchecked-value="false">
-                                            <span  :class="{'strikethrough-v2':!field.checked}" @click.prevent="()=>{
-                                                if(!field.checked)
-                                                    setFieldValue(`events[${id}].price`, null);
-                                                
-                                                setFieldValue(`events[${id}].cleaner`, !field.checked);
-                                                }" class="text-[1.5em] cursor-pointer">🧹</span>
-                                         
+                                            <span
+                                                :class="{ 'strikethrough-v2': !field.checked }"
+                                                @click.prevent="
+                                                    () => {
+                                                        if (!field.checked) setFieldValue(`events[${id}].price`, null)
+
+                                                        setFieldValue(`events[${id}].cleaner`, !field.checked)
+                                                    }
+                                                "
+                                                class="text-[1.5em] cursor-pointer"
+                                                >🧹</span
+                                            >
+
                                             <input type="checkbox" v-bind="field" :value="true" class="w-4 h-4 mt-1 accent accent-blue-gray-800 hidden" />
                                         </Field>
                                     </div>
@@ -585,6 +601,24 @@ console.log(values.events[`${eventId}`].lock);
                                             <span v-else @click.prevent="setFieldValue(`events[${id}].lock`, true)" class="text-xl cursor-pointer">🔓</span>
                                             <input type="checkbox" v-bind="field" :value="true" class="w-4 h-4 mt-1 accent accent-blue-gray-800 hidden" />
                                         </Field>
+                                    </div>
+                                    <div class="col-span-full my-2 grid grid-cols-4 md:grid-cols-8 gap-1">
+                                        <button
+                                            v-for="(price, key) in Object.keys(priceClassColor[id] ?? {})"
+                                            :key="'price' + price"
+                                            class="align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-1 px-2 rounded-md border border-gray-900 text-gray-900 focus:ring focus:ring-gray-300 active:opacity-[0.85] flex items-center gap-3 justify-between"
+                                            :class="{ 'ring ring-gray-500 ring-1': price == values.events[id].price }"
+                                            @click.prevent="
+                                                () => {
+                                                    setFieldValue(`events.${id}.cleaner`, false)
+                                                    setFieldValue(`events.${id}.price`, Number(price))
+                                                }
+                                            "
+                                            type="button"
+                                        >
+                                            <div class="w-4 h-4 rounded-full" :style="{ backgroundColor: priceClassColor[id][price] }"></div>
+                                            <div>{{ price }}</div>
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="w-full bg-gray-50 shadow-inner sm:px-0 rounded-md">
@@ -600,16 +634,22 @@ console.log(values.events[`${eventId}`].lock);
                                         <TabPanels class="mt-2">
                                             <TabPanel :unmount="false" v-for="(floor, idx) in getHallsServiceCall.data.value.find((x) => x.id == filed.value.hallId).floorInfoDtos" :key="'eventMap' + id + idx" :class="[' rounded-md p-3 max-h-[500px] min-h-[500px] overflow-auto']">
                                                 <div :id="'mapElm' + idx">
-                                                    <div :id="`event_${id}_floor_${idx}`" class="!cursor-crosshair" @click.prevent="() => {}" :ref="(el) => setupTippy(el)"  v-html="seatMaps[`event_${id}_floor_${idx}`] ?? ''"></div>
+                                                    <div :id="`event_${id}_floor_${idx}`" class="!cursor-crosshair" @click.prevent="() => {}" :ref="(el) => setupTippy(el)" v-html="seatMaps[`event_${id}_floor_${idx}`] ?? ''"></div>
                                                     <div class="flex justify-center">
                                                         <div>
-                                                            <button type="button" class="btn btn-sm bg-green-300 btnZoomIn text-base"><PxZoomIn /></button>
+                                                            <button type="button" class="btn btn-sm bg-green-300 btnZoomIn text-base">
+                                                                <PxZoomIn />
+                                                            </button>
                                                         </div>
                                                         <div>
-                                                            <button type="button" class="btn btn-sm bg-green-300 btnZoomReset text-base"><FlFilledZoomFit /></button>
+                                                            <button type="button" class="btn btn-sm bg-green-300 btnZoomReset text-base">
+                                                                <FlFilledZoomFit />
+                                                            </button>
                                                         </div>
                                                         <div>
-                                                            <button type="button" class="btn btn-sm bg-green-300 btnZoomOut text-base"><PxZoomOut /></button>
+                                                            <button type="button" class="btn btn-sm bg-green-300 btnZoomOut text-base">
+                                                                <PxZoomOut />
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -651,6 +691,7 @@ console.log(values.events[`${eventId}`].lock);
                                         class="btn h-fit text-gray-50 bg-green-600 rounded-lg w-fit text-nowrap py-2.5 self-center"
                                         @click.prevent="
                                             () => {
+                                                priceClassColor[fields.length === 0 ? fields.length : fields.length - 1] = {}
                                                 push({ ...eventFields, hallId: tempHallId })
                                                 tempHallId = null
                                             }
@@ -691,19 +732,18 @@ console.log(values.events[`${eventId}`].lock);
     @apply !text-gray-50 !bg-info shadow-md;
 }
 
-
 .strikethrough-v2 {
-  position: relative;
+    position: relative;
 }
+
 .strikethrough-v2:before {
-  position: absolute;
-  content: "";
-  left: 0;
-  top: 33%;
-  right: 0;
-  border-top: 6px solid;
-  border-color: rgba(237, 16, 16, 0.6);
-  
+    position: absolute;
+    content: '';
+    left: 0;
+    top: 33%;
+    right: 0;
+    border-top: 6px solid;
+    border-color: rgba(237, 16, 16, 0.6);
 }
 
 .tab {
@@ -753,9 +793,5 @@ console.log(values.events[`${eventId}`].lock);
 
 .not-recongnized {
     fill: red !important;
-}
-
-.actived{
-    fill : blue !important;
 }
 </style>
