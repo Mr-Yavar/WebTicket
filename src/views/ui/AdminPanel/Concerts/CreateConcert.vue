@@ -19,6 +19,7 @@ import vueSelectUmd from 'vue-select'
 import { sendRequest, getFile } from '@/services/service'
 import tippy from 'tippy.js'
 import Panzoom from '@panzoom/panzoom'
+
 const router = useRouter()
 const route = useRoute()
 const placeId = !route.params.id ? null : route.params.id
@@ -43,7 +44,14 @@ const eventFields = {
     endSaleDate: new Date(),
     executionDate: new Date(),
     Note: '',
-    SeatsInfo: []
+    SeatsInfo: {
+        ItemTitle: '',
+        ItemDescription: '',
+        Items: []
+    },
+    lock: false,
+    price: 0,
+    cleaner : false
 }
 const { mutate } = useMutation({
     mutationKey: ['CU/Places'],
@@ -143,6 +151,8 @@ const styles = useCssModule('map')
 
 const seatMapErrors = reactive({})
 const seatMapMessages = reactive({})
+
+const seatMaps = reactive({})
 const getCategoryServiceCall = useQuery({
     queryKey: ['/api/BaseInfo/GetCategories'],
     queryFn: ({ queryKey }) =>
@@ -200,9 +210,9 @@ watch(concertPlace, () => {
     tempHallId.value = null
 })
 
-function showSeatMap(seatMap_url, floorSeats, key, idx) {
-  
-    
+function showSeatMap(seatMap_url, floorSeats, key, idx, EventId) {
+    if (document.querySelector('#event_' + EventId + '_' + key + '_' + idx + ' svg')) return
+
     var reader = new FileReader()
     reader.onload = function (e) {
         var svgData = e.target.result
@@ -216,7 +226,7 @@ function showSeatMap(seatMap_url, floorSeats, key, idx) {
         })
 
         CriticalIds.forEach((tagId) => {
-            let newId = tagId + '_' + idx
+            let newId = tagId + '_' + EventId + '_' + +idx
             tempDoc.querySelector('svg').innerHTML = tempDoc.querySelector('svg').innerHTML.replaceAll('id="' + tagId + '"', 'id="' + newId + '"')
             tempDoc.querySelector('svg').innerHTML = tempDoc.querySelector('svg').innerHTML.replaceAll('#' + tagId, '#' + newId)
         })
@@ -224,18 +234,21 @@ function showSeatMap(seatMap_url, floorSeats, key, idx) {
         floorSeats.forEach((seat) => {
             let seatElem = tempDoc.querySelector(`*[id="${seat.name}"]`)
             seatElem?.setAttribute('tid', seat.floorSeatId)
+            seatElem?.setAttribute('eventIndex', EventId)
+
             seatElem?.classList?.add(styles['recongnized'])
         })
 
-        document.querySelector('#' + key + '_' + idx).innerHTML = tempDoc.querySelector('svg')?.outerHTML ?? ''
-        console.log(document);
-        try{
-        panZoomInit(document.querySelector('#' + key + '_' + idx), idx);
-        }catch(err){
-                console.log(err);
+        seatMaps['event_' + EventId + '_' + key + '_' + idx] = tempDoc.querySelector('svg')?.outerHTML ?? ''
+        console.log(document)
+        try {
+            panZoomInit(document.querySelector('#event_' + EventId + '_' + key + '_' + idx), idx)
+        } catch (err) {
+            console.log(err)
         }
-        setupTippy(document.querySelector('#' + key + '_' + idx));
-        setFieldValue(key + '.' + idx + '.seatsInfo.items', floorSeats)
+
+        let pValue = values?.events[EventId]?.SeatsInfo?.Items
+        setFieldValue('events.' + EventId + '.SeatsInfo.Items', [...(pValue ? pValue : []), ...floorSeats])
     }
 
     getFile({
@@ -244,8 +257,8 @@ function showSeatMap(seatMap_url, floorSeats, key, idx) {
         method: 'GET'
     }).then((file) => {
         reader.readAsText(file)
-    });
-    return "monted";
+    })
+    return null
 }
 function panZoomInit(map, index) {
     if (!map || !document.getElementById(map.id)) return
@@ -260,7 +273,6 @@ function panZoomInit(map, index) {
     pzoom.pan(10, 10)
     pzoom.zoom(1, { animate: true })
 
-  
     // Panning and pinch zooming are bound automatically (unless disablePan is true).
     // There are several available methods for zooming
     // that can be bound on button clicks or mousewheel.
@@ -272,21 +284,20 @@ function panZoomInit(map, index) {
         .addEventListener('click', pzoom.zoomOut)
     map.closest('#mapElm' + index).addEventListener('wheel', pzoom.zoomWithWheel)
     map.setAttribute('setup', 'true')
-
 }
-function setupTippy(map){
-    if(!map || !document.getElementById(map.id))
-    return;
+function setupTippy(map) {
+    if (!map || !document.getElementById(map.id)) return
+
+    if (!document.getElementById(map.id).querySelector('svg')) return
 
     if (map.getAttribute('setupTippy')) return
     map.setAttribute('setupTippy', 'true')
 
     map.querySelectorAll(`*[id^="f"]`).forEach((item) => {
-      
         tippy(item, {
-          
             onTrigger(instance, event) {
-                console.log(item);
+                if(!event.target.getAttribute('eventIndex'))
+                    setTicket(event,Number(event.target.getAttribute('eventIndex')))
                 instance.setContent(`محتواها`)
             }
         })
@@ -335,6 +346,40 @@ const categories = computed(() => getCategoryServiceCall.data.value?.filter((x) 
 const places = computed(() => getPlacesServiceCall.data.value?.map((x) => ({ label: x.title, value: x.id, parent: x.city })))
 const promoters = computed(() => getPromotersServiceCall.data.value?.map((x) => ({ label: x.title, value: x.id, parent: x.categoryName })))
 const halls = computed(() => getHallsServiceCall.data.value?.map((x) => ({ label: x.title, value: x.id, parent: places.value.find((y) => y.value === x.placeId)?.title })))
+
+function setTicket(event, eventId) {
+    console.log(event)
+    const regex = /f[0-9]{1,3}_r[0-9]{1,3}_c[0-9]{1,9}/gm
+    if (event.target.id.match(regex) === null) return;
+    console.log(event)
+
+    console.log(values.events[`${eventId}`].lock,event.target,event.target.getAttribute("tid"));
+    if(!event.target.getAttribute("tid"))
+        return;
+
+console.log(values.events[`${eventId}`].lock);
+
+    if(values.events[`${eventId}`].lock){
+        const floorSeatId = event.target.getAttribute("tid");
+        console.log(styles);
+        event.target.classList.remove(...Object.values(styles));
+        event.target.classList.add(styles["test"]);
+        let index = values.events[`${eventId}`].SeatsInfo.Items.findIndex(item=>item.id===floorSeatId);
+        setFieldValue('events.' + eventId + '.SeatsInfo.Items.'+index+".price",values.events[`${eventId}`].price);
+        console.log(values.events[`${eventId}`].price);
+    }
+    if(values.events[`${eventId}`].cleaner){
+        const floorSeatId = event.target.getAttribute("tid");
+        console.log(styles);
+        event.target.classList.remove(...Object.values(styles));
+        event.target.classList.add(styles["test"]);
+        let index = values.events[`${eventId}`].SeatsInfo.Items.findIndex(item=>item.id===floorSeatId);
+        setFieldValue('events.' + eventId + '.SeatsInfo.Items.'+index+".price",0);
+        console.log(values.events[`${eventId}`].price);
+    }
+
+    
+}
 </script>
 
 <template>
@@ -509,11 +554,42 @@ const halls = computed(() => getHallsServiceCall.data.value?.map((x) => ({ label
                                     <span>{{ halls.find((x) => x.value === filed.value.hallId)?.label }}</span>
                                 </div>
                             </div>
-                            <div class="col-start-2 col-span-6 mt-1">
-                                <div class="text-center">طبقات</div>
+
+                            <div class="col-start-2 col-span-6 mt-2">
+                                <div class="text-right"><span class="border-b-2 border-gray-200">تعیین بلیت‌های رویداد</span></div>
+                                <div class="grid grid-cols-4 my-2 mx-6 p-2 rounded-md border-2 border-gray-300 relative">
+                                    <span class="block text-center bg-gray-50 col-span-full">ابزار</span>
+                                    <div class=" col-span-2 mt-1 flex justify-around">
+                                        <label class="block text-xs w-fit text-nowrap font-medium text-gray-700 leading-10">قیمت :</label>
+                                        <Field v-slot="{ field }" :name="`events[${id}].price`">
+                                            <input type="number" :disabled="values.events[id].cleaner"  class=" py-0.5 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" v-bind="field" />
+                                        </Field>
+                                    </div>
+                                    <div class="col-span-1 px-4 mt-1 flex justify-around items-center select-none">
+                                        <label class="block text-xs font-medium text-gray-700 text-nowrap">پاک کن:</label>
+                                        <Field v-slot="{ field, value }" type="checkbox" :name="`events[${id}].cleaner`" :value="true" :unchecked-value="false">
+                                            <span  :class="{'strikethrough-v2':!field.checked}" @click.prevent="()=>{
+                                                if(!field.checked)
+                                                    setFieldValue(`events[${id}].price`, null);
+                                                
+                                                setFieldValue(`events[${id}].cleaner`, !field.checked);
+                                                }" class="text-[1.5em] cursor-pointer">🧹</span>
+                                         
+                                            <input type="checkbox" v-bind="field" :value="true" class="w-4 h-4 mt-1 accent accent-blue-gray-800 hidden" />
+                                        </Field>
+                                    </div>
+                                    <div class="col-span-1 px-4 mt-1 flex justify-around items-center select-none">
+                                        <label class="block text-xs font-medium text-gray-700 text-nowrap">قفل اشاره گر:</label>
+                                        <Field v-slot="{ field, value }" type="checkbox" :name="`events[${id}].lock`" :value="true" :unchecked-value="false">
+                                            <span v-if="field.checked" @click.prevent="setFieldValue(`events[${id}].lock`, false)" class="text-xl cursor-pointer">🔒</span>
+                                            <span v-else @click.prevent="setFieldValue(`events[${id}].lock`, true)" class="text-xl cursor-pointer">🔓</span>
+                                            <input type="checkbox" v-bind="field" :value="true" class="w-4 h-4 mt-1 accent accent-blue-gray-800 hidden" />
+                                        </Field>
+                                    </div>
+                                </div>
                                 <div class="w-full bg-gray-50 shadow-inner sm:px-0 rounded-md">
                                     <TabGroup :default-index="0">
-                                        <TabList class="flex !justify-between rounded-xl bg-blue-900/20 p-1" >
+                                        <TabList class="flex !justify-between rounded-xl bg-blue-900/20 p-1">
                                             <Tab v-for="(floor, idx) in getHallsServiceCall.data.value.find((x) => x.id == filed.value.hallId).floorInfoDtos" as="template" :key="floor.title + idx" v-slot="{ selected }">
                                                 <button :class="['w-full rounded-lg py-2.5 text-sm font-medium leading-5', selected ? 'dark:!text-white !text-white !bg-indigo-400 shadow' : 'text-gray-900 hover:bg-indigo-200 hover:text-black']">
                                                     {{ floor.title }}
@@ -522,10 +598,9 @@ const halls = computed(() => getHallsServiceCall.data.value?.map((x) => ({ label
                                         </TabList>
 
                                         <TabPanels class="mt-2">
-
-                                                <TabPanel :unmount="false"  v-for="(floor, idx) in getHallsServiceCall.data.value.find((x) => x.id == filed.value.hallId).floorInfoDtos" :key="'eventMap'+id+idx"  :class="[' rounded-md p-3 max-h-[500px] min-h-[500px] overflow-auto']">
+                                            <TabPanel :unmount="false" v-for="(floor, idx) in getHallsServiceCall.data.value.find((x) => x.id == filed.value.hallId).floorInfoDtos" :key="'eventMap' + id + idx" :class="[' rounded-md p-3 max-h-[500px] min-h-[500px] overflow-auto']">
                                                 <div :id="'mapElm' + idx">
-                                                    <div :id="`floor_${idx}`" @click.prevent="(()=>{})"></div>
+                                                    <div :id="`event_${id}_floor_${idx}`" class="!cursor-crosshair" @click.prevent="() => {}" :ref="(el) => setupTippy(el)"  v-html="seatMaps[`event_${id}_floor_${idx}`] ?? ''"></div>
                                                     <div class="flex justify-center">
                                                         <div>
                                                             <button type="button" class="btn btn-sm bg-green-300 btnZoomIn text-base"><PxZoomIn /></button>
@@ -538,17 +613,13 @@ const halls = computed(() => getHallsServiceCall.data.value?.map((x) => ({ label
                                                         </div>
                                                     </div>
                                                 </div>
-                                              
                                             </TabPanel>
-
-                                          
-                                       
                                         </TabPanels>
                                     </TabGroup>
                                     <!-- I load image by pure js-->
-                                   <template v-for="(floor, idx) in getHallsServiceCall.data.value.find((x) => x.id == filed.value.hallId).floorInfoDtos">
-                                        {{ showSeatMap(floor.seatMap_url, floor.seatsInfo.items, 'floor', idx) }}
-                                   </template>
+                                    <template v-for="(floor, idx) in getHallsServiceCall.data.value.find((x) => x.id == filed.value.hallId).floorInfoDtos">
+                                        {{ showSeatMap(floor.seatMap_url, floor.seatsInfo.items, 'floor', idx, id) }}
+                                    </template>
                                 </div>
                             </div>
                         </template>
@@ -619,8 +690,22 @@ const halls = computed(() => getHallsServiceCall.data.value?.map((x) => ({ label
 .vs__dropdown-menu li:hover {
     @apply !text-gray-50 !bg-info shadow-md;
 }
-</style>
-<style scoped>
+
+
+.strikethrough-v2 {
+  position: relative;
+}
+.strikethrough-v2:before {
+  position: absolute;
+  content: "";
+  left: 0;
+  top: 33%;
+  right: 0;
+  border-top: 6px solid;
+  border-color: rgba(237, 16, 16, 0.6);
+  
+}
+
 .tab {
     position: relative;
     grid-row-start: 1;
@@ -668,5 +753,9 @@ const halls = computed(() => getHallsServiceCall.data.value?.map((x) => ({ label
 
 .not-recongnized {
     fill: red !important;
+}
+
+.actived{
+    fill : blue !important;
 }
 </style>
