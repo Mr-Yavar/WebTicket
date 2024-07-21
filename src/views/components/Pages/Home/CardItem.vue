@@ -36,7 +36,7 @@
 
 
 import {Guid} from "@/config/helper.js";
-import {FILE_PROVIDER} from "@/config/appConfig.js";
+import {FILE_PROVIDER, FILE_PROVIDER2} from "@/config/appConfig.js";
 
 export default {
   name:"cardItem",
@@ -63,7 +63,7 @@ export default {
   },
   computed:{
     startDate(){return !this.concert.startDate  ? "" : new Date(this.concert?.startDate).toLocaleString('fa-ir',{ day:"2-digit",month:"long",weekday:"long"});}
-    ,cardImg(){return FILE_PROVIDER + this.concert?.img_Url}
+    ,cardImg(){return FILE_PROVIDER2 + encodeURI(this.concert.img_Url)}
 
   }
 

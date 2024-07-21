@@ -2,7 +2,7 @@
     <div>
         <div class="relative overflow-hidden rounded-lg mb-3">
             <div class="w-full event-cover bg-transparent">
-                <img class="h-fit w-full rounded-lg" :src="FILE_PROVIDER + concert?.poster" border="0" />
+                <img class="h-fit w-full rounded-lg" :src="FILE_PROVIDER2 + concert?.poster" border="0" />
                 <h1 class="bg-none bg-transparent rounded-md text-white font-bold absolute bottom-2 right-2 z-10">کنسرت {{ concert?.title }}</h1>
             </div>
         </div>
@@ -123,7 +123,7 @@ import { computed, onMounted, ref } from 'vue'
 import nmp_mapboxgl from '@neshan-maps-platform/mapbox-gl'
 import useTicketStore from '@/stores/Ticket.js'
 
-import { FILE_PROVIDER } from '@/config/appConfig.js'
+import { FILE_PROVIDER2 } from '@/config/appConfig.js'
 import useSeatMapStore from '@/stores/seatMap.js'
 
 const props = defineProps({
