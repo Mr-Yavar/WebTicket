@@ -226,7 +226,7 @@ function showSeatMap(seatMap_url, floorSeats, key, idx, EventId) {
             tempDoc.querySelector('svg').innerHTML = tempDoc.querySelector('svg').innerHTML.replaceAll('#' + tagId, '#' + newId)
         })
 
-        floorSeats.forEach((seat,index) => {
+        floorSeats.forEach((seat, index) => {
             let seatElem = tempDoc.querySelector(`*[id="${seat.name}"]`)
             seatElem?.setAttribute('tid', seat.floorSeatId)
             seatElem?.setAttribute('tIndex', index)
@@ -359,27 +359,21 @@ async function setTicket(event, eventId) {
 
         //const floorSeatId =await  event.target.getAttribute('tid')
         //let index = await values.events[`${eventId}`].SeatsInfo.Items.findIndex((item) =>{ return  item.floorSeatId === floorSeatId; })
-        let index= event.target.getAttribute('tindex');
-        console.log(values);
-        try{
-        await setFieldValue('events.' + eventId + '.SeatsInfo.Items.' + index + '.price', values.events[`${eventId}`].price);
+        let index = event.target.getAttribute('tindex')
+
+        await setFieldValue('events[' + eventId + '].SeatsInfo.Items[' + index + '].price', values.events[`${eventId}`].price)
         event.target.classList.remove(...Object.values(styles))
         event.target.style.fill = priceClassColor[eventId][values.events[`${eventId}`].price]
-        }catch(r){
-            console.log(r);
-        }
-
-  
     }
     if (values.events[`${eventId}`].cleaner) {
-       // const floorSeatId =await event.target.getAttribute('tid')
+        // const floorSeatId =await event.target.getAttribute('tid')
 
         event.target.classList.remove(...Object.values(styles))
         event.target.classList.add(styles['recongnized'])
         event.target.style.fill = 'unset'
         //let index = await values.events[`${eventId}`].SeatsInfo.Items.findIndex((item) => item.floorSeatId === floorSeatId)
-        let index= event.target.getAttribute('tindex');
-        await setFieldValue('events.' + eventId + '.SeatsInfo.Items.' + index + '.price', 0)
+        let index = event.target.getAttribute('tindex')
+        await setFieldValue('events[' + eventId + '].SeatsInfo.Items[' + index + '].price', 0)
     }
 }
 
@@ -388,21 +382,21 @@ const priceClassColor = reactive({})
 
 <template>
     <div>
-        <div class="sticky top-0  h-fit z-40">
-            <div class="relative ">
-                <div class="absolute top-0 w-full ">
-                <div class=" h-fit">
-                    <div class="w-full !bg-white">
-                        <Splitter v-if="!hallId" border-class=" border-black " title="کنسرت جدید" title-class="text-black" type="middle" />
-                        <Splitter v-else border-class=" border-black " title="ویرایش یک سالن برگزاری" title-class="text-black" type="middle" />
+        <div class="sticky top-0 z-40 h-fit">
+            <div class="">
+                <div class="w-full">
+                    <div class="h-fit">
+                        <div class="w-full !bg-white">
+                            <Splitter v-if="!hallId" border-class="border-black " title="کنسرت جدید" title-class="text-black" type="middle" />
+                            <Splitter v-else border-class="border-black " title="ویرایش یک سالن برگزاری" title-class="text-black" type="middle" />
+                        </div>
+                    </div>
+                    <div class="flex flex-row-reverse mx-1 my-2">
+                        <button class="items-center px-4 py-2 text-white bg-red-600 border border-transparent rounded-md shadow-sm w-fit hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" @click="router.push({ name: 'AllConcerts' })">
+                            <CiCircleChevLeft class="font-bold scale-125" />
+                        </button>
                     </div>
                 </div>
-                <div class="my-2 mx-1 flex flex-row-reverse">
-                    <button class="items-center px-4 py-2 w-fit border border-transparent rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" @click="router.push({ name: 'AllConcerts' })">
-                        <CiCircleChevLeft class="scale-125 font-bold" />
-                    </button>
-                </div>
-            </div>
             </div>
         </div>
 
@@ -522,60 +516,60 @@ const priceClassColor = reactive({})
                 </div>
                 <div class="col-span-full">
                     <div class="grid grid-cols-8">
-                        <div class="col-start-2 col-span-2">
+                        <div class="col-span-2 col-start-2">
                             <DateTimePicker />
                         </div>
 
                         <div class="col-span-full"></div>
                         <template v-for="(filed, id) in fields" :key="'event' + id">
-                            <div class="col-span-full my-2">
+                            <div class="my-2 col-span-full">
                                 <div class="flex items-center">
                                     <hr class="flex-grow border-t border-gray-300" />
-                                    <span class="px-3 text-gray-900"> <span @click.prevent="remove(id)" class="text-red-500 hover:animate-pulse text-base rounded-full p-1 inline">🗑️</span> رویداد شماره {{ id + 1 }} </span>
+                                    <span class="px-3 text-gray-900"> <span @click.prevent="remove(id)" class="inline p-1 text-base text-red-500 rounded-full hover:animate-pulse">🗑️</span> رویداد شماره {{ id + 1 }} </span>
 
                                     <hr class="flex-grow border-t border-gray-300" />
                                 </div>
                             </div>
-                            <div class="col-start-2 col-span-2">
+                            <div class="col-span-2 col-start-2">
                                 <label class="block text-sm font-medium text-gray-700">تاریخ شروع فروش</label>
                                 <Field :name="`events[${id}].startSaleDate`" v-slot="{ field }">
                                     <DateTimePicker v-bind="field" />
                                 </Field>
                             </div>
-                            <div class="col-start-4 col-span-2">
+                            <div class="col-span-2 col-start-4">
                                 <label class="block text-sm font-medium text-gray-700">تاریخ پایان فروش</label>
                                 <Field :name="`events[${id}].endSaleDate`" v-slot="{ field }">
                                     <DateTimePicker v-bind="field" />
                                 </Field>
                             </div>
-                            <div class="col-start-6 col-span-2">
+                            <div class="col-span-2 col-start-6">
                                 <label class="block text-sm font-medium text-gray-700">تاریخ اجرا</label>
                                 <Field :name="`events[${id}].executionDate`" v-slot="{ field }">
                                     <DateTimePicker v-bind="field" />
                                 </Field>
                             </div>
-                            <div class="col-start-2 col-span-2 mt-1">
+                            <div class="col-span-2 col-start-2 mt-1">
                                 <label class="block text-sm font-medium text-gray-700">نکته</label>
                                 <input class="mt-1 py-2 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                             </div>
-                            <div class="col-start-6 col-span-2 mt-1">
+                            <div class="col-span-2 col-start-6 mt-1">
                                 <label class="block text-sm font-medium text-gray-700">سالن برگزاری</label>
                                 <div class="mt-1 py-2 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                                     <span>{{ halls.find((x) => x.value === filed.value.hallId)?.label }}</span>
                                 </div>
                             </div>
 
-                            <div class="col-start-2 col-span-6 mt-2">
+                            <div class="col-span-6 col-start-2 mt-2">
                                 <div class="text-right"><span class="border-b-2 border-gray-200">تعیین بلیت‌های رویداد</span></div>
-                                <div class="grid grid-cols-4 my-2 mx-6 p-2 rounded-md border-2 border-gray-300 relative">
+                                <div class="relative grid grid-cols-4 p-2 mx-6 my-2 border-2 border-gray-300 rounded-md">
                                     <span class="block text-center bg-gray-50 col-span-full">ابزار</span>
-                                    <div class="col-span-2 mt-1 flex justify-around">
-                                        <label class="block text-xs w-fit text-nowrap font-medium text-gray-700 leading-10">قیمت :</label>
+                                    <div class="flex justify-around col-span-2 mt-1">
+                                        <label class="block text-xs font-medium leading-10 text-gray-700 w-fit text-nowrap">قیمت :</label>
                                         <Field v-slot="{ field }" :name="`events[${id}].price`">
                                             <input type="number" :disabled="values.events[id].cleaner" class="py-0.5 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" v-bind="field" />
                                         </Field>
                                     </div>
-                                    <div class="col-span-1 px-4 mt-1 flex justify-around items-center select-none">
+                                    <div class="flex items-center justify-around col-span-1 px-4 mt-1 select-none">
                                         <label class="block text-xs font-medium text-gray-700 text-nowrap">پاک کن:</label>
                                         <Field v-slot="{ field, value }" type="checkbox" :name="`events[${id}].cleaner`" :value="true" :unchecked-value="false">
                                             <span
@@ -591,18 +585,18 @@ const priceClassColor = reactive({})
                                                 >🧹</span
                                             >
 
-                                            <input type="checkbox" v-bind="field" :value="true" class="w-4 h-4 mt-1 accent accent-blue-gray-800 hidden" />
+                                            <input type="checkbox" v-bind="field" :value="true" class="hidden w-4 h-4 mt-1 accent accent-blue-gray-800" />
                                         </Field>
                                     </div>
-                                    <div class="col-span-1 px-4 mt-1 flex justify-around items-center select-none">
+                                    <div class="flex items-center justify-around col-span-1 px-4 mt-1 select-none">
                                         <label class="block text-xs font-medium text-gray-700 text-nowrap">قفل اشاره گر:</label>
                                         <Field v-slot="{ field, value }" type="checkbox" :name="`events[${id}].lock`" :value="true" :unchecked-value="false">
                                             <span v-if="field.checked" @click.prevent="setFieldValue(`events[${id}].lock`, false)" class="text-xl cursor-pointer">🔒</span>
                                             <span v-else @click.prevent="setFieldValue(`events[${id}].lock`, true)" class="text-xl cursor-pointer">🔓</span>
-                                            <input type="checkbox" v-bind="field" :value="true" class="w-4 h-4 mt-1 accent accent-blue-gray-800 hidden" />
+                                            <input type="checkbox" v-bind="field" :value="true" class="hidden w-4 h-4 mt-1 accent accent-blue-gray-800" />
                                         </Field>
                                     </div>
-                                    <div class="col-span-full my-2 grid grid-cols-4 md:grid-cols-8 gap-1">
+                                    <div class="grid gap-1 my-2 sm:grid-cols-2 md:grid-cols-4 col-span-full xl:grid-cols-8">
                                         <button
                                             v-for="(price, key) in Object.keys(priceClassColor[id] ?? {})"
                                             :key="'price' + price"
@@ -621,7 +615,7 @@ const priceClassColor = reactive({})
                                         </button>
                                     </div>
                                 </div>
-                                <div class="w-full bg-gray-50 shadow-inner sm:px-0 rounded-md">
+                                <div class="w-full rounded-md shadow-inner bg-gray-50 sm:px-0">
                                     <TabGroup :default-index="0">
                                         <TabList class="flex !justify-between rounded-xl bg-blue-900/20 p-1">
                                             <Tab v-for="(floor, idx) in getHallsServiceCall.data.value.find((x) => x.id == filed.value.hallId).floorInfoDtos" as="template" :key="floor.title + idx" v-slot="{ selected }">
@@ -637,17 +631,17 @@ const priceClassColor = reactive({})
                                                     <div :id="`event_${id}_floor_${idx}`" class="!cursor-crosshair" @click.prevent="() => {}" :ref="(el) => setupTippy(el)" v-html="seatMaps[`event_${id}_floor_${idx}`] ?? ''"></div>
                                                     <div class="flex justify-center">
                                                         <div>
-                                                            <button type="button" class="btn btn-sm bg-green-300 btnZoomIn text-base">
+                                                            <button type="button" class="text-base bg-green-300 btn btn-sm btnZoomIn">
                                                                 <PxZoomIn />
                                                             </button>
                                                         </div>
                                                         <div>
-                                                            <button type="button" class="btn btn-sm bg-green-300 btnZoomReset text-base">
+                                                            <button type="button" class="text-base bg-green-300 btn btn-sm btnZoomReset">
                                                                 <FlFilledZoomFit />
                                                             </button>
                                                         </div>
                                                         <div>
-                                                            <button type="button" class="btn btn-sm bg-green-300 btnZoomOut text-base">
+                                                            <button type="button" class="text-base bg-green-300 btn btn-sm btnZoomOut">
                                                                 <PxZoomOut />
                                                             </button>
                                                         </div>
@@ -663,7 +657,7 @@ const priceClassColor = reactive({})
                                 </div>
                             </div>
                         </template>
-                        <div class="col-span-full my-2">
+                        <div class="my-2 col-span-full">
                             <div class="flex items-center">
                                 <hr class="flex-grow border-t border-gray-300" />
                                 <span class="px-3 text-gray-500 flex w-fit grid grid-cols-3 w-[300px] gap-1">
@@ -709,12 +703,12 @@ const priceClassColor = reactive({})
 
                 <div class="col-span-2 col-start-4">
                     <button v-if="!hallId" class="good-btn" type="submit">ایجاد</button>
-                    <button v-else class="block mx-auto items-center px-4 py-2 w-fit border border-transparent rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500" type="submit">ویرایش</button>
+                    <button v-else class="items-center block px-4 py-2 mx-auto text-white bg-orange-600 border border-transparent rounded-md shadow-sm w-fit hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500" type="submit">ویرایش</button>
                 </div>
             </div>
         </form>
         <div :class="getHallServiceCall.isFetched || !getHallServiceCall.isLoading ? 'hidden' : ''">
-            <PrSpinner class="animate-spin mx-auto text-3xl mt-8" />
+            <PrSpinner class="mx-auto mt-8 text-3xl animate-spin" />
         </div>
     </div>
 </template>
