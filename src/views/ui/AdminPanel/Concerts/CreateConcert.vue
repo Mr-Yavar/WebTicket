@@ -26,18 +26,19 @@ const { resetForm, defineField, handleSubmit, values, setFieldValue } = useForm(
 
 const [concertTitle] = defineField('concert.title')
 const [concertDesc] = defineField('concert.description')
-const cocertCardImage = defineField('concert.image')
+const cocertCardImage = defineField('concert.image');
+
 const cocertPosterImage = defineField('concert.poster')
-const [concertCategory] = defineField('concert.catergory')
+const [concertCategory] = defineField('concert.category')
 const [concertPlace] = defineField('concert.place')
 const [concertPromoter] = defineField('concert.promoter')
 const { push, remove, fields } = useFieldArray('events')
 const eventFields = {
-    id: null,
+    EventId: undefined,
     hallId: null,
-    startSaleDate: new Date(),
-    endSaleDate: new Date(),
-    executionDate: new Date(),
+    StartSaleDate: new Date(),
+    EndSaleDate: new Date(),
+    ExecutionDate: new Date(),
     Note: '',
     SeatsInfo: {
         ItemTitle: '',
@@ -55,50 +56,48 @@ const { mutate } = useMutation({
 
 const onSubmit = handleSubmit(async (data) => {
     console.log(data)
-    return
+    
     const Data = {
-        ...data.hall,
+        Concertid : data.concert.id ?? null,
         Title: data.concert.title,
-        PlaceId: placeId,
-        Description: data.concert.description,
-        lng: Number(data.concert.lng),
-        lat: Number(data.concert.lat),
-        FloorInfoDtos: [
-            ...data.floors.map((x, index) => ({
-                floorId: x?.floorId,
-                Title: x.title,
-                DisplayOrder: index,
-                seatMap: x.seatMap,
-                SeatsInfo: { ItemTitle: x.seatsInfo.itemTitle, Items: [...x.seatsInfo.items] }
-            }))
-        ]
+        PlaceId: data.concert.place,
+        CategoryId : data.concert.category,
+        Note: data.concert.description,
+        PromoterId : data.concert.promoter,
+        Events :{
+            ItemTitle :'',
+            ItemDescription :'',
+            Items : [
+                ...data.events
+
+            ]
+        }
+       
+        
     }
-    console.log(Data)
+   
     const formData = new FormData()
     let offset = 0
     if (!!data.concert.image && data.concert.image?.length != 0) {
         formData.append('Files.Files[' + 0 + '].File', data.concert.image[0])
-        formData.append('Files.Files[' + 0 + '].Key', 'hall')
+        formData.append('Files.Files[' + 0 + '].Key', 'img_url')
         offset++
     }
-    Data.FloorInfoDtos.forEach((item, index) => {
-        if (!item.seatMap) return
-        formData.append('Files.Files[' + (index + offset) + '].File', item.seatMap)
-        formData.append('Files.Files[' + (index + offset) + '].Key', index)
 
-        delete item.seatMap
-    })
+    if (!!data.concert.poster && data.concert.poster?.length != 0) {
+        formData.append('Files.Files[' + offset + '].File', data.concert.poster[0])
+        formData.append('Files.Files[' + offset + '].Key', 'poster')
+        offset++
+    }
 
     if (!formData.has('Files.Files[0].File')) formData.append('Files.Files', null)
 
-    formData.append('Hall', JSON.stringify(Data))
+    formData.append('Concert', JSON.stringify(Data))
 
-    console.log(formData)
 
-    if (!hallId) {
-        mutate(
+    mutate(
             {
-                url: '/api/Place/CreateHall?api-version=1.0',
+                url: '/api/Manager/CreateConcert?api-version=1.0',
                 body: formData,
                 method: 'POST'
             },
@@ -117,6 +116,10 @@ const onSubmit = handleSubmit(async (data) => {
                 }
             }
         )
+
+    return;
+    if (!hallId) {
+     
     } else {
         mutate(
             {
@@ -377,7 +380,13 @@ async function setTicket(event, eventId) {
     }
 }
 
-const priceClassColor = reactive({})
+// به ازای هر رویداد در یک آبجکت به ازای هر قیمت رنگی رندوم ذخیره میشود
+const priceClassColor = reactive({});
+
+
+function setConcertDate(){
+
+}
 </script>
 
 <template>
@@ -413,7 +422,7 @@ const priceClassColor = reactive({})
                         type="file"
                         @change="
                             ($event) => {
-                                hallImage[0].value = $event.target.files
+                                cocertCardImage[0].value = $event.target.files
                             }
                         "
                     />
@@ -425,7 +434,7 @@ const priceClassColor = reactive({})
                         type="file"
                         @change="
                             ($event) => {
-                                hallImage[0].value = $event.target.files
+                                cocertPosterImage[0].value = $event.target.files
                             }
                         "
                     />
@@ -516,10 +525,6 @@ const priceClassColor = reactive({})
                 </div>
                 <div class="col-span-full">
                     <div class="grid grid-cols-8">
-                        <div class="col-span-2 col-start-2">
-                            <DateTimePicker />
-                        </div>
-
                         <div class="col-span-full"></div>
                         <template v-for="(filed, id) in fields" :key="'event' + id">
                             <div class="my-2 col-span-full">
@@ -532,19 +537,19 @@ const priceClassColor = reactive({})
                             </div>
                             <div class="col-span-2 col-start-2">
                                 <label class="block text-sm font-medium text-gray-700">تاریخ شروع فروش</label>
-                                <Field :name="`events[${id}].startSaleDate`" v-slot="{ field }">
+                                <Field :name="`events[${id}].StartSaleDate`" v-slot="{ field }" @change="setConcertDate($event)">
                                     <DateTimePicker v-bind="field" />
                                 </Field>
                             </div>
                             <div class="col-span-2 col-start-4">
                                 <label class="block text-sm font-medium text-gray-700">تاریخ پایان فروش</label>
-                                <Field :name="`events[${id}].endSaleDate`" v-slot="{ field }">
+                                <Field :name="`events[${id}].EndSaleDate`" v-slot="{ field }">
                                     <DateTimePicker v-bind="field" />
                                 </Field>
                             </div>
                             <div class="col-span-2 col-start-6">
                                 <label class="block text-sm font-medium text-gray-700">تاریخ اجرا</label>
-                                <Field :name="`events[${id}].executionDate`" v-slot="{ field }">
+                                <Field :name="`events[${id}].ExecutionDate`" v-slot="{ field }">
                                     <DateTimePicker v-bind="field" />
                                 </Field>
                             </div>
