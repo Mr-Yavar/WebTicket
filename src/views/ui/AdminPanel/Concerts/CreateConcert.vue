@@ -18,42 +18,36 @@ import randomColor from 'randomcolor'
 import tippy from 'tippy.js'
 import Panzoom from '@panzoom/panzoom'
 
-import dateHelper from "@/utils/dateHelper";
+import dateHelper from '@/utils/dateHelper'
 
 const dateOption = {
-year : "numeric",
-month: "2-digit",
-day : "2-digit",
-hour : "2-digit",
-minute : "2-digit",
-hour12 : false,
-
-};
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+}
 const router = useRouter()
 const route = useRoute()
-
-const placeId = !route.params.id ? null : route.params.id
-const hallId = !route.params.hallId ? null : route.params.hallId
-
+// تنظمیات فرم
 const { resetForm, defineField, handleSubmit, values, setFieldValue } = useForm({})
-
 const [concertTitle] = defineField('concert.title')
 const [concertDesc] = defineField('concert.description')
 const cocertCardImage = defineField('concert.image')
 const concertStartDate = defineField('concert.startdate')
-
 const cocertEndDate = defineField('concert.enddate')
 const cocertPosterImage = defineField('concert.poster')
 const [concertCategory] = defineField('concert.category')
 const [concertPlace] = defineField('concert.place')
 const [concertPromoter] = defineField('concert.promoter')
-const { push, remove, fields } = useFieldArray('events')
+const { push, remove, fields, replace } = useFieldArray('events')
 const eventFields = {
     EventId: undefined,
     hallId: null,
-    StartSaleDate: new Date().toLocaleString('fa-ir',dateOption).replace(',',''),
-    EndSaleDate: new Date().toLocaleString('fa-ir',dateOption).replace(',',''),
-    ExecutionDate: new Date().toLocaleString('fa-ir',dateOption).replace(',',''),
+    StartSaleDate: new Date().toJSON().replace('T', ' ').replace('Z', ''),
+    EndSaleDate: new Date().toJSON().replace('T', ' ').replace('Z', ''),
+    ExecutionDate: new Date().toJSON().replace('T', ' ').replace('Z', ''),
     Note: '',
     SeatsInfo: {
         ItemTitle: '',
@@ -64,14 +58,29 @@ const eventFields = {
     price: 0,
     cleaner: false
 }
+const concertId = !route.params.concertId ? null : route.params.concertId
+//console.log(route.params.concertId)
+const getConceretServiceCall = useQuery({
+    queryKey: ['/api/Manager/GetConcertWithDetails/', concertId],
+    queryFn: async ({ queryKey }) => {
+        //console.log(queryKey)
+        const data = await sendRequest({
+            url: queryKey.join(''),
+            method: 'GET'
+        })
+        return data
+    },
+    enabled: !!concertId
+})
+
 const { mutate } = useMutation({
     mutationKey: ['CU/Places'],
     mutationFn: CRPlacesService
 })
 
 const onSubmit = handleSubmit(async (data) => {
-   console.log(data)
-    console.log(dateHelper.dateToISO(data.concert.startdate));
+    //console.log(data)
+    // console.log(dateHelper.dateToISO(data.concert.startdate))
     const Data = {
         Concertid: data.concert.id ?? null,
         Title: data.concert.title,
@@ -79,19 +88,17 @@ const onSubmit = handleSubmit(async (data) => {
         CategoryId: data.concert.category,
         Note: data.concert.description,
         PromoterId: data.concert.promoter,
-        startDate  : dateHelper.dateToISO(data.concert?.startdate),
-       endDate  : dateHelper.dateToISO(data.concert?.enddate),
+        startDate: dateHelper.dateToISO(data.concert?.startdate),
+        endDate: dateHelper.dateToISO(data.concert?.enddate),
 
         Events: {
             ItemTitle: '',
             ItemDescription: '',
-            Items: [...data.events.map(event=>{
-                return {...event,
-                    StartSaleDate :dateHelper.persianStringToISO(event.StartSaleDate),
-                    EndSaleDate :dateHelper.persianStringToISO(event.EndSaleDate),
-                    ExecutionDate :dateHelper.persianStringToISO(event.ExecutionDate),
-                };
-            })]
+            Items: [
+                ...data.events.map((event) => {
+                    return { ...event, StartSaleDate: dateHelper.persianStringToISO(event.StartSaleDate), EndSaleDate: dateHelper.persianStringToISO(event.EndSaleDate), ExecutionDate: dateHelper.persianStringToISO(event.ExecutionDate) }
+                })
+            ]
         }
     }
 
@@ -113,7 +120,6 @@ const onSubmit = handleSubmit(async (data) => {
 
     formData.append('Concert', JSON.stringify(Data))
 
- 
     mutate(
         {
             url: '/api/Manager/CreateConcert?api-version=1.0',
@@ -165,8 +171,6 @@ const onSubmit = handleSubmit(async (data) => {
 
 const styles = useCssModule('map')
 
-const seatMapErrors = reactive({})
-const seatMapMessages = reactive({})
 // SVG مپ های لود شده داخل این قرار میگیره
 const seatMaps = reactive({})
 const getCategoryServiceCall = useQuery({
@@ -196,12 +200,11 @@ const getPromotersServiceCall = useQuery({
         }),
     enabled: true
 })
-
 const placeSelected = computed(() => !!concertPlace.value)
 const getHallsServiceCall = useQuery({
     queryKey: ['/api/BaseInfo/GetHallsAndFloorsByPlaceId?Id=', concertPlace],
     queryFn: ({ queryKey }) => {
-        console.log(queryKey)
+        //console.log(queryKey)
         return sendRequest({
             url: queryKey.join(''),
             method: 'GET'
@@ -210,17 +213,12 @@ const getHallsServiceCall = useQuery({
     enabled: placeSelected
 })
 
-const getHallServiceCall = useQuery({
-    queryKey: ['/api/Place/GetHallById', hallId],
-    queryFn: () => GetHallService(hallId),
-    enabled: !!hallId
-})
-
 watch(concertPlace, () => {
+    if (concertId) return
     if (fields.value.length !== 0) {
         for (let index = 0; index < fields.value.length + 1; index++) {
             remove(index)
-            console.log(remove(index))
+            // console.log(remove(index))
         }
     }
     tempHallId.value = null
@@ -235,6 +233,19 @@ function showSeatMap(seatMap_url, floorSeats, key, idx, EventId) {
         var parser = new DOMParser()
         var tempDoc = parser.parseFromString(svgData, 'image/svg+xml')
 
+        const pValue = values?.events[EventId]?.SeatsInfo?.Items
+
+        const AllSeats = floorSeats.map((seat) => {
+            
+            let price = pValue.find((ticket) => ticket.floorSeatId === seat.floorSeatId)?.price
+            if (price) {
+                const temp = {...seat};
+                temp.price = price;
+                return temp;
+            }
+            return seat
+        })
+
         let CriticalIds = []
         tempDoc.querySelector('svg').classList.add('w-full', 'mx-auto')
         tempDoc.querySelectorAll('defs').forEach((def) => {
@@ -247,25 +258,36 @@ function showSeatMap(seatMap_url, floorSeats, key, idx, EventId) {
             tempDoc.querySelector('svg').innerHTML = tempDoc.querySelector('svg').innerHTML.replaceAll('#' + tagId, '#' + newId)
         })
 
-        floorSeats.forEach((seat, index) => {
+        AllSeats.forEach((seat, index) => {
             let seatElem = tempDoc.querySelector(`*[id="${seat.name}"]`)
             seatElem?.setAttribute('tid', seat.floorSeatId)
             seatElem?.setAttribute('tIndex', index)
             seatElem?.setAttribute('eventIndex', EventId)
 
-            seatElem?.classList?.add(styles['recongnized'])
+            if (seat.price > 0) {
+                if (!priceClassColor[EventId]) priceClassColor[EventId] = {}
+
+                if (!priceClassColor[EventId][seat.price])
+                    priceClassColor[EventId][`${seat.price}`] = randomColor({
+                        luminosity: 'bright',
+                        format: 'rgb'
+                    })
+
+                seatElem.classList.remove(...Object.values(styles))
+                seatElem.style.fill = priceClassColor[EventId][seat.price]
+            } else seatElem?.classList?.add(styles['recongnized'])
         })
 
         seatMaps['event_' + EventId + '_' + key + '_' + idx] = tempDoc.querySelector('svg')?.outerHTML ?? ''
-        console.log(document)
+
         try {
             panZoomInit(document.querySelector('#event_' + EventId + '_' + key + '_' + idx), idx)
         } catch (err) {
-            console.log(err)
+            //console.log(err)
         }
 
-        let pValue = values?.events[EventId]?.SeatsInfo?.Items
-        setFieldValue('events.' + EventId + '.SeatsInfo.Items', [...(pValue ? pValue : []), ...floorSeats])
+        let temp = AllSeats.filter((x) => !pValue.find((y) => x.floorSeatId == y.floorSeatId))
+        setFieldValue('events.' + EventId + '.SeatsInfo.Items', [...(pValue ? pValue : []), ...temp])
     }
 
     getFile({
@@ -319,44 +341,7 @@ function setupTippy(map) {
         })
     })
 }
-watch([getHallServiceCall.data, getHallServiceCall.dataUpdatedAt], async () => {
-    if (!getHallServiceCall.data.value && !hallId && !getHallServiceCall.isFetched) return
-    const data = getHallServiceCall.data.value
-    const formData = {
-        hall: {
-            title: data?.title,
-            id: data.id,
-            lat: data.lat,
-            lng: data.lng,
-            description: data.description
-        },
-        floors: [...data.floorInfoDtos]
-    }
 
-    await resetForm({ values: formData })
-
-    formData.floors.forEach((floor, index) => {
-        fetch(FILE_PROVIDER + '?fileName=' + floor.seatMap_url, {
-            method: 'GET'
-        })
-            .then((res) => {
-                return res.blob()
-            })
-            .then((res) => {
-                return res
-            })
-            .then((data) => {
-                ;(async function () {
-                    console.log(data)
-                })()
-
-                showSeatMap([data], 'floors', index)
-            })
-            .catch((e) => {
-                console.error(e)
-            })
-    })
-})
 const tempHallId = ref(null)
 const categories = computed(() => getCategoryServiceCall.data.value?.filter((x) => x.parentId != null)?.map((x) => ({ label: x.title, value: x.id, parent: getCategoryServiceCall.data.value.find((y) => y.id === x.parentId)?.title })))
 const places = computed(() => getPlacesServiceCall.data.value?.map((x) => ({ label: x.title, value: x.id, parent: x.city })))
@@ -402,15 +387,11 @@ async function setTicket(event, eventId) {
 const priceClassColor = reactive({})
 
 function setStartSaleEvent(e) {
-     
     if (!e) return
 
     let startDate = values.concert.startdate
 
     if (!startDate || e.valueOf() < startDate.valueOf()) setFieldValue('concert.startdate', e.toDate())
-
-
-
 }
 function setEndSaleEvent(e) {
     if (!e) return
@@ -420,8 +401,55 @@ function setEndSaleEvent(e) {
     if (!endDate || e.valueOf() > endDate.valueOf()) setFieldValue('concert.enddate', e.toDate())
 }
 
-function setExecEvent(e, eventId) {
-  
+function setExecEvent(e, eventId) {}
+
+watch([getConceretServiceCall.data], async () => {
+    //JSON.parse(JSON.stringify(getConceretServiceCall.data.value),toCamelCase));
+    setFieldValue('concert.place', getConceretServiceCall.data.value.placeId)
+
+    resetForm({
+        values: {
+            concert: {
+                title: getConceretServiceCall.data.value.title,
+                description: getConceretServiceCall.data.value.description,
+                startdate: new Date(getConceretServiceCall.data.value.startDate),
+                enddate: new Date(getConceretServiceCall.data.value.endDate),
+                category: getConceretServiceCall.data.value.categoryId,
+                place: getConceretServiceCall.data.value.placeId,
+                promoter: getConceretServiceCall.data.value.promoterId
+            },
+            events: [
+                ...getConceretServiceCall.data.value.events.items.map((event) => {
+                    let sDate = event.startSaleDate.replace('T', ' ')
+                    let eDate = event.endSaleDate.replace('T', ' ')
+                    let exDate = event.executionDate.replace('T', ' ')
+
+                    return {
+                        EventId: event.eventId,
+                        hallId: event.hallId,
+                        StartSaleDate: sDate,
+                        EndSaleDate: eDate,
+                        ExecutionDate: exDate,
+                        Note: '',
+                        SeatsInfo: {
+                            ItemTitle: '',
+                            ItemDescription: '',
+                            Items: [...event.seatsInfo.items.map((x) => ({ ...x }))]
+                        },
+                        lock: false,
+                        price: 0,
+                        cleaner: false
+                    }
+                })
+            ]
+        }
+    })
+});
+
+function addNewEvent(){
+    priceClassColor[fields.length === 0 ? fields.length : fields.length - 1] = {}
+                                                push({ ...eventFields, hallId: tempHallId.value })
+                                                tempHallId.value = null
 }
 </script>
 
@@ -432,7 +460,7 @@ function setExecEvent(e, eventId) {
                 <div class="w-full">
                     <div class="h-fit">
                         <div class="w-full !bg-white">
-                            <Splitter v-if="!hallId" border-class="border-black " title="کنسرت جدید" title-class="text-black" type="middle" />
+                            <Splitter v-if="!concertId" border-class="border-black " title="کنسرت جدید" title-class="text-black" type="middle" />
                             <Splitter v-else border-class="border-black " title="ویرایش یک سالن برگزاری" title-class="text-black" type="middle" />
                         </div>
                     </div>
@@ -445,7 +473,7 @@ function setExecEvent(e, eventId) {
             </div>
         </div>
 
-        <form @submit.prevent="onSubmit" :class="!getHallServiceCall.isFetched && getHallServiceCall.isLoading ? 'hidden' : ''">
+        <form @submit.prevent="onSubmit" :class="!getConceretServiceCall.isFetched && getConceretServiceCall.isLoading ? 'hidden' : ''">
             <div class="grid grid-cols-8 gap-2">
                 <div class="col-span-2 col-start-2">
                     <label class="block text-sm font-medium text-gray-700">نام</label>
@@ -487,6 +515,7 @@ function setExecEvent(e, eventId) {
                         "
                         label="label"
                         class="mt-1 py-1 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md style-chooser"
+                        :disabled="!!concertId"
                     >
                         <template #selected-option="{ label, parent }">
                             <div style="display: flex; align-items: baseline; padding: 0">
@@ -515,6 +544,7 @@ function setExecEvent(e, eventId) {
                         "
                         label="label"
                         class="mt-1 py-1 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md style-chooser"
+                        :disabled="!!concertId"
                     >
                         <template #selected-option="{ label, parent }">
                             <div style="display: flex; align-items: baseline; padding: 0">
@@ -562,31 +592,44 @@ function setExecEvent(e, eventId) {
                 <div class="col-span-full">
                     <div class="grid grid-cols-8">
                         <div class="col-span-full"></div>
+
                         <template v-for="(filed, id) in fields" :key="'event' + id">
                             <div class="my-2 col-span-full">
                                 <div class="flex items-center">
                                     <hr class="flex-grow border-t border-gray-300" />
-                                    <span class="px-3 text-gray-900"> <span @click.prevent="remove(id)" class="inline p-1 text-base text-red-500 rounded-full hover:animate-pulse">🗑️</span> رویداد شماره {{ id + 1 }} </span>
+                                    <span class="px-3 text-gray-900">
+                                        <span
+                                            @click.prevent="
+                                                () => {
+                                                    if (!filed.value.EventId) remove(id)
+                                                }
+                                            "
+                                            class="inline p-1 text-base text-red-500 rounded-full hover:animate-pulse relative"
+                                            :class="{ hidden: !!filed.value.EventId }"
+                                            >❌</span
+                                        >
+                                        <span :class="{ hidden: !filed.value.EventId }">🚯</span> رویداد شماره {{ id + 1 }}
+                                    </span>
 
                                     <hr class="flex-grow border-t border-gray-300" />
                                 </div>
                             </div>
                             <div class="col-span-2 col-start-2">
                                 <label class="block text-sm font-medium text-gray-700">تاریخ شروع فروش</label>
-                                <Field :name="`events[${id}].StartSaleDate`" v-slot="{ field }" >
-                                    <AB-Date-Picker mode="single" type="datetime" click-on="all" format="jYYYY/jMM/jDD HH:mm" inputFormat="jYYYY/jMM/jDD HH:mm"  locale="fa" :column="1" :modal="false" auto-submit :show="false" display-format="jYYYY/jMM/jDD HH:mm" v-bind="field" @select="setStartSaleEvent($event,id)"/>
+                                <Field :name="`events[${id}].StartSaleDate`" v-slot="{ field, componentField }">
+                                    <AB-Date-Picker mode="single" type="datetime" click-on="all" format="jYYYY/jMM/jDD HH:mm" inputFormat="jYYYY/jMM/jDD HH:mm" locale="fa" :column="1" :modal="false" auto-submit :show="false" display-format="jYYYY/jMM/jDD HH:mm" v-bind="field" v-model="componentField.modelValue" @select="setStartSaleEvent($event, id)" />
                                 </Field>
                             </div>
                             <div class="col-span-2 col-start-4">
                                 <label class="block text-sm font-medium text-gray-700">تاریخ پایان فروش</label>
-                                <Field :name="`events[${id}].EndSaleDate`" v-slot="{ field }" >
-                                    <AB-Date-Picker mode="single" type="datetime" click-on="all" locale="fa" :column="1" display-format="jYYYY/jMM/jDD HH:mm" format="jYYYY/jMM/jDD HH:mm"  inputFormat="jYYYY/jMM/jDD  HH:mm"   :modal="false" auto-submit :show="false" v-bind="field" @select="setEndSaleEvent($event,id)"/>
+                                <Field :name="`events[${id}].EndSaleDate`" v-slot="{ field, componentField }">
+                                    <AB-Date-Picker mode="single" type="datetime" click-on="all" locale="fa" :column="1" display-format="jYYYY/jMM/jDD HH:mm" format="jYYYY/jMM/jDD HH:mm" inputFormat="jYYYY/jMM/jDD  HH:mm" :modal="false" auto-submit :show="false" v-bind="field" v-model="componentField.modelValue" @select="setEndSaleEvent($event, id)" />
                                 </Field>
                             </div>
                             <div class="col-span-2 col-start-6">
                                 <label class="block text-sm font-medium text-gray-700">تاریخ اجرا</label>
-                                <Field :name="`events[${id}].ExecutionDate`" v-slot="{ field }" >
-                                    <AB-Date-Picker mode="single" type="datetime" click-on="all" locale="fa" :column="1" display-format="jYYYY/jMM/jDD HH:mm" inputFormat="jYYYY/jMM/jDD HH:mm"  :modal="false" auto-submit format="jYYYY/jMM/jDD HH:mm"  :show="false" v-bind="field" @select="setExecEvent($event,id)" />
+                                <Field :name="`events[${id}].ExecutionDate`" v-slot="{ field, componentField }">
+                                    <AB-Date-Picker mode="single" type="datetime" click-on="all" locale="fa" :column="1" display-format="jYYYY/jMM/jDD HH:mm" inputFormat="jYYYY/jMM/jDD HH:mm" :modal="false" auto-submit format="jYYYY/jMM/jDD HH:mm" :show="false" v-bind="field" v-model="componentField.modelValue" @select="setExecEvent($event, id)" />
                                 </Field>
                             </div>
                             <div class="col-span-2 col-start-2 mt-1">
@@ -596,14 +639,14 @@ function setExecEvent(e, eventId) {
                             <div class="col-span-2 col-start-6 mt-1">
                                 <label class="block text-sm font-medium text-gray-700">سالن برگزاری</label>
                                 <div class="mt-1 py-2 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                                    <span>{{ halls.find((x) => x.value === filed.value.hallId)?.label }}</span>
+                                    <span>{{ halls?.find((x) => x.value === filed.value.hallId)?.label }}</span>
                                 </div>
                             </div>
 
                             <div class="col-span-6 col-start-2 mt-2">
                                 <div class="text-right"><span class="border-b-2 border-gray-200">تعیین بلیت‌های رویداد</span></div>
                                 <div class="relative grid grid-cols-4 p-2 mx-6 my-2 border-2 border-gray-300 rounded-md">
-                                    <span class="block text-center bg-gray-50 col-span-full">ابزار</span>
+                                    <span class="block text-center bg-gray-200 col-span-full rounded-md">ابزار</span>
                                     <div class="flex justify-around col-span-2 mt-1">
                                         <label class="block text-xs font-medium leading-10 text-gray-700 w-fit text-nowrap">قیمت :</label>
                                         <Field v-slot="{ field }" :name="`events[${id}].price`">
@@ -659,7 +702,7 @@ function setExecEvent(e, eventId) {
                                 <div class="w-full rounded-md shadow-inner bg-gray-50 sm:px-0">
                                     <TabGroup :default-index="0">
                                         <TabList class="flex !justify-between rounded-xl bg-blue-900/20 p-1">
-                                            <Tab v-for="(floor, idx) in getHallsServiceCall.data.value.find((x) => x.id == filed.value.hallId).floorInfoDtos" as="template" :key="floor.title + idx" v-slot="{ selected }">
+                                            <Tab v-for="(floor, idx) in getHallsServiceCall.data.value?.find((x) => x.id == filed.value.hallId).floorInfoDtos" as="template" :key="floor.title + idx" v-slot="{ selected }">
                                                 <button :class="['w-full rounded-lg py-2.5 text-sm font-medium leading-5', selected ? 'dark:!text-white !text-white !bg-indigo-400 shadow' : 'text-gray-900 hover:bg-indigo-200 hover:text-black']">
                                                     {{ floor.title }}
                                                 </button>
@@ -667,7 +710,7 @@ function setExecEvent(e, eventId) {
                                         </TabList>
 
                                         <TabPanels class="mt-2">
-                                            <TabPanel :unmount="false" v-for="(floor, idx) in getHallsServiceCall.data.value.find((x) => x.id == filed.value.hallId).floorInfoDtos" :key="'eventMap' + id + idx" :class="[' rounded-md p-3 max-h-[500px] min-h-[500px] overflow-auto']">
+                                            <TabPanel :unmount="false" v-for="(floor, idx) in getHallsServiceCall.data.value?.find((x) => x.id == filed.value.hallId).floorInfoDtos" :key="'eventMap' + id + idx" :class="[' rounded-md p-3 max-h-[500px] min-h-[500px] overflow-auto']">
                                                 <div :id="'mapElm' + idx">
                                                     <div :id="`event_${id}_floor_${idx}`" class="!cursor-crosshair" @click.prevent="() => {}" :ref="(el) => setupTippy(el)" v-html="seatMaps[`event_${id}_floor_${idx}`] ?? ''"></div>
                                                     <div class="flex justify-center">
@@ -692,7 +735,7 @@ function setExecEvent(e, eventId) {
                                         </TabPanels>
                                     </TabGroup>
                                     <!-- I load image by pure js-->
-                                    <template v-for="(floor, idx) in getHallsServiceCall.data.value.find((x) => x.id == filed.value.hallId).floorInfoDtos">
+                                    <template v-for="(floor, idx) in getHallsServiceCall.data.value?.find((x) => x.id == filed.value.hallId).floorInfoDtos">
                                         {{ showSeatMap(floor.seatMap_url, floor.seatsInfo.items, 'floor', idx, id) }}
                                     </template>
                                 </div>
@@ -725,11 +768,7 @@ function setExecEvent(e, eventId) {
                                     <button
                                         class="btn h-fit text-gray-50 bg-green-600 rounded-lg w-fit text-nowrap py-2.5 self-center"
                                         @click.prevent="
-                                            () => {
-                                                priceClassColor[fields.length === 0 ? fields.length : fields.length - 1] = {}
-                                                push({ ...eventFields, hallId: tempHallId })
-                                                tempHallId = null
-                                            }
+                                           addNewEvent
                                         "
                                     >
                                         + رویداد جدید
@@ -743,12 +782,12 @@ function setExecEvent(e, eventId) {
                 </div>
 
                 <div class="col-span-2 col-start-4">
-                    <button v-if="!hallId" class="good-btn" type="submit">ایجاد</button>
+                    <button v-if="!concertId" class="good-btn" type="submit">ایجاد</button>
                     <button v-else class="items-center block px-4 py-2 mx-auto text-white bg-orange-600 border border-transparent rounded-md shadow-sm w-fit hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500" type="submit">ویرایش</button>
                 </div>
             </div>
         </form>
-        <div :class="getHallServiceCall.isFetched || !getHallServiceCall.isLoading ? 'hidden' : ''">
+        <div :class="getConceretServiceCall.isFetched || !getConceretServiceCall.isLoading ? 'hidden' : ''">
             <PrSpinner class="mx-auto mt-8 text-3xl animate-spin" />
         </div>
     </div>

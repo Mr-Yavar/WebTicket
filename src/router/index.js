@@ -152,7 +152,15 @@ const router = createRouter({
               name: 'createConcert',
               component: () => import('@/views/ui/AdminPanel/Concerts/CreateConcert.vue'),
               meta: {
-                label: 'ایجاد ماکن برگزاری'
+                label: 'ایجاد یک کنسرت'
+              }
+            },
+            {
+              path: 'EditConcert/:concertId',
+              name: 'EditConcert',
+              component: () => import('@/views/ui/AdminPanel/Concerts/CreateConcert.vue'),
+              meta: {
+                label: 'ویرایش یک کنسرت'
               }
             }
           ]
