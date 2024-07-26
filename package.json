@@ -14,7 +14,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@alireza-ab/vue-persian-datepicker": "^2.3.2",
+    "@alireza-ab/vue3-persian-datepicker": "^1.0.4",
     "@headlessui/vue": "^1.7.21",
     "@heroicons/vue": "^2.1.4",
     "@jobinsjp/vue3-datatable": "^1.0.15",

@@ -17,8 +17,21 @@ import { sendRequest, getFile } from '@/services/service'
 import randomColor from 'randomcolor'
 import tippy from 'tippy.js'
 import Panzoom from '@panzoom/panzoom'
+
+import dateHelper from "@/utils/dateHelper";
+
+const dateOption = {
+year : "numeric",
+month: "2-digit",
+day : "2-digit",
+hour : "2-digit",
+minute : "2-digit",
+hour12 : false,
+
+};
 const router = useRouter()
 const route = useRoute()
+
 const placeId = !route.params.id ? null : route.params.id
 const hallId = !route.params.hallId ? null : route.params.hallId
 
@@ -26,8 +39,10 @@ const { resetForm, defineField, handleSubmit, values, setFieldValue } = useForm(
 
 const [concertTitle] = defineField('concert.title')
 const [concertDesc] = defineField('concert.description')
-const cocertCardImage = defineField('concert.image');
+const cocertCardImage = defineField('concert.image')
+const concertStartDate = defineField('concert.startdate')
 
+const cocertEndDate = defineField('concert.enddate')
 const cocertPosterImage = defineField('concert.poster')
 const [concertCategory] = defineField('concert.category')
 const [concertPlace] = defineField('concert.place')
@@ -36,9 +51,9 @@ const { push, remove, fields } = useFieldArray('events')
 const eventFields = {
     EventId: undefined,
     hallId: null,
-    StartSaleDate: new Date(),
-    EndSaleDate: new Date(),
-    ExecutionDate: new Date(),
+    StartSaleDate: new Date().toLocaleString('fa-ir',dateOption).replace(',',''),
+    EndSaleDate: new Date().toLocaleString('fa-ir',dateOption).replace(',',''),
+    ExecutionDate: new Date().toLocaleString('fa-ir',dateOption).replace(',',''),
     Note: '',
     SeatsInfo: {
         ItemTitle: '',
@@ -55,27 +70,31 @@ const { mutate } = useMutation({
 })
 
 const onSubmit = handleSubmit(async (data) => {
-    console.log(data)
-    
+   console.log(data)
+    console.log(dateHelper.dateToISO(data.concert.startdate));
     const Data = {
-        Concertid : data.concert.id ?? null,
+        Concertid: data.concert.id ?? null,
         Title: data.concert.title,
         PlaceId: data.concert.place,
-        CategoryId : data.concert.category,
+        CategoryId: data.concert.category,
         Note: data.concert.description,
-        PromoterId : data.concert.promoter,
-        Events :{
-            ItemTitle :'',
-            ItemDescription :'',
-            Items : [
-                ...data.events
+        PromoterId: data.concert.promoter,
+        startDate  : dateHelper.dateToISO(data.concert?.startdate),
+       endDate  : dateHelper.dateToISO(data.concert?.enddate),
 
-            ]
+        Events: {
+            ItemTitle: '',
+            ItemDescription: '',
+            Items: [...data.events.map(event=>{
+                return {...event,
+                    StartSaleDate :dateHelper.persianStringToISO(event.StartSaleDate),
+                    EndSaleDate :dateHelper.persianStringToISO(event.EndSaleDate),
+                    ExecutionDate :dateHelper.persianStringToISO(event.ExecutionDate),
+                };
+            })]
         }
-       
-        
     }
-   
+
     const formData = new FormData()
     let offset = 0
     if (!!data.concert.image && data.concert.image?.length != 0) {
@@ -94,32 +113,31 @@ const onSubmit = handleSubmit(async (data) => {
 
     formData.append('Concert', JSON.stringify(Data))
 
-
+ 
     mutate(
-            {
-                url: '/api/Manager/CreateConcert?api-version=1.0',
-                body: formData,
-                method: 'POST'
-            },
-            {
-                onSuccess: async (data) => {
-                    await Swal.fire({
-                        text: 'با موفقیت ایجاد شد!',
-                        icon: 'success',
-                        showConfirmButton: false,
-                        showCloseButton: true,
-                        timer: 2000,
-                        timerProgressBar: true,
-                        showClass: { popup: 'direction-rtl vazir-font' }
-                    })
-                    router.push({ name: 'managePlace', params: { id: placeId } })
-                }
+        {
+            url: '/api/Manager/CreateConcert?api-version=1.0',
+            body: formData,
+            method: 'POST'
+        },
+        {
+            onSuccess: async (data) => {
+                await Swal.fire({
+                    text: 'با موفقیت ایجاد شد!',
+                    icon: 'success',
+                    showConfirmButton: false,
+                    showCloseButton: true,
+                    timer: 2000,
+                    timerProgressBar: true,
+                    showClass: { popup: 'direction-rtl vazir-font' }
+                })
+                router.push({ name: 'managePlace', params: { id: placeId } })
             }
-        )
+        }
+    )
 
-    return;
+    return
     if (!hallId) {
-     
     } else {
         mutate(
             {
@@ -381,11 +399,29 @@ async function setTicket(event, eventId) {
 }
 
 // به ازای هر رویداد در یک آبجکت به ازای هر قیمت رنگی رندوم ذخیره میشود
-const priceClassColor = reactive({});
+const priceClassColor = reactive({})
+
+function setStartSaleEvent(e) {
+     
+    if (!e) return
+
+    let startDate = values.concert.startdate
+
+    if (!startDate || e.valueOf() < startDate.valueOf()) setFieldValue('concert.startdate', e.toDate())
 
 
-function setConcertDate(){
 
+}
+function setEndSaleEvent(e) {
+    if (!e) return
+
+    let endDate = values.concert.enddate
+
+    if (!endDate || e.valueOf() > endDate.valueOf()) setFieldValue('concert.enddate', e.toDate())
+}
+
+function setExecEvent(e, eventId) {
+  
 }
 </script>
 
@@ -537,20 +573,20 @@ function setConcertDate(){
                             </div>
                             <div class="col-span-2 col-start-2">
                                 <label class="block text-sm font-medium text-gray-700">تاریخ شروع فروش</label>
-                                <Field :name="`events[${id}].StartSaleDate`" v-slot="{ field }" @change="setConcertDate($event)">
-                                    <DateTimePicker v-bind="field" />
+                                <Field :name="`events[${id}].StartSaleDate`" v-slot="{ field }" >
+                                    <AB-Date-Picker mode="single" type="datetime" click-on="all" format="jYYYY/jMM/jDD HH:mm" inputFormat="jYYYY/jMM/jDD HH:mm"  locale="fa" :column="1" :modal="false" auto-submit :show="false" display-format="jYYYY/jMM/jDD HH:mm" v-bind="field" @select="setStartSaleEvent($event,id)"/>
                                 </Field>
                             </div>
                             <div class="col-span-2 col-start-4">
                                 <label class="block text-sm font-medium text-gray-700">تاریخ پایان فروش</label>
-                                <Field :name="`events[${id}].EndSaleDate`" v-slot="{ field }">
-                                    <DateTimePicker v-bind="field" />
+                                <Field :name="`events[${id}].EndSaleDate`" v-slot="{ field }" >
+                                    <AB-Date-Picker mode="single" type="datetime" click-on="all" locale="fa" :column="1" display-format="jYYYY/jMM/jDD HH:mm" format="jYYYY/jMM/jDD HH:mm"  inputFormat="jYYYY/jMM/jDD  HH:mm"   :modal="false" auto-submit :show="false" v-bind="field" @select="setEndSaleEvent($event,id)"/>
                                 </Field>
                             </div>
                             <div class="col-span-2 col-start-6">
                                 <label class="block text-sm font-medium text-gray-700">تاریخ اجرا</label>
-                                <Field :name="`events[${id}].ExecutionDate`" v-slot="{ field }">
-                                    <DateTimePicker v-bind="field" />
+                                <Field :name="`events[${id}].ExecutionDate`" v-slot="{ field }" >
+                                    <AB-Date-Picker mode="single" type="datetime" click-on="all" locale="fa" :column="1" display-format="jYYYY/jMM/jDD HH:mm" inputFormat="jYYYY/jMM/jDD HH:mm"  :modal="false" auto-submit format="jYYYY/jMM/jDD HH:mm"  :show="false" v-bind="field" @select="setExecEvent($event,id)" />
                                 </Field>
                             </div>
                             <div class="col-span-2 col-start-2 mt-1">
