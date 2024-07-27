@@ -236,16 +236,16 @@ function showSeatMap(seatMap_url, floorSeats, key, idx, EventId) {
         const pValue = values?.events[EventId]?.SeatsInfo?.Items
 
         const AllSeats = floorSeats.map((seat) => {
-            
             let price = pValue.find((ticket) => ticket.floorSeatId === seat.floorSeatId)?.price
             if (price) {
-                const temp = {...seat};
-                temp.price = price;
-                return temp;
+                const temp = { ...seat }
+                temp.price = price
+                return temp
             }
             return seat
         })
 
+        
         let CriticalIds = []
         tempDoc.querySelector('svg').classList.add('w-full', 'mx-auto')
         tempDoc.querySelectorAll('defs').forEach((def) => {
@@ -260,6 +260,7 @@ function showSeatMap(seatMap_url, floorSeats, key, idx, EventId) {
 
         AllSeats.forEach((seat, index) => {
             let seatElem = tempDoc.querySelector(`*[id="${seat.name}"]`)
+            if (!seatElem) return
             seatElem?.setAttribute('tid', seat.floorSeatId)
             seatElem?.setAttribute('tIndex', index)
             seatElem?.setAttribute('eventIndex', EventId)
@@ -444,12 +445,12 @@ watch([getConceretServiceCall.data], async () => {
             ]
         }
     })
-});
+})
 
-function addNewEvent(){
+function addNewEvent() {
     priceClassColor[fields.length === 0 ? fields.length : fields.length - 1] = {}
-                                                push({ ...eventFields, hallId: tempHallId.value })
-                                                tempHallId.value = null
+    push({ ...eventFields, hallId: tempHallId.value })
+    tempHallId.value = null
 }
 </script>
 
@@ -604,7 +605,7 @@ function addNewEvent(){
                                                     if (!filed.value.EventId) remove(id)
                                                 }
                                             "
-                                            class="inline p-1 text-base text-red-500 rounded-full hover:animate-pulse relative"
+                                            class="relative inline p-1 text-base text-red-500 rounded-full hover:animate-pulse"
                                             :class="{ hidden: !!filed.value.EventId }"
                                             >❌</span
                                         >
@@ -646,7 +647,7 @@ function addNewEvent(){
                             <div class="col-span-6 col-start-2 mt-2">
                                 <div class="text-right"><span class="border-b-2 border-gray-200">تعیین بلیت‌های رویداد</span></div>
                                 <div class="relative grid grid-cols-4 p-2 mx-6 my-2 border-2 border-gray-300 rounded-md">
-                                    <span class="block text-center bg-gray-200 col-span-full rounded-md">ابزار</span>
+                                    <span class="block text-center bg-gray-200 rounded-md col-span-full">ابزار</span>
                                     <div class="flex justify-around col-span-2 mt-1">
                                         <label class="block text-xs font-medium leading-10 text-gray-700 w-fit text-nowrap">قیمت :</label>
                                         <Field v-slot="{ field }" :name="`events[${id}].price`">
@@ -765,14 +766,7 @@ function addNewEvent(){
                                         </vue-Select-Umd>
                                     </div>
 
-                                    <button
-                                        class="btn h-fit text-gray-50 bg-green-600 rounded-lg w-fit text-nowrap py-2.5 self-center"
-                                        @click.prevent="
-                                           addNewEvent
-                                        "
-                                    >
-                                        + رویداد جدید
-                                    </button>
+                                    <button class="btn h-fit text-gray-50 bg-green-600 rounded-lg w-fit text-nowrap py-2.5 self-center" @click.prevent="addNewEvent">+ رویداد جدید</button>
                                 </span>
 
                                 <hr class="flex-grow border-t border-gray-300" />
