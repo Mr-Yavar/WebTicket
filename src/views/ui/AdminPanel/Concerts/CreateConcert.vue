@@ -245,7 +245,6 @@ function showSeatMap(seatMap_url, floorSeats, key, idx, EventId) {
             return seat
         })
 
-        
         let CriticalIds = []
         tempDoc.querySelector('svg').classList.add('w-full', 'mx-auto')
         tempDoc.querySelectorAll('defs').forEach((def) => {
@@ -358,6 +357,8 @@ async function setTicket(event, eventId) {
     if (!event.target.getAttribute('tid')) return
 
     if (values.events[`${eventId}`].lock && values.events[`${eventId}`].price) {
+        if (!priceClassColor[eventId]) priceClassColor[eventId] = {}
+
         if (!priceClassColor[eventId][values.events[`${eventId}`].price])
             priceClassColor[eventId][`${values.events[`${eventId}`].price}`] = await randomColor({
                 luminosity: 'bright',
