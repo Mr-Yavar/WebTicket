@@ -72,7 +72,19 @@ const getConceretServiceCall = useQuery({
 
 const { mutate } = useMutation({
     mutationKey: ['CU/Places'],
-    mutationFn: CRPlacesService
+    mutationFn: CRPlacesService,
+    onError: (err) => {
+        console.error(err)
+        Swal.fire({
+            text: 'ناموفق',
+            icon: 'error',
+            showConfirmButton: false,
+            showCloseButton: true,
+            timer: 2000,
+            timerProgressBar: true,
+            showClass: { popup: 'direction-rtl vazir-font' }
+        })
+    }
 })
 
 const onSubmit = handleSubmit(async (data) => {
@@ -325,18 +337,13 @@ function setupTippy(map) {
             onTrigger(instance, event) {
                 if (!event.target.getAttribute('eventIndex')) setTicket(event, Number(event.target.getAttribute('eventIndex')))
 
-                const [floor, row, column] = event.target.id.replace('f', '').replace('r', '').replace('c', '').split('_');
-                const listPrice =priceClassColor[Number(event.target.getAttribute('eventIndex'))];
+                const [floor, row, column] = event.target.id.replace('f', '').replace('r', '').replace('c', '').split('_')
+                const listPrice = priceClassColor[Number(event.target.getAttribute('eventIndex'))]
                 const price = Object.keys(listPrice).find((key) => listPrice[key] === event.target.style.fill) ?? 'تعیین نشده'
 
-                instance.setContent(`<div class="direction-rtl vazir-font text-right">
-        <p>طبقه : ${floor}</p>
-        <p>ردیف : ${row}</p>
-        <p>ستون :${column}</p>
-    <p style="background:${event.target.style.fill}">قیمت : ${price} تومان</p>
-</div>`)
+                instance.setContent(`<div class="direction-rtl vazir-font text-right"><p>طبقه : ${floor}</p><p>ردیف : ${row}</p><p>ستون :${column}</p><p style="background:${event.target.style.fill}">قیمت : ${price} تومان</p></div>`)
             },
-            allowHTML:true
+            allowHTML: true
         })
     })
 }
@@ -362,14 +369,14 @@ async function setTicket(event, eventId) {
         if (!priceClassColor[eventId]) priceClassColor[eventId] = {}
 
         if (!priceClassColor[eventId][values.events[`${eventId}`].price])
-            priceClassColor[eventId][`${values.events[`${eventId}`].price}`] = await randomColor({
-                luminosity: 'bright',
-                format: 'rgb'
-            })
+        priceClassColor[eventId][`${values.events[`${eventId}`].price}`] = await randomColor({
+            luminosity: 'bright',
+            format: 'rgb'
+        })
 
         //const floorSeatId =await  event.target.getAttribute('tid')
         //let index = await values.events[`${eventId}`].SeatsInfo.Items.findIndex((item) =>{ return  item.floorSeatId === floorSeatId; })
-        console.log(floorIndex)
+        //console.log(floorIndex)
 
         await setFieldValue('events[' + eventId + '].SeatsInfo[' + floorIndex + '][' + index + '].price', values.events[`${eventId}`].price)
         event.target.classList.remove(...Object.values(styles))
