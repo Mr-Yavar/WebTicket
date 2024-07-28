@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/vue-query'
 import { sendRequest } from '@/services/service'
 
 const getAllConcert = useQuery({
-    queryKey: [{ url: '/api/Manager/GetAllConcerts', pageSize: 1, currentPage: 1 }],
+    queryKey: [{ url: '/api/Manager/GetAllConcerts', pageSize: 10, currentPage: 1 }],
     queryFn: ({ queryKey }) =>
         sendRequest({
             url: queryKey[0].url + '/' + queryKey[0].pageSize + '/' + queryKey[0].currentPage,

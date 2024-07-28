@@ -49,15 +49,12 @@ const eventFields = {
     EndSaleDate: new Date().toJSON().replace('T', ' ').replace('Z', ''),
     ExecutionDate: new Date().toJSON().replace('T', ' ').replace('Z', ''),
     Note: '',
-    SeatsInfo: {
-        ItemTitle: '',
-        ItemDescription: '',
-        Items: []
-    },
+    SeatsInfo: {},
     lock: false,
     price: 0,
     cleaner: false
 }
+
 const concertId = !route.params.concertId ? null : route.params.concertId
 //console.log(route.params.concertId)
 const getConceretServiceCall = useQuery({
@@ -79,10 +76,11 @@ const { mutate } = useMutation({
 })
 
 const onSubmit = handleSubmit(async (data) => {
-    //console.log(data)
+    console.log(data)
     // console.log(dateHelper.dateToISO(data.concert.startdate))
+
     const Data = {
-        Concertid: data.concert.id ?? null,
+        Concertid: concertId ?? null,
         Title: data.concert.title,
         PlaceId: data.concert.place,
         CategoryId: data.concert.category,
@@ -119,35 +117,32 @@ const onSubmit = handleSubmit(async (data) => {
     if (!formData.has('Files.Files[0].File')) formData.append('Files.Files', null)
 
     formData.append('Concert', JSON.stringify(Data))
-
-    mutate(
-        {
-            url: '/api/Manager/CreateConcert?api-version=1.0',
-            body: formData,
-            method: 'POST'
-        },
-        {
-            onSuccess: async (data) => {
-                await Swal.fire({
-                    text: 'با موفقیت ایجاد شد!',
-                    icon: 'success',
-                    showConfirmButton: false,
-                    showCloseButton: true,
-                    timer: 2000,
-                    timerProgressBar: true,
-                    showClass: { popup: 'direction-rtl vazir-font' }
-                })
-                router.push({ name: 'managePlace', params: { id: placeId } })
+    if (!concertId) {
+        mutate(
+            {
+                url: '/api/Manager/CreateConcert?api-version=1.0',
+                body: formData,
+                method: 'POST'
+            },
+            {
+                onSuccess: async (data) => {
+                    await Swal.fire({
+                        text: 'با موفقیت ایجاد شد!',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        showCloseButton: true,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        showClass: { popup: 'direction-rtl vazir-font' }
+                    })
+                    router.push({ name: 'ManageConcerts' })
+                }
             }
-        }
-    )
-
-    return
-    if (!hallId) {
+        )
     } else {
         mutate(
             {
-                url: '/api/Place/UpdateHall?api-version=1.0',
+                url: '/api/Manager/UpdateConcert?api-version=1.0',
                 body: formData,
                 method: 'PATCH'
             },
@@ -162,7 +157,7 @@ const onSubmit = handleSubmit(async (data) => {
                         timerProgressBar: true,
                         showClass: { popup: 'direction-rtl vazir-font' }
                     })
-                    router.push({ name: 'managePlace', params: { id: placeId } })
+                    router.push({ name: 'ManageConcerts' })
                 }
             }
         )
@@ -226,24 +221,16 @@ watch(concertPlace, () => {
 
 function showSeatMap(seatMap_url, floorSeats, key, idx, EventId) {
     if (document.querySelector('#event_' + EventId + '_' + key + '_' + idx + ' svg')) return
-
+    //idx floorIndex
+    // EventId EventIndex
     var reader = new FileReader()
     reader.onload = function (e) {
         var svgData = e.target.result
         var parser = new DOMParser()
         var tempDoc = parser.parseFromString(svgData, 'image/svg+xml')
-
-        const pValue = values?.events[EventId]?.SeatsInfo?.Items
-
-        const AllSeats = floorSeats.map((seat) => {
-            let price = pValue.find((ticket) => ticket.floorSeatId === seat.floorSeatId)?.price
-            if (price) {
-                const temp = { ...seat }
-                temp.price = price
-                return temp
-            }
-            return seat
-        })
+        //'events[' + EventId + ']SeatsInfo['+idx+']'
+        const pValue = values?.events[EventId]?.SeatsInfo?.[idx] ?? []
+        const AllSeats = [...(floorSeats.filter((x) => !pValue.find((y) => x.floorSeatId == y.floorSeatId)) ?? []), ...pValue]
 
         let CriticalIds = []
         tempDoc.querySelector('svg').classList.add('w-full', 'mx-auto')
@@ -260,9 +247,11 @@ function showSeatMap(seatMap_url, floorSeats, key, idx, EventId) {
         AllSeats.forEach((seat, index) => {
             let seatElem = tempDoc.querySelector(`*[id="${seat.name}"]`)
             if (!seatElem) return
-            seatElem?.setAttribute('tid', seat.floorSeatId)
+
+            if (!seat.isReserved) seatElem?.setAttribute('tid', seat.floorSeatId)
             seatElem?.setAttribute('tIndex', index)
             seatElem?.setAttribute('eventIndex', EventId)
+            seatElem?.setAttribute('floorIndex', idx)
 
             if (seat.price > 0) {
                 if (!priceClassColor[EventId]) priceClassColor[EventId] = {}
@@ -286,8 +275,7 @@ function showSeatMap(seatMap_url, floorSeats, key, idx, EventId) {
             //console.log(err)
         }
 
-        let temp = AllSeats.filter((x) => !pValue.find((y) => x.floorSeatId == y.floorSeatId))
-        setFieldValue('events.' + EventId + '.SeatsInfo.Items', [...(pValue ? pValue : []), ...temp])
+        setFieldValue('events[' + EventId + ']SeatsInfo[' + idx + ']', [...AllSeats])
     }
 
     getFile({
@@ -332,12 +320,23 @@ function setupTippy(map) {
     if (map.getAttribute('setupTippy')) return
     map.setAttribute('setupTippy', 'true')
 
-    map.querySelectorAll(`*[id^="f"]`).forEach((item) => {
+    map.querySelectorAll(`*[id^="f"][tid]`).forEach((item) => {
         tippy(item, {
             onTrigger(instance, event) {
                 if (!event.target.getAttribute('eventIndex')) setTicket(event, Number(event.target.getAttribute('eventIndex')))
-                instance.setContent(`محتواها`)
-            }
+
+                const [floor, row, column] = event.target.id.replace('f', '').replace('r', '').replace('c', '').split('_');
+                const listPrice =priceClassColor[Number(event.target.getAttribute('eventIndex'))];
+                const price = Object.keys(listPrice).find((key) => listPrice[key] === event.target.style.fill) ?? 'تعیین نشده'
+
+                instance.setContent(`<div class="direction-rtl vazir-font text-right">
+        <p>طبقه : ${floor}</p>
+        <p>ردیف : ${row}</p>
+        <p>ستون :${column}</p>
+    <p style="background:${event.target.style.fill}">قیمت : ${price} تومان</p>
+</div>`)
+            },
+            allowHTML:true
         })
     })
 }
@@ -356,6 +355,9 @@ async function setTicket(event, eventId) {
 
     if (!event.target.getAttribute('tid')) return
 
+    let index = event.target.getAttribute('tindex')
+    let floorIndex = event.target.getAttribute('floorindex')
+
     if (values.events[`${eventId}`].lock && values.events[`${eventId}`].price) {
         if (!priceClassColor[eventId]) priceClassColor[eventId] = {}
 
@@ -367,9 +369,9 @@ async function setTicket(event, eventId) {
 
         //const floorSeatId =await  event.target.getAttribute('tid')
         //let index = await values.events[`${eventId}`].SeatsInfo.Items.findIndex((item) =>{ return  item.floorSeatId === floorSeatId; })
-        let index = event.target.getAttribute('tindex')
+        console.log(floorIndex)
 
-        await setFieldValue('events[' + eventId + '].SeatsInfo.Items[' + index + '].price', values.events[`${eventId}`].price)
+        await setFieldValue('events[' + eventId + '].SeatsInfo[' + floorIndex + '][' + index + '].price', values.events[`${eventId}`].price)
         event.target.classList.remove(...Object.values(styles))
         event.target.style.fill = priceClassColor[eventId][values.events[`${eventId}`].price]
     }
@@ -380,8 +382,8 @@ async function setTicket(event, eventId) {
         event.target.classList.add(styles['recongnized'])
         event.target.style.fill = 'unset'
         //let index = await values.events[`${eventId}`].SeatsInfo.Items.findIndex((item) => item.floorSeatId === floorSeatId)
-        let index = event.target.getAttribute('tindex')
-        await setFieldValue('events[' + eventId + '].SeatsInfo.Items[' + index + '].price', 0)
+
+        await setFieldValue('events[' + eventId + '].SeatsInfo[' + floorIndex + '][' + index + '].price', 0)
     }
 }
 
@@ -425,7 +427,6 @@ watch([getConceretServiceCall.data], async () => {
                     let sDate = event.startSaleDate.replace('T', ' ')
                     let eDate = event.endSaleDate.replace('T', ' ')
                     let exDate = event.executionDate.replace('T', ' ')
-
                     return {
                         EventId: event.eventId,
                         hallId: event.hallId,
@@ -434,9 +435,7 @@ watch([getConceretServiceCall.data], async () => {
                         ExecutionDate: exDate,
                         Note: '',
                         SeatsInfo: {
-                            ItemTitle: '',
-                            ItemDescription: '',
-                            Items: [...event.seatsInfo.items.map((x) => ({ ...x }))]
+                            ...event.seatsInfo
                         },
                         lock: false,
                         price: 0,
