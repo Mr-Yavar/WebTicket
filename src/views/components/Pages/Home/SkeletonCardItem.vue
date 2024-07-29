@@ -21,36 +21,7 @@
     </div>
 </template>
 <script>
-import { Guid } from '@/config/helper.js'
-import { FILE_PROVIDER, FILE_PROVIDER2 } from '@/config/appConfig.js'
 
-export default {
-    name: 'cardItem',
-    props: ['concert'],
-    data() {},
-    methods: {
-        FILE_PROVIDER() {
-            return FILE_PROVIDER
-        },
-        RedirectToGettingTicket() {
-            this.$router.push({
-                name: 'event',
-                params: {
-                    id: Guid({}).fromFullToCompressed(this.concert.concertid),
-                    step: 1
-                }
-            })
-        }
-    },
-    computed: {
-        startDate() {
-            return !this.concert.startDate ? '' : new Date(this.concert?.startDate).toLocaleString('fa-ir', { day: '2-digit', month: 'long', weekday: 'long' })
-        },
-        cardImg() {
-            return FILE_PROVIDER2 + encodeURI(this.concert.img_Url)
-        }
-    }
-}
 </script>
 
 <style scoped>
