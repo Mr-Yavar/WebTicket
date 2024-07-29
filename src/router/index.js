@@ -13,6 +13,22 @@ const router = createRouter({
       }
     },
     {
+      path: '/about-us',
+      name: 'about',
+      component: () => import('@/views/pages/Home/AboutUs.vue'),
+      meta: {
+        layout: 'Default'
+      }
+    },
+    {
+      path: '/check',
+      name: 'check',
+      component: () => import('@/views/pages/Home/CheckTicket.vue'),
+      meta: {
+        layout: 'Default'
+      }
+    },
+    {
       path: '/event/:id',
       name: 'event1',
       redirect: (to) => ({ name: 'event', params: { ...to.params, step: 1 } }),

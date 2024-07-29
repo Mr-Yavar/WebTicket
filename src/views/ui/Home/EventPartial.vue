@@ -5,7 +5,29 @@ import SearchBox from "@/views/components/Select/SearchBox.vue";
 import Splitter from "@/views/components/Splitter/Splitter.vue";
 import CardItem from "@/views/components/Pages/Home/CardItem.vue";
 import Carousel from "@/views/components/Slider/Carousel.vue";
-import Vselect from "vue-select"
+import Vselect from "vue-select";
+import Cities from '@/assets/data/city.json';
+import { useQuery } from "@tanstack/vue-query";
+import { sendRequest } from "@/services/service";
+import { computed } from "vue";
+import { ref } from "vue";
+
+const getCategoryServiceCall = useQuery({
+    queryKey: ['/api/BaseInfo/GetCategories'],
+    queryFn: ({ queryKey }) =>
+        sendRequest({
+            url: queryKey.join(''),
+            method: 'GET'
+        }),
+    enabled: true
+});
+const categories = computed(() => getCategoryServiceCall.data.value?.filter((x) => x.parentId != null)?.map((x) => ({ label: x.title, value: x.id, parent: getCategoryServiceCall.data.value.find((y) => y.id === x.parentId)?.title })));
+
+const selectedCities = ref([]);
+const selectedCategory = ref([]);
+const searchText = ref("");
+
+
 </script>
 
 <template>
@@ -25,20 +47,63 @@ import Vselect from "vue-select"
                 <v-icon name="si-openstreetmap"/>
                 شهرها...
               </p>
-            <Vselect multiple  :options="['Canada','United States']" class="w-full"/>
+            <Vselect multiple v-model="selectedCities" :options="Cities.map(x=>({value:x,label:x}))"   :reduce="
+            (city) => {
+                return city.value
+            }
+        "
+        label="label"       class="mt-1 py-1 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md style-chooser" >
+              <template #selected-option="{ label }">
+                <div style="display: flex; align-items: baseline; padding: 0">
+                    <strong class="text-sm"> {{ label }} </strong>
+                
+                </div>
+            </template>
+
+            <template #option="{ label }">
+                <div class="text-right">
+                    <h3 style="margin: 0">{{ label }}</h3>
+                  
+                </div>
+            </template>
+            </Vselect>
             </div>
             <div class="mx-2">
               <p class="rtl:fa-font flex  items-center gap-1 mt-2 font-sans text-sm antialiased font-normal leading-normal text-gray-700">
                 <v-icon name="md-category-outlined"/>
                 نوع اجرا ...
               </p>
-              <Vselect multiple  :options="['Canada','United States']" class="w-full"/>
+              <Vselect
+              multiple
+              :options="categories"
+              v-model="selectedCategory"
+              :reduce="
+                  (cat) => {
+                      return cat.value
+                  }
+              "
+              label="label"
+              class="mt-1 py-1 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md style-chooser"
+          >
+              <template #selected-option="{ label, parent }">
+                  <div style="display: flex; align-items: baseline; padding: 0">
+                      <strong class="text-sm"> {{ label }} </strong>
+                      <em class="mx-1 text-xs"> {{ parent }} </em>
+                  </div>
+              </template>
 
+              <template #option="{ label, parent }">
+                  <div class="text-right">
+                      <h3 style="margin: 0">{{ label }}</h3>
+                      <em>{{ parent }}</em>
+                  </div>
+              </template>
+          </Vselect>
             </div>
           </div>
           <div class="inline-step h-20 lg:inline-block hidden"></div>
           <div class="lg:w-[50%] w-full">
-          <SearchBox/>
+          <SearchBox v-model="searchText"/>
           </div>
         </div>
       </div>

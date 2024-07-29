@@ -188,7 +188,7 @@ const getCategoryServiceCall = useQuery({
             method: 'GET'
         }),
     enabled: true
-})
+});
 const getPlacesServiceCall = useQuery({
     queryKey: ['/api/BaseInfo/GetPlaces'],
     queryFn: ({ queryKey }) =>
