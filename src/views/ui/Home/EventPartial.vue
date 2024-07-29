@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/vue-query";
 import { sendRequest } from "@/services/service";
 import { computed } from "vue";
 import { ref } from "vue";
+import SkeletonCardItem from "@/views/components/Pages/Home/SkeletonCardItem.vue";
 
 const getCategoryServiceCall = useQuery({
     queryKey: ['/api/BaseInfo/GetCategories'],
@@ -108,7 +109,10 @@ const searchText = ref("");
         </div>
       </div>
 
-      <slot name="Events"></slot>
+      <slot name="Events" :selectedCategories="selectedCategory" :selectedCities="selectedCities" :searchText="searchText">
+
+
+      </slot>
     </div>
   </div>
 </template>

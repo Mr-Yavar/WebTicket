@@ -4,7 +4,9 @@
 
       <div class="grid grid-cols-1 mt-4 xl:grid-cols-4 xl:gap-y-4 lg:grid-cols-3 md:grid-cols-2 gap-y-2 " dir="rtl" v-if="GetAllConcertsServiceCall.data">
         <CardItem v-for="item in Concerts" :concert="item" :key="item.concertId"/>
+        <SkeletonCardItem/>
       </div>
+    
     </template>
   </EventPartial>
 
@@ -18,6 +20,7 @@ import CardItem from "@/views/components/Pages/Home/CardItem.vue";
 import {useQuery} from "@tanstack/vue-query";
 import {GetAllConcertService} from "@/services/ConcertsService.js";
 import {computed} from "vue";
+import SkeletonCardItem from "@/views/components/Pages/Home/SkeletonCardItem.vue";
 
 const GetAllConcertsServiceCall = useQuery({
   queryKey: ["api/Concerts/GetAllConcerts",new Date()],
