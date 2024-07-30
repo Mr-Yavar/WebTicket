@@ -14,13 +14,13 @@
                             </li>
 
                             <li class="block p-1 font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 hover:border-b-2">
-                                <router-link :to="{ name: 'about' }" active-class="active"  class="flex items-center" href="#">درباره ما</router-link>
+                                <router-link :to="{ name: 'about' }" active-class="active" class="flex items-center" href="#">درباره ما</router-link>
                             </li>
-                            <li v-if="userStore.isAuthenticated" class="block p-1 font-sans text-sm antialiased font-normal leading-normal rounded-sm hover:shadow-md text-blue-gray-900 ">
-                                <router-link :to="{ name: 'adminPanel' }" active-class="active"  class="flex items-center" href="#">مدیریت </router-link>
+                            <li v-if="userStore.isAuthenticated" class="block p-1 font-sans text-sm antialiased font-normal leading-normal rounded-sm hover:shadow-md text-blue-gray-900">
+                                <router-link :to="{ name: 'adminPanel' }" active-class="active" class="flex items-center" href="#">مدیریت </router-link>
                             </li>
                             <li class="block p-1 font-sans text-sm antialiased font-normal leading-normal border-2 border-dashed rounded-sm hover:shadow-md text-blue-gray-900 border-dark-400">
-                                <router-link :to="{ name: 'check' }" active-class="active"  class="flex items-center" href="#">بررسی بلیت</router-link>
+                                <router-link :to="{ name: 'check' }" active-class="active" class="flex items-center" href="#">بررسی بلیت</router-link>
                             </li>
                             <li v-if="userStore.isAuthenticated" class="block p-1 font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
                                 <Dropdown @visible-change="change">
@@ -79,7 +79,7 @@
             <transition name="fade">
                 <div v-if="showMenu" class="block w-full overflow-hidden basis-full lg:hidden" style="">
                     <ul class="flex flex-col gap-2 mt-2 mb-4 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
-                        <li class="block p-1 font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 hover:border-b-2" >
+                        <li class="block p-1 font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 hover:border-b-2">
                             <router-link :to="{ name: 'home' }" active-class="active" class="flex items-center" href="#">صفحه اصلی</router-link>
                         </li>
                         <li class="block p-1 font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 hover:border-b-2">

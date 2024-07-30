@@ -1,13 +1,7 @@
 <template>
-  
     <div class="text-center">بررسی بلیت !</div>
-
 </template>
 
-<script setup>
+<script setup></script>
 
-</script>
-
-<style>
-
-</style>
+<style></style>

@@ -1,36 +1,31 @@
 @import './base.css';
-@import "./../../public/styles/fonts.css";
+@import './../../public/styles/fonts.css';
 /* purgecss start ignore */
 @tailwind base;
 @tailwind utilities;
 @tailwind components;
 /* purgecss end ignore */
 
-
 @layer base {
-
-    :where([dir="rtl"]) .fa-font {
+    :where([dir='rtl']) .fa-font {
         font-family: VazirMatn !important;
     }
 
-    .AppContainer{
-        @apply block w-full max-w-screen-xl px-4  py-3 mx-auto overflow-hidden ;
+    .AppContainer {
+        @apply block w-full max-w-screen-xl px-4  py-3 mx-auto overflow-hidden;
     }
 
     .AppGap {
         @apply my-2;
     }
 
-
-    [dir='rtl'] *   {
+    [dir='rtl'] * {
         font-family: VazirMatn, serif !important;
-       direction: rtl;
+        direction: rtl;
     }
-
 
     .inline-step {
         border-right: solid 1px rgba(0, 0, 0, 0.15);
-
 
         margin: 0 5px -4px;
     }
@@ -38,12 +33,11 @@
     .direction-rtl {
         direction: rtl;
     }
-    
-    .vazir-font *{
-        font-family: VazirMatn ,Tahoma, serif;
+
+    .vazir-font * {
+        font-family: VazirMatn, Tahoma, serif;
     }
-    .bg-neutral{
+    .bg-neutral {
         background-color: rgb(229 229 229);
     }
 }
-

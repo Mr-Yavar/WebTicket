@@ -309,7 +309,7 @@ function panZoomInit(map, index) {
 
     map.querySelectorAll(`*[id^="f"]:not([tid])`).forEach((item) => {
         let [floor, row, column] = item.id.split('_')
- 
+
         tippy(item, {
             content: `
                 <div class="direction-rtl vazir-font text-right">

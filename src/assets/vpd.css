@@ -1,39 +1,31 @@
-
-.vpd-container{
-
-
-    .vpd-icon-btn{
+.vpd-container {
+    .vpd-icon-btn {
         @apply !m-0;
     }
-    .vpd-addon-list{
+    .vpd-addon-list {
         @apply overflow-hidden;
     }
 
-    .vpd-addon-list-content{
-
+    .vpd-addon-list-content {
     }
 
-    .vpd-time svg{
+    .vpd-time svg {
         @apply block mx-auto;
     }
 
-    .vpd-month-label{
+    .vpd-month-label {
         @apply w-fit;
     }
-    .vpd-controls svg{
+    .vpd-controls svg {
         @apply block mx-auto;
     }
-
-  
 }
-.vpd-main{
-
-
-    .vpd-input-group{
+.vpd-main {
+    .vpd-input-group {
         @apply !rounded-md overflow-hidden pe-2;
     }
 
-    label{
+    label {
         @apply !m-0;
     }
     input {

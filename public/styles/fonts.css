@@ -1,9 +1,10 @@
 @font-face {
     font-family: VazirMatn;
-    src: url("/fonts/Vazir/Vazir.eot");
-    src: url('/fonts/Vazir/Vazir.eot?#iefix') format('Vazir-opentype'),
-    url('/fonts/Vazir/Vazir.woff') format('woff'),
-    url('/fonts/Vazir/Vazir.eot') format('truetype');
+    src: url('/fonts/Vazir/Vazir.eot');
+    src:
+        url('/fonts/Vazir/Vazir.eot?#iefix') format('Vazir-opentype'),
+        url('/fonts/Vazir/Vazir.woff') format('woff'),
+        url('/fonts/Vazir/Vazir.eot') format('truetype');
     font-weight: normal;
     font-style: normal;
     unicode-range: U+0020-002F, U+003A-007F;
@@ -11,10 +12,11 @@
 
 @font-face {
     font-family: VazirMatn;
-    src: url("/fonts/Vazir-FD/Vazir-FD.eot");
-    src: url('/fonts/Vazir-FD/Vazir-FD.eot') format('Vazir-opentype'),
-    url('/fonts/Vazir-FD/Vazir-FD.woff') format('woff'),
-    url('/fonts/Vazir-FD/Vazir-FD.ttf') format('truetype');
+    src: url('/fonts/Vazir-FD/Vazir-FD.eot');
+    src:
+        url('/fonts/Vazir-FD/Vazir-FD.eot') format('Vazir-opentype'),
+        url('/fonts/Vazir-FD/Vazir-FD.woff') format('woff'),
+        url('/fonts/Vazir-FD/Vazir-FD.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     unicode-range: U+0600-06FF, U+0030-0039;

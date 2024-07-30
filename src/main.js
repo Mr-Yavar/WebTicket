@@ -31,9 +31,9 @@ import Vue3PersianDatetimePicker from 'vue3-persian-datetime-picker'
 
 addIcons(LaFileInvoiceDollarSolid, IoTicketOutline, MdAttachmoneyOutlined, CoHeart, FaRegularStar, BiChevronLeft, HiChevronDown, BiShieldCheck, HiQuestionMarkCircle, RiMenu2Line, IoGridOutline, IoDocumentsOutline, FaChartPie, IoSettingsOutline, BiPencil, LaTimesSolid, MdDashboardOutlined, HiTable, CoBell, BiBarChartLine, FaSearch, LaUserCircle, MdDiscountTwotone, IoTrashOutline, MdCategoryOutlined, SiOpenstreetmap, OiLocation, RiCalendarEventFill, FaSearch, FaTicketAlt, IoTicketSharp, IoArrowForwardOutline, FaTimes, PrSpinner, PxCalendarTomorrow, PxClock, PxGps, HiSolidCheckCircle)
 
-import DatePicker, {PersianDate} from '@alireza-ab/vue3-persian-datepicker'
+import DatePicker, { PersianDate } from '@alireza-ab/vue3-persian-datepicker'
 const app = createApp(App)
-app.component("AB-Date-Picker",DatePicker)
+app.component('AB-Date-Picker', DatePicker)
 app.use(Vue3PersianDatetimePicker, {
     name: 'DateTimePicker',
     props: {

@@ -59,7 +59,7 @@
                         <Menu as="div" class="mr-3 relative">
                             <div>
                                 <MenuButton class="max-w-xs bg-white rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 lg:p-2 lg:rounded-md lg:hover:bg-gray-50">
-                                  <v-icon name="la-user-circle" class="scale-150" />
+                                    <v-icon name="la-user-circle" class="scale-150" />
                                     <span class="hidden mr-3 text-gray-700 text-sm font-medium lg:block">{{ userStore.FullName }}</span>
                                     <v-icon aria-hidden="true" class="hidden flex-shrink-0 mr-1 h-5 w-5 text-gray-400 lg:block" fill="black" name="hi-chevron-down" />
                                 </MenuButton>
@@ -96,12 +96,12 @@ import { ref } from 'vue'
 import { Dialog, DialogOverlay, Menu, MenuButton, MenuItem, MenuItems, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import SideBar from '@/views/components/Layouts/AdminLayout/component/SideBar.vue'
 import { useRoute } from 'vue-router'
-import useUserStore from '@/stores/user';
+import useUserStore from '@/stores/user'
 
 const sidebarOpen = ref(false)
 
 const route = useRoute()
-const userStore = useUserStore();
+const userStore = useUserStore()
 console.log(route.matched)
 </script>
 

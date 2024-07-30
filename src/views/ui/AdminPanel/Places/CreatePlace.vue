@@ -10,7 +10,7 @@ import { watch } from 'vue'
 import Cities from '@/assets/data/city.json'
 const router = useRouter()
 const route = useRoute()
-import Vselect from "vue-select";
+import Vselect from 'vue-select'
 const placeId = !route.params.id ? null : route.params.id
 
 const getPlaceServiceCall = useQuery({

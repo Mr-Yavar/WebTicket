@@ -77,7 +77,6 @@ import Support from '@/views/components/Layouts/AdminLayout/component/Support.vu
                     {{ item.name }}
                 </RouterLink>
             </div>
-           
         </div>
     </nav>
 </template>

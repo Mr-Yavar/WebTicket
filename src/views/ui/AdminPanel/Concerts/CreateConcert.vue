@@ -188,7 +188,7 @@ const getCategoryServiceCall = useQuery({
             method: 'GET'
         }),
     enabled: true
-});
+})
 const getPlacesServiceCall = useQuery({
     queryKey: ['/api/BaseInfo/GetPlaces'],
     queryFn: ({ queryKey }) =>
@@ -292,7 +292,7 @@ function showSeatMap(seatMap_url, floorSeats, key, idx, EventId) {
 
     getFile({
         baseUrl: FILE_PROVIDER2,
-        url:  seatMap_url,
+        url: seatMap_url,
         method: 'GET'
     }).then((file) => {
         reader.readAsText(file)
@@ -369,10 +369,10 @@ async function setTicket(event, eventId) {
         if (!priceClassColor[eventId]) priceClassColor[eventId] = {}
 
         if (!priceClassColor[eventId][values.events[`${eventId}`].price])
-        priceClassColor[eventId][`${values.events[`${eventId}`].price}`] = await randomColor({
-            luminosity: 'bright',
-            format: 'rgb'
-        })
+            priceClassColor[eventId][`${values.events[`${eventId}`].price}`] = await randomColor({
+                luminosity: 'bright',
+                format: 'rgb'
+            })
 
         //const floorSeatId =await  event.target.getAttribute('tid')
         //let index = await values.events[`${eventId}`].SeatsInfo.Items.findIndex((item) =>{ return  item.floorSeatId === floorSeatId; })
