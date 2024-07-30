@@ -16,6 +16,9 @@
                             <li class="block p-1 font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 hover:border-b-2">
                                 <router-link :to="{ name: 'about' }" active-class="active"  class="flex items-center" href="#">درباره ما</router-link>
                             </li>
+                            <li v-if="userStore.isAuthenticated" class="block p-1 font-sans text-sm antialiased font-normal leading-normal rounded-sm hover:shadow-md text-blue-gray-900 ">
+                                <router-link :to="{ name: 'adminPanel' }" active-class="active"  class="flex items-center" href="#">مدیریت </router-link>
+                            </li>
                             <li class="block p-1 font-sans text-sm antialiased font-normal leading-normal border-2 border-dashed rounded-sm hover:shadow-md text-blue-gray-900 border-dark-400">
                                 <router-link :to="{ name: 'check' }" active-class="active"  class="flex items-center" href="#">بررسی بلیت</router-link>
                             </li>
@@ -87,6 +90,9 @@
                         </li>
                         <li class="block p-1 font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 hover:border-b-2">
                             <router-link :to="{ name: 'check' }" active-class="active" class="flex items-center" href="#">بررسی بلیت</router-link>
+                        </li>
+                        <li v-if="userStore.isAuthenticated" class="block p-1 font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 hover:border-b-2">
+                            <router-link :to="{ name: 'adminPanel' }" active-class="active" class="flex items-center" href="#"> مدیریت </router-link>
                         </li>
                         <li v-if="userStore.isAuthenticated" class="block p-1 font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
                             <Dropdown @visible-change="change" :fullWidth="true">

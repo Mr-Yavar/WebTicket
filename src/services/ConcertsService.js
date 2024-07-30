@@ -1,4 +1,4 @@
-import API_BASE_URL from "@/config/appConfig.js";
+import API_BASE_URL, { FILE_PROVIDER2 } from "@/config/appConfig.js";
 
 export async function GetAllConcertService(){
 
@@ -55,7 +55,7 @@ export async function GetSpecificEventService(data){
 
 export async function GetSeatMapService(fileName){
 
-    let res = await fetch(API_BASE_URL+'/api/FileProvider/File/'+fileName,{
+    let res = await fetch(FILE_PROVIDER2+fileName,{
         method : "GET",
         headers : {
             "Content-Type" : "application/json",

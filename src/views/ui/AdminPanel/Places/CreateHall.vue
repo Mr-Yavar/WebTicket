@@ -9,7 +9,7 @@ import {HuTimesCircle} from '@kalimahapps/vue-icons/hu'
 import Swal from 'sweetalert2'
 import {useRoute, useRouter} from 'vue-router'
 import {reactive, ref, useCssModule, watch} from 'vue'
-import { FILE_PROVIDER } from '@/config/appConfig'
+import { FILE_PROVIDER, FILE_PROVIDER2 } from '@/config/appConfig'
 import {PrSpinner} from "@kalimahapps/vue-icons/pr";
 const router = useRouter()
 const route = useRoute()
@@ -245,7 +245,7 @@ const formData = {
   await resetForm({values:formData});
  
     formData.floors.forEach((floor,index)=>{
-      fetch(FILE_PROVIDER+"?fileName="+floor.seatMap_url,{
+      fetch(FILE_PROVIDER2+floor.seatMap_url,{
         method : "GET"
       }).then((res)=>{
         return res.blob();

@@ -1,5 +1,5 @@
 <template>
-    <div id="card" dir="rtl" class="mx-auto h-[22rem] w-full max-w-[15rem] flex items-end justify-center overflow-hidden rounded-xl bg-white bg-clip-border text-center text-gray-700 relative flex-col justify-center shadow-md animate-pulse ">
+    <div id="card" dir="rtl" class="mx-auto h-[22rem] w-full max-w-[15rem] flex items-end justify-center overflow-hidden rounded-xl bg-gray-100 bg-clip-border text-center text-gray-700 relative flex-col shadow-[0px_20px_13px_-13px_rgba(0,0,0,0.1)] animate-pulse ">
       
         <div class="absolute grid h-full opacity-0 overflow-hidden text-gray-700 bg-gray-300 bg-clip-border rounded-xl place-items-center">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-full h-full text-gray-500 ">
@@ -8,14 +8,14 @@
         </div>
         <div class="self-center absolute bottom-0 items-end">
         <div class="py-2  ">
-            <div class="block w-56 mx-auto h-3 mb-4 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-gray-300 rounded-full text-inherit">&nbsp;</div>
-            <div class="block w-24 h-2 mb-2 font-sans text-base antialiased font-light leading-relaxed bg-gray-300 rounded-full text-inherit">&nbsp;</div>
-            <div class="block w-32 h-2 mb-2 font-sans text-base antialiased font-light leading-relaxed bg-gray-300 rounded-full text-inherit">&nbsp;</div>
+            <div class="block w-56 mx-auto h-3 mb-4 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-gray-400 rounded-full text-inherit">&nbsp;</div>
+            <div class="block w-24 h-2 mb-2 font-sans text-base antialiased font-light leading-relaxed bg-gray-400 rounded-full text-inherit">&nbsp;</div>
+            <div class="block w-32 h-2 mb-2 font-sans text-base antialiased font-light leading-relaxed bg-gray-400 rounded-full text-inherit">&nbsp;</div>
             <!-- <div class="block w-full h-2 mb-2 font-sans text-base antialiased font-light leading-relaxed bg-gray-300 rounded-full text-inherit">&nbsp;</div>
             <div class="block w-full h-2 mb-2 font-sans text-base antialiased font-light leading-relaxed bg-gray-300 rounded-full text-inherit">&nbsp;</div> -->
         </div>
         <div class="py-2 px-0 pt-0 self-center w-full">
-            <button disabled="" tabindex="-1" class="align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-5 px-6 rounded-lg text-white shadow-gray-900/10 hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none h-8  bg-gray-300 shadow-none hover:shadow-none !w-full" type="button">&nbsp;</button>
+            <button disabled="" tabindex="-1" class="align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-5 px-6 rounded-lg text-white shadow-gray-900/10 hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none h-8  bg-gray-400 shadow-none hover:shadow-none !w-full" type="button">&nbsp;</button>
         </div>
       </div>
     </div>

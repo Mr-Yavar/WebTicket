@@ -4,7 +4,7 @@ import { BsLightningCharge } from "@kalimahapps/vue-icons/bs";
 import { RePencilLine } from "@kalimahapps/vue-icons/re";
 import { BsLightningChargeFill } from '@kalimahapps/vue-icons/bs';
 import { useRouter } from "vue-router";
-import { FILE_PROVIDER } from "@/config/appConfig";
+import { FILE_PROVIDER, FILE_PROVIDER2 } from "@/config/appConfig";
 
 defineProps({
   promoter: Object,
@@ -18,7 +18,7 @@ const router = useRouter();
 <template>
   <div class="mx-auto w-64 mb-2 flex flex-col text-center bg-white rounded-lg shadow divide-y divide-gray-200">
     <div class="flex-1 flex flex-col p-3">
-      <img class="w-32 h-32 flex-shrink-0 mx-auto rounded-full" :src="(promoter.img_url ?  FILE_PROVIDER+'?filename='+promoter.img_url : '/image-03.jpg')" alt="">
+      <img class="w-32 h-32 flex-shrink-0 mx-auto rounded-full" :src="(promoter.img_url ?  FILE_PROVIDER2+promoter.img_url : '/image-03.jpg')" alt="">
       <h3 class="mt-6 text-gray-900 text-sm font-medium">{{ promoter.title }}</h3>
       <dl class="mt-1 flex-grow flex flex-col justify-between">
         <dd class="mt-3">

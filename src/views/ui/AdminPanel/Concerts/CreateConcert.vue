@@ -10,7 +10,7 @@ import { CiCircleChevLeft } from '@kalimahapps/vue-icons/ci'
 import Swal from 'sweetalert2'
 import { useRoute, useRouter } from 'vue-router'
 import { computed, reactive, ref, useCssModule, watch } from 'vue'
-import { FILE_PROVIDER } from '@/config/appConfig'
+import { FILE_PROVIDER, FILE_PROVIDER2 } from '@/config/appConfig'
 import { PrSpinner } from '@kalimahapps/vue-icons/pr'
 import vueSelectUmd from 'vue-select'
 import { sendRequest, getFile } from '@/services/service'
@@ -291,8 +291,8 @@ function showSeatMap(seatMap_url, floorSeats, key, idx, EventId) {
     }
 
     getFile({
-        baseUrl: FILE_PROVIDER,
-        url: '?fileName=' + seatMap_url,
+        baseUrl: FILE_PROVIDER2,
+        url:  seatMap_url,
         method: 'GET'
     }).then((file) => {
         reader.readAsText(file)

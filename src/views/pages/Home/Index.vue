@@ -2,10 +2,14 @@
   <EventPartial>
     <template #Events>
 
-      <div class="grid grid-cols-1 mt-4 xl:grid-cols-4 xl:gap-y-4 lg:grid-cols-3 md:grid-cols-2 gap-y-2 " dir="rtl" v-if="GetAllConcertsServiceCall.data">
+      <div class="grid grid-cols-1 mt-4 xl:grid-cols-4 xl:gap-y-4 lg:grid-cols-3 md:grid-cols-2 gap-y-2 " dir="rtl" v-if=" GetAllConcertsServiceCall.isFetched.value && !GetAllConcertsServiceCall.isLoading.value">
         <CardItem v-for="item in Concerts" :concert="item" :key="item.concertId"/>
-        <SkeletonCardItem/>
       </div>
+      <div class="grid grid-cols-1 mt-4 xl:grid-cols-4 xl:gap-y-4 lg:grid-cols-3 md:grid-cols-2 gap-y-2 " dir="rtl" v-else>
+     
+        <SkeletonCardItem />
+      </div>
+     
     
     </template>
   </EventPartial>
