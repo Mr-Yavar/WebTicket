@@ -8,7 +8,7 @@
             </tr>
         </thead>
     </table>
-    <div class="max-h-[500px] min-h-[500px] overflow-y-scroll">
+    <div class="max-h-[500px] min-h-[500px] overflow-y-scroll bg-gray-50 shadow-inner">
         <table :class="tableClass">
             <tbody :class="tbodyClass">
                 <tr v-for="(row, index) in data" :key="'row' + index" :class="trClass">
@@ -17,12 +17,19 @@
                     </td>
                 </tr>
             </tbody>
+            
         </table>
+    </div>
+    <div :class="' sticky bottom-0 ' + ''">
+        <slot name="pagination" ></slot>
     </div>
 </template>
 
 <script setup>
-defineProps({
+import { reactive } from 'vue';
+import { ref } from 'vue';
+
+const props = defineProps({
     columns: Object,
     data: Array,
     tableClass: String,
@@ -31,8 +38,14 @@ defineProps({
     thClass: String,
     trClass: String,
     tdClass: String,
-    theadTRClass: String
-})
+    theadTRClass: String,
+    pageSizes : Array
+});
+
+
+
+
+
 </script>
 
 <style></style>

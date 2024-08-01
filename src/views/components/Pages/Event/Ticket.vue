@@ -3,7 +3,7 @@
         <div class="cardWrap md:!text-base !text-sm">
             <div class="card cardLeft relative">
                 <span class="absolute top-[-2%] left-[-4%] py-0.5 px-1 mx-1 rounded-full bg-red-900 text-white text-xs" v-show="event.isEnded">خاتمه یافت</span>
-                <div class="absolute top-2.5 text-center text-white block w-full md:!text-lg !text-base"><span class="font-extrabold">کنسرت ماکان بند</span></div>
+                <div class="absolute top-2.5 text-center text-white block w-full md:!text-lg !text-base"><span class="font-extrabold">کنسرت {{ concertTitle }} </span></div>
                 <div class="h-full flex flex-col justify-end items-center">
                     <span class="text-center block text-black"
                         ><span class="font-bold">ساعت : </span

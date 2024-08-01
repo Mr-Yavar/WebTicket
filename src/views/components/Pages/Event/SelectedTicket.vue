@@ -2,7 +2,7 @@
     <div>
         <div class="cardWrap md:!text-base sm:!text-sm !text-xs">
             <div class="card cardLeft relative">
-                <div class="absolute top-0.5 text-center text-white block w-full md:!text-lg !text-base"><span class="font-extrabold">کنسرت ماکان بند</span></div>
+                <div class="absolute top-0.5 text-center text-white block w-full md:!text-lg !text-base"><span class="font-extrabold">کنسرت {{concertTitle}}</span></div>
                 <div class="h-full w-full grid grid-cols-2 items-end gap-0">
                     <div class="text-center block text-black"><span class="font-bold">طبقه :</span> {{ floor }}</div>
 
@@ -37,7 +37,8 @@ const props = defineProps({
         type: Boolean,
         default: true
     },
-    index: String
+    index: String,
+    concertTitle : String
 })
 
 console.log(props.seatInfo.id)

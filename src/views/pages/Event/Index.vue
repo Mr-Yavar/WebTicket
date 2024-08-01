@@ -20,14 +20,14 @@
                     </FirstStep>
                 </div>
                 <div v-else-if="step === 2">
-                    <SecondStep :stepControls="{ nextFn: toNext, previousFn: toPrevious }">
+                    <SecondStep :stepControls="{ nextFn: toNext, previousFn: toPrevious }" :concert="concert">
                         <template #controlSteps>
                             <ControlSteps :to-next="toNext" :to-previous="toPrevious" />
                         </template>
                     </SecondStep>
                 </div>
                 <div v-else-if="step === 3">
-                    <ThridStep :stepControls="{ nextFn: toNext, previousFn: toPrevious }">
+                    <ThridStep :stepControls="{ nextFn: toNext, previousFn: toPrevious }" :concert="concert">
                         <template #controlSteps="ThridStepProps">
                             <ControlSteps :to-next="toNext" :to-previous="toPrevious">
                                 <template #nextBtn>
@@ -38,10 +38,11 @@
                     </ThridStep>
                 </div>
                 <div v-else-if="step === 4">
-                    <FourthStep :stepControls="{ nextFn: toNext, previousFn: toPrevious }" />
+                    <FourthStep :stepControls="{ nextFn: toNext, previousFn: toPrevious }" :concert="concert" />
                 </div>
             </keep-alive>
         </transition>
+      
     </div>
 </template>
 

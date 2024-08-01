@@ -14,7 +14,7 @@ import Swal from 'sweetalert2'
 const GetAllPlaceServiceCall = useQuery({
     queryKey: ['api/place/GetAllPlaces'],
     queryFn: GetAllPlacesService,
-
+    refetchOnMount:true,
     enabled: true
 })
 const { mutate } = useMutation({

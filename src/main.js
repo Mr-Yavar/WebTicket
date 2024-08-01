@@ -13,25 +13,29 @@ import router from './router'
 import { VueQueryPlugin } from '@tanstack/vue-query'
 import VeeValidatePlugin from './config/veevalidate.js'
 import registerLayouts from '@/config/_registerLoayouts.js'
+
 import { addIcons, OhVueIcon } from 'oh-vue-icons'
+
+
 import { OiLocation } from 'oh-vue-icons/icons/oi'
-import { RiCalendarEventFill } from 'oh-vue-icons/icons/ri/index.js'
-import { FaRegularStar, FaSearch, FaTicketAlt, FaTimes } from 'oh-vue-icons/icons/fa/index.js'
+import { RiCalendarEventFill,RiMenu2Line } from 'oh-vue-icons/icons/ri/index.js'
+import { FaRegularStar, FaSearch, FaTicketAlt, FaTimes,FaChartPie } from 'oh-vue-icons/icons/fa/index.js'
 import { IoSettingsOutline, IoGridOutline, IoDocumentsOutline, IoTicketSharp, IoArrowForwardOutline, IoTrashOutline, IoTicketOutline } from 'oh-vue-icons/icons/io/index.js'
 import { PrSpinner } from 'oh-vue-icons/icons/pr'
 import { PxCalendarTomorrow, PxClock, PxGps } from 'oh-vue-icons/icons/px'
 import { HiChevronDown, HiQuestionMarkCircle, HiSolidCheckCircle, HiTable } from 'oh-vue-icons/icons/hi'
-import { SiOpenstreetmap, SiTruenas } from 'oh-vue-icons/icons/si'
+import { SiOpenstreetmap,  } from 'oh-vue-icons/icons/si'
 import { MdCategoryOutlined, MdDashboardOutlined, MdDiscountTwotone, MdAttachmoneyOutlined } from 'oh-vue-icons/icons/md'
-import { BiBarChartLine, BiPencil, BiShieldCheck, CoBell, FaChartPie, LaTimesSolid, BiChevronLeft, LaUserCircle, RiMenu2Line } from 'oh-vue-icons/icons'
-import { CoHeart } from 'oh-vue-icons/icons/co/index.js'
-import { LaFileInvoiceDollarSolid } from 'oh-vue-icons/icons/la/index.js'
+import { BiBarChartLine, BiPencil, BiShieldCheck, BiChevronLeft } from 'oh-vue-icons/icons/bi'
+import { CoHeart,CoBell } from 'oh-vue-icons/icons/co/index.js'
+
+import { LaFileInvoiceDollarSolid,LaTimesSolid,LaUserCircle } from 'oh-vue-icons/icons/la/index.js'
 import { PerfectScrollbarPlugin } from 'vue3-perfect-scrollbar'
 import Vue3PersianDatetimePicker from 'vue3-persian-datetime-picker'
 
 addIcons(LaFileInvoiceDollarSolid, IoTicketOutline, MdAttachmoneyOutlined, CoHeart, FaRegularStar, BiChevronLeft, HiChevronDown, BiShieldCheck, HiQuestionMarkCircle, RiMenu2Line, IoGridOutline, IoDocumentsOutline, FaChartPie, IoSettingsOutline, BiPencil, LaTimesSolid, MdDashboardOutlined, HiTable, CoBell, BiBarChartLine, FaSearch, LaUserCircle, MdDiscountTwotone, IoTrashOutline, MdCategoryOutlined, SiOpenstreetmap, OiLocation, RiCalendarEventFill, FaSearch, FaTicketAlt, IoTicketSharp, IoArrowForwardOutline, FaTimes, PrSpinner, PxCalendarTomorrow, PxClock, PxGps, HiSolidCheckCircle)
 
-import DatePicker, { PersianDate } from '@alireza-ab/vue3-persian-datepicker'
+import DatePicker from '@alireza-ab/vue3-persian-datepicker'
 const app = createApp(App)
 app.component('AB-Date-Picker', DatePicker)
 app.use(Vue3PersianDatetimePicker, {

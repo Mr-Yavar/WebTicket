@@ -3,19 +3,51 @@ import DataTable_V1 from '@/views/components/Globals/DataTables/DataTable_V1.vue
 import Splitter from '@/views/components/Splitter/Splitter.vue'
 import { useQuery } from '@tanstack/vue-query'
 import { sendRequest } from '@/services/service'
-
+import { ref } from 'vue';
+import { computed } from 'vue';
+const pageIndex = ref(0);
+const pageSize = ref(1);
+import EditConcertModal from '@/views/components/Layouts/AdminLayout/Modal/EditConcertModal.vue';
+const queryKey = computed(()=>([{ url: '/api/Manager/GetAllConcerts', pageSize: pageSize.value, currentPage: pageIndex.value+1 }]));
 const getAllConcert = useQuery({
-    queryKey: [{ url: '/api/Manager/GetAllConcerts', pageSize: 10, currentPage: 1 }],
+    queryKey: queryKey,
     queryFn: ({ queryKey }) =>
         sendRequest({
             url: queryKey[0].url + '/' + queryKey[0].pageSize + '/' + queryKey[0].currentPage,
             method: 'GET',
             headers: {}
         }),
+        refetchOnMount:true,
     enabled: true
 })
 
-const dateFormat = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }
+const totalCount = computed (()=>getAllConcert.data.value?.totalCount ?? 0);
+
+const totalPage = computed (()=>Math.ceil(totalCount.value / pageSize.value));
+
+const dateFormat = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false };
+
+function action(step){
+
+
+    if(step>0 && pageIndex.value+step >= totalPage.value)
+    return;
+
+    if(step<0 && pageIndex.value+step < 0)
+    return;
+    
+
+    pageIndex.value += step;
+
+}
+const showTermsModal = ref(false)
+
+function toggleTermsModal() {
+    showTermsModal.value = !showTermsModal.value
+}
+
+const selectedConcert = ref("");
+
 </script>
 
 <template>
@@ -31,6 +63,7 @@ const dateFormat = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2
                 <button class="btn btn-success btn-sm" @click.prevent="$router.push({ name: 'createConcert' })">اضافه کردن</button>
             </div>
             <DataTable_V1
+
                 :columns="[
                     {
                         title: '#',
@@ -68,6 +101,7 @@ const dateFormat = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2
                 :tdClass="'text-center p-1'"
                 :trClass="'odd:!bg-[#e4e4e7] even:!bg-gary-100'"
                 :theadTRClass="'!bg-info'"
+
             >
                 <template #[`tbodyconcertid`]="{ data }">{{ '-' }}</template>
                 <template #[`tbodytitle`]="{ data }">{{ data.title }}</template>
@@ -89,9 +123,34 @@ const dateFormat = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2
                         >
                             ویرایش
                         </button>
+
+                        <button
+                        class=""
+                        @click.prevent="
+                            () => {
+                                selectedConcert = data.concertid;
+                                toggleTermsModal();
+                            }
+                        "
+                    >
+                        ⚙️
+                    </button>
+                    </div>
+                </template>
+
+
+                <template #[`pagination`]>
+                    <div class="flex justify-center">
+                        <div @click="action(5)" class="text-xl">{{ '▶️' }}</div>
+                        <div @click="action(1)" class="text-base self-center">{{ '▶️' }}</div>
+                        <div class="mx-5">{{ pageIndex+1  }} از {{totalPage}}</div>
+                        <div @click="action(-1)" class="text-base self-center">{{'◀️'}}</div>
+                        <div @click="action(-5)" class="text-xl">{{'◀️'}}</div>
+
                     </div>
                 </template>
             </DataTable_V1>
         </div>
     </template>
+    <edit-concert-modal :concertId="selectedConcert" :show="showTermsModal" :on-close-fn="toggleTermsModal" />
 </template>
