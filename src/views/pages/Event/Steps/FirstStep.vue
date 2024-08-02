@@ -100,7 +100,13 @@
                                 () => {
                                     seatMap.JoinGroup(event.eventId)
                                     TicketStore.setSelectedShowing(event.eventId)
-                                    stepControls.nextFn()
+                                    $router.push({
+                                        name: 'event1',
+                                        params: {
+                                            ...$route.params,
+                                            eventId: Guid({}).fromFullToCompressed(event.eventId)
+                                        }
+                                    })
                                 }
                             "
                         />
@@ -109,11 +115,9 @@
             </div>
         </div>
     </div>
-
-    <slot name="controlSteps" />
 </template>
 
-<script setup>
+<script>
 import ConcertTermsModal from '@/views/components/Globals/modal/ConcertTermsModal.vue'
 import Ticket from '@/views/components/Pages/Event/Ticket.vue'
 
@@ -122,68 +126,92 @@ import '@neshan-maps-platform/mapbox-gl-vue/dist/style.css'
 import { computed, onMounted, ref } from 'vue'
 import nmp_mapboxgl from '@neshan-maps-platform/mapbox-gl'
 import useTicketStore from '@/stores/Ticket.js'
-
-import { FILE_PROVIDER2 } from '@/config/appConfig.js'
 import useSeatMapStore from '@/stores/seatMap.js'
+import { GetSpecificConcertService } from '@/services/ConcertsService'
+import { useQuery } from '@tanstack/vue-query'
+import { useRoute, useRouter } from 'vue-router'
+import { Guid } from '@/config/helper'
 
-const props = defineProps({
-    stepControls: Object,
-    concert: Object
-})
+export default {
+    components: { ConcertTermsModal, Ticket, MapComponent },
+    props:{stepControls: Object},
+    setup: () => {
+     
+        const route = useRoute()
+        const GetSpecificConcertServiceCallKey = computed(()=>['api/Concerts/GetSpecificConcert', route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id)]);
+        const GetSpecificConcertServiceCall = useQuery({
+            queryKey: GetSpecificConcertServiceCallKey,
+            queryFn: GetSpecificConcertService,
 
-const seatMap = useSeatMapStore()
+            enabled: true
+        })
 
-const eventsDate = computed(() => {
-    let DateTimes = props.concert?.events.items.map((e) => new Date(e.executionDate))
+        const concert = computed(() => GetSpecificConcertServiceCall.data.value?.concerts[0]);
 
-    let res = {}
+        const seatMap = useSeatMapStore()
 
-    res['dates'] = DateTimes?.reduce((acc, item) => {
-        acc.push(item.toLocaleString('fa-ir', { day: '2-digit', month: 'long', weekday: 'long' }))
-        return acc
-    }, [])
+        const eventsDate = computed(() => {
+            let DateTimes = concert.value?.events.items.map((e) => new Date(e.executionDate))
 
-    res['times'] = DateTimes?.reduce((acc, item) => {
-        let time = item.toLocaleString('fa-ir', { hour: '2-digit', minute: '2-digit', hour12: false })
-        if (acc.indexOf(time) === -1) acc.push(time)
-        return acc
-    }, []).sort()
+            let res = {}
 
-    return res
-})
+            res['dates'] = DateTimes?.reduce((acc, item) => {
+                acc.push(item.toLocaleString('fa-ir', { day: '2-digit', month: 'long', weekday: 'long' }))
+                return acc
+            }, [])
 
-const TicketStore = useTicketStore()
+            res['times'] = DateTimes?.reduce((acc, item) => {
+                let time = item.toLocaleString('fa-ir', { hour: '2-digit', minute: '2-digit', hour12: false })
+                if (acc.indexOf(time) === -1) acc.push(time)
+                return acc
+            }, []).sort()
 
-const termsAgreed = ref(false)
+            return res
+        })
 
-const showTermsModal = ref(false)
+        const TicketStore = useTicketStore()
 
-function toggleTermsModal() {
-    showTermsModal.value = !showTermsModal.value
+        const termsAgreed = ref(false)
+
+        const showTermsModal = ref(false)
+
+        function toggleTermsModal() {
+            showTermsModal.value = !showTermsModal.value
+        }
+
+        function handleStartMap(map) {
+            map.fitBounds(map.getBounds(), {
+                padding: { top: 50, bottom: 50, left: 50, right: 50 },
+                center: [51.375, 35.7449],
+                maxZoom: 20,
+                zoom: 15,
+                minZoom: 7,
+                animate: true,
+                around: [51.375, 35.7449]
+            })
+
+            const marker = new nmp_mapboxgl.Marker({
+                color: 'black',
+                title: 'محل برگزاری',
+                draggable: false
+            }).setLngLat([51.375, 35.7449])
+
+            marker.addTo(map)
+        }
+
+        onMounted(() => {
+            seatMap.LeaveGroup()
+        })
+
+        const router = useRouter()
+
+        return { concert, router, route,seatMap, handleStartMap, toggleTermsModal, termsAgreed, TicketStore, eventsDate ,MapTypes,Guid}
+        // same as beforeRouteUpdate option but with no access to `this`
+    },
+    beforeRouteEnter: async (to, from, next) => {
+        console.log(to, from, next);
+        next();
+    }
 }
-
-function handleStartMap(map) {
-    map.fitBounds(map.getBounds(), {
-        padding: { top: 50, bottom: 50, left: 50, right: 50 },
-        center: [51.375, 35.7449],
-        maxZoom: 20,
-        zoom: 15,
-        minZoom: 7,
-        animate: true,
-        around: [51.375, 35.7449]
-    })
-
-    const marker = new nmp_mapboxgl.Marker({
-        color: 'black',
-        title: 'محل برگزاری',
-        draggable: false
-    }).setLngLat([51.375, 35.7449])
-
-    marker.addTo(map)
-}
-
-onMounted(() => {
-    seatMap.LeaveGroup()
-})
 </script>
 <style scoped></style>

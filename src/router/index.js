@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import useUserStore from '@/stores/user.js'
+import { Guid } from '@/config/helper'
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -30,20 +31,77 @@ const router = createRouter({
         },
         {
             path: '/event/:id',
-            name: 'event1',
-            redirect: (to) => ({ name: 'event', params: { ...to.params, step: 1 } }),
-            beforeEnter: () => console.log(41)
-        },
-        {
-            path: '/event/:id/:step',
             name: 'event',
             component: () => import('@/views/pages/Event/Index.vue'),
-            beforeEnter: (to, from, next) => {
-                console.log('df', to.params.step)
-                if (!isNaN(Number(to.params.step))) {
-                    next()
+            redirect: { name: 'event0' },
+            beforeEnter: (to, form, next) => {
+                console.log(to);
+                try {
+                    Guid({}).fromCompressedToFull(to.params.id);
+                    next();
+                } catch (err) {
+                    return;
                 }
             },
+            children: [
+                {
+                    path: '0',
+                    name: 'event0',
+                    component: () => import('@/views/pages/Event/Steps/FirstStep.vue'),
+                    beforeEnter: (to, form, next) => {
+                        
+                        try {
+                            Guid({}).fromCompressedToFull(to.params.id);
+                            next();
+                        } catch (err) {
+                            return;
+                        }
+                    },
+                },
+                {
+                    path: '1/:eventId',
+                    name: 'event1',
+                    
+                    component: () => import('@/views/pages/Event/Steps/SecondStep.vue'),
+                    beforeEnter: (to, form, next) => {
+                        try {
+                            Guid({}).fromCompressedToFull(to.params.id);
+                            Guid({}).fromCompressedToFull(to.params.eventId);
+
+                            next();
+                        } catch (err) {
+                            return;
+                        }
+                    },
+                },
+                {
+                    path: '2/:eventId',
+                    name: 'event2',
+                    component: () => import('@/views/pages/Event/Steps/ThridStep.vue'),
+                    beforeEnter: (to, form, next) => {
+                        try {
+                            Guid({}).fromCompressedToFull(to.params.id);
+                            Guid({}).fromCompressedToFull(to.params.eventId);
+                            next();
+                        } catch (err) {
+                            return;
+                        }
+                    },
+                },
+                {
+                    path: '3/:eventId',
+                    name: 'event3',
+                    component: () => import('@/views/pages/Event/Steps/FourthStep.vue'), beforeEnter: (to, form, next) => {
+                        try {
+                            Guid({}).fromCompressedToFull(to.params.id);
+                            Guid({}).fromCompressedToFull(to.params.eventId);
+                            next();
+                        } catch (err) {
+                          return;
+                        }
+                    },
+                }
+            ],
             meta: {
                 layout: 'Default'
             }

@@ -4,15 +4,16 @@
             <div class="card cardLeft relative">
                 <div class="absolute top-0.5 text-center text-white block w-full md:!text-lg !text-base"><span class="font-extrabold">کنسرت {{concertTitle}}</span></div>
                 <div class="h-full w-full grid grid-cols-2 items-end gap-0">
-                    <div class="text-center block text-black"><span class="font-bold">طبقه :</span> {{ floor }}</div>
+                    <div class="text-center block text-black"><span class="font-bold">طبقه :</span> {{ FRC[0] }}</div>
 
-                    <div class="text-center block text-black"><span class="font-bold">ردیف :</span>{{ row }}</div>
+                    <div class="text-center block text-black"><span class="font-bold">ردیف :</span>{{ FRC[1] }}</div>
 
-                    <div class="text-center block text-black"><span class="font-bold">صندلی :</span> {{ column }}</div>
+                    <div class="text-center block text-black"><span class="font-bold">صندلی :</span> {{ FRC[2] }}</div>
 
-                    <div class="text-center block text-black"><span class="font-bold">قیمت :</span>{{ 20000 }}</div>
+                    <div class="text-center block text-black"><span class="font-bold">قیمت :</span>{{ seatInfo.price }}</div>
                 </div>
             </div>
+           
             <div class="card cardRight relative">
                 <div class="absolute md:bottom-5 bottom-3 text-center text-white block w-full">
                     <span @click.prevent="handleDelete" v-if="hasDelete">
@@ -41,12 +42,12 @@ const props = defineProps({
     concertTitle : String
 })
 
-console.log(props.seatInfo.id)
-const floor = props.seatInfo.floor
-const row = props.seatInfo.row
-const column = props.seatInfo.column
+//console.log(props.seatInfo.id)
+// const floor = props.seatInfo.floor
+// const row = props.seatInfo.row
+// const column = props.seatInfo.column
+const FRC = computed(()=>props.seatInfo.name.replace("f","").replace("c","").replace("r","").split("_"));
 
-const price = props.seatInfo.price
 </script>
 
 <style scoped>
