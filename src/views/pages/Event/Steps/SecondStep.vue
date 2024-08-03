@@ -174,7 +174,9 @@ async function onNext() {
         },
         {
             onSuccess: async (data) => {
-
+                if(data.tempReservationId==null)
+                return false;
+            
                 try {
                     await seatMapService.notifyLockTickets()
                 } catch (e) {

@@ -169,7 +169,7 @@ const useSeatMapStore = defineStore('SeatMap', () => {
         if (groupId.value !== undefined) return false
         Locked_Tickets.value = []
         groupId.value = group
-        
+        console.log(group);
         const res = await talkToServer('/api/SeatMap/ChooseEvent/' + user.ClientId + '/' + group, { method: 'GET', headers: {} });
         const msg = JSON.parse(res);
    

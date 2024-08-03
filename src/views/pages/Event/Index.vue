@@ -10,7 +10,7 @@
             <div :class="step >= 3 ? 'bg-gray-900 text-white dark:bg-gray-50 dark:text-black' : 'bg-gray-300  dark:bg-gray-600 dark:text-white'" class="relative z-10 grid w-10 h-10 font-bold transition-all duration-300 rounded-full place-items-center">4</div>
         </div>
         <div>
-            <Splitter :title="stepTitles[step-1]" border-class="border-gray-500 border-dashed" class="my-3" titleClass="font-bold text-md text-gray-900 dark:text-white" type="middle" />
+            <Splitter :title="stepTitles[step]" border-class="border-gray-500 border-dashed" class="my-3" titleClass="font-bold text-md text-gray-900 dark:text-white" type="middle" />
         </div>
         <router-view v-slot="{ Component }">
             <component :is="Component" :to-next="toNext" :to-previous="toPrevious">

@@ -1,4 +1,8 @@
 <template>
+    <div class="mx-auto my-2 text-center" v-tippy="{ content: '.در این زمان شما فرصت دارید تا خرید خود را نهایی کنید' }">
+        <vue-countdown v-show="GetUserTempoReservation.data.value?.amount != -1 && GetUserTempoReservation.data.value?.tickets.length !== 0" :time="expirationTimeOut" v-slot="{ minutes, seconds }">مدت زمان باقیمانده : {{ minutes.toString().padStart(2, '0') }}:{{ seconds.toString().padStart(2, '0') }} </vue-countdown>
+    </div>
+
     <div class="grid md:grid-cols-2 grid-cols-1 mt-2 gap-2 p-4 rounded-2xl shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset]">
         <div class="col-span-full dark:text-gray-200 text-black font-bold">بلیت های انتخابی شما:</div>
         <div v-if="TicketStore.Tickets.length === 0" class="col-span-full text-center dark:text-gray-200 text-black text-md font-bold">هیچ بلیتی انتخاب نشده است!</div>
@@ -9,24 +13,24 @@
         <div class="col-span-1 rtl:!text-right text-left dark:text-gray-200 text-black">
             <p class="leading-10">
                 <span class="!text-sm font-bold">مبلغ قابل پرداخت : </span>
-                <span :class="{ strikethrough: usedDiscount!=='' }">{{ GetUserTempoReservation.data.value?.amount ?? '-' }} تومان</span>
-                <span v-if="usedDiscount!==''" class="px-3">{{ discountPrice }} تومان</span>
+                <span :class="{ strikethrough: usedDiscount !== '' }">{{ amount ?? '-' }} تومان</span>
+                <span v-if="usedDiscount !== ''" class="px-3">{{ discountPrice }} تومان</span>
             </p>
         </div>
-        <div v-if="usedDiscount!==''" class="col-span-1 rtl:!text-right text-left dark:text-gray-200 text-black">
+        <div v-if="usedDiscount !== ''" class="col-span-1 rtl:!text-right text-left dark:text-gray-200 text-black">
             <p class="leading-10">
-                <span class="!text-sm font-bold">تخفیف اعمال شده : </span>
-                <span class="">{{ discountPrice }} تومان</span>
-                <span class="px-3 text-red-700" title="حذف تخفیف" @click.prevent="usedDiscount=''">X</span>
+                <span class="!text-sm font-bold"> کد تخفیف اعمال شده: </span>
+                <span class=""> {{ discount }}</span>
+                <span class="px-3 text-red-700" title="حذف تخفیف" @click.prevent="usedDiscount = ''">X</span>
             </p>
         </div>
         <div v-else class="col-span-1 flex rtl:!text-right text-left dark:text-gray-200 text-black text-md font-bold">
-            <span class="leading-10 pl-3">کد تخفیف : </span>
+            <span class="pl-1 lg:text-md sm:text-xs align-middle self-center">کد تخفیف : </span>
             <span>
                 <div class="flex !justify-between">
                     <div class="relative w-fit">
                         <div class="absolute grid w-5 h-5 place-items-center text-blue-gray-500 top-2/4 left-3 -translate-y-2/4">
-                            <v-icon aria-hidden="true" name="md-discount-twotone"></v-icon>
+                            <v-icon aria-hidden="true" name="md-discount-twotone" :fill="discountHasError ? 'red' : ''" :class="{ 'animate-bounce !temporary-animation duration-100': discountHasError }"></v-icon>
                         </div>
                         <input class="h-10 rounded-[7px] rtl:fa-font !border !border-gray-300 border-t-transparent bg-transparent bg-white px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 shadow-lg shadow-gray-900/5 outline outline-0 ring-4 ring-transparent transition-all placeholder:text-gray-500 placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:!border-gray-900 focus:border-t-transparent focus:!border-t-gray-900 focus:outline-0 focus:ring-gray-900/10 disabled:border-0 disabled:bg-blue-gray-50" placeholder="کد تخفیف ..." type="text" v-model="discount" />
                     </div>
@@ -38,7 +42,12 @@
         </div>
     </div>
 
-    <ControlSteps :to-next="onNext" :to-previous="onPreviuos" />
+    <ControlSteps :to-next="onNext" :to-previous="onPreviuos">
+        <template #nextBtn>
+            <button v-if="!GetUserTempoReservation.isError.value && (GetUserTempoReservation.data.value?.amount != -1 && GetUserTempoReservation.data.value?.tickets.length !== 0)" class="select-none rounded-lg bg-green-500 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-green-500/20 transition-all hover:shadow-lg hover:shadow-green-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" @click.prevent="onNext">پرداخت</button>
+            <span v-else></span>
+        </template>
+    </ControlSteps>
 </template>
 <script setup>
 import { Guid } from '@/config/helper'
@@ -52,6 +61,8 @@ import ControlSteps from './controlSteps.vue'
 import useUserStore from '@/stores/user'
 import { CRPlacesService } from '@/services/PlacesService'
 import useSeatMapStore from '@/stores/seatMap'
+import VueCountdown from '@chenfengyuan/vue-countdown'
+
 const props = defineProps({
     stepControls: Object,
     toNext: Function,
@@ -63,12 +74,12 @@ const route = useRoute()
 const TicketStore = useTicketStore()
 const seatMapService = useSeatMapStore()
 const usedDiscount = ref('')
-
+const discountHasError = ref(false)
 const userStore = useUserStore()
 const { mutate } = useMutation({
     mutationKey: ['Reservation'],
     mutationFn: CRPlacesService
-});
+})
 
 const GetSpecificConcertServiceCallKey = computed(() => ['/api/Concerts/GetConcertInfo/', route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id)])
 const GetSpecificConcertServiceCall = useQuery({
@@ -79,7 +90,7 @@ const GetSpecificConcertServiceCall = useQuery({
             method: 'Get'
         })
     },
-
+    
     enabled: true
 })
 
@@ -94,8 +105,13 @@ const GetUserTempoReservation = useQuery({
             }
         })
     },
+    refetchInterval:false,
     enabled: true
 })
+
+const amount = computed(() => (GetUserTempoReservation.data.value?.amount > 0 ? GetUserTempoReservation.data.value?.amount : 0))
+const expirationTimeOut = computed(() => (new Date(GetUserTempoReservation.data.value?.expirationDate) - new Date() > 0 ? new Date(GetUserTempoReservation.data.value?.expirationDate) - new Date() : 0))
+
 const discount = ref('')
 const discountKey = computed(() => ['/api/Billing/GetDiscount/', discount])
 const GetDiscount = useQuery({
@@ -122,78 +138,73 @@ watch([GetUserTempoReservation.data], () => {
 })
 
 async function useDiscount() {
+    if (amount.value <= 0) return
+
     const { data } = await GetDiscount.refetch()
-    console.log(data,data.isActive,new Date(data.expirationDate),new Date());
-    if (data != null && data.isActive && new Date(data.expirationDate) > new Date()) {
-        usedDiscount.value = data.id;
-        console.log(usedDiscount.value);
+
+    if (data != null && data.isActive && new Date(data.expirationDate) > new Date() && data.discountType != -1) {
+        usedDiscount.value = data.id
+        console.log(usedDiscount.value)
+        discountHasError.value = false
+    } else {
+        discountHasError.value = true
     }
-
-
 }
 
 const concert = computed(() => GetSpecificConcertServiceCall.data.value)
 
 const discountPrice = computed(() => {
-    let res = GetUserTempoReservation.data.value?.amount;
+    let res = amount.value
 
-    if(!GetDiscount.data.value && usedDiscount.value=="")
-    return res;
+    let maxDiscount = GetDiscount.data.value.maxDiscount
+    let discountPrecentage = GetDiscount.data.value.percentage
+    if (!GetDiscount.data.value && usedDiscount.value == '') return res
 
-    if (GetDiscount.data.value.percentage == null && GetDiscount.data.value.maxDiscount != null) {
-        res = GetUserTempoReservation.data.value.amount - GetDiscount.data.value.maxDiscoun
-        res = res < 0 ? 0 : res;
-    }else if (GetDiscount.data.value.percentage != null && GetDiscount.data.value.maxDiscount == null) {
-        let tempDis = GetUserTempoReservation.data.value.amount * GetDiscount.data.value.percentage /100;
+    if (discountPrecentage == null && maxDiscount != null) {
+        res = amount.value - maxDiscount
+        res = res < 0 ? 0 : res
+    } else if (discountPrecentage != null && maxDiscount == null) {
+        let tempDis = (amount.value * discountPrecentage) / 100
 
-        res = GetUserTempoReservation.data.value.amount - tempDis;
-        res = res < 0 ? 0 : res;
-    }else{
-        let tempDis = GetUserTempoReservation.data.value.amount * GetDiscount.data.value.percentage /100;
-        tempDis = tempDis > GetDiscount.data.value.maxDiscount ?  GetDiscount.data.value.maxDiscount : tempDis;
-        res = GetUserTempoReservation.data.value.amount - tempDis;
-        res = res < 0 ? 0 : res;
+        res = amount.value - tempDis
+        res = res < 0 ? 0 : res
+    } else {
+        let tempDis = (amount.value * discountPrecentage) / 100
+        tempDis = tempDis > maxDiscount ? maxDiscount : tempDis
+        res = amount.value - tempDis
+        res = res < 0 ? 0 : res
     }
 
-    return res;
-});
+    return res
+})
 
-function onNext(){
+function onNext() {}
 
-}
-
-async function onPreviuos(){
-
+async function onPreviuos() {
     await mutate(
         {
             url: '/api/Concerts/RemoveFromResevation?api-version=1.0',
-            body: JSON.stringify({
-                concertId: Guid({}).fromCompressedToFull(route.params.id),
-                eventId: Guid({}).fromCompressedToFull(route.params.eventId),
-                ticketIds: [...TicketStore.Tickets.map((x) => x.id)]
-            }),
+            body: JSON.stringify(GetUserTempoReservation.data.value.tempReservationId),
             method: 'POST',
             headers: {
                 'Content-type': 'application/json',
-                'Authorization'  : "Bearer "+userStore.accessToken
+                Authorization: 'Bearer ' + userStore.accessToken
             }
         },
         {
             onSuccess: async (data) => {
-
                 try {
                     await seatMapService.notifyUnLockTickets()
                 } catch (e) {
                     return false
                 }
 
-                await seatMapService.JoinGroup(ChosenEvent);
+                await seatMapService.JoinGroup(ChosenEvent.value)
 
-                props.toPrevious();
+                props.toPrevious()
             }
         }
-    );
-
+    )
 }
 </script>
 <style scoped></style>

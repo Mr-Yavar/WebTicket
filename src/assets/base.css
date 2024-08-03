@@ -16,3 +16,10 @@
     -o-transform: rotate(-5deg);
     transform: rotate(-5deg);
 }
+
+
+.temporary-animation {
+    -webkit-animation-iteration-count: 5 !important;
+    animation-iteration-count: 5 !important;
+  }
+  
