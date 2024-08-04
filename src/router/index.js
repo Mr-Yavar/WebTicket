@@ -107,6 +107,24 @@ const router = createRouter({
             }
         },
         {
+            path: '/buy/:id/:eventId',
+            name: 'buyStep',
+            component: () => import('@/views/pages/Event/BuyStep.vue'),
+            beforeEnter: (to, form, next) => {
+                console.log(to);
+                try {
+                    Guid({}).fromCompressedToFull(to.params.id);
+                    Guid({}).fromCompressedToFull(to.params.eventId);
+                    next();
+                } catch (err) {
+                    return;
+                }
+            },
+            meta: {
+                layout: 'Default'
+            }
+        },
+        {
             path: '/logout',
             name: 'logout',
 

@@ -44,7 +44,7 @@
 
     <ControlSteps :to-next="onNext" :to-previous="onPreviuos">
         <template #nextBtn>
-            <button v-if="!GetUserTempoReservation.isError.value && (GetUserTempoReservation.data.value?.amount != -1 && GetUserTempoReservation.data.value?.tickets.length !== 0)" class="select-none rounded-lg bg-green-500 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-green-500/20 transition-all hover:shadow-lg hover:shadow-green-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" @click.prevent="onNext">پرداخت</button>
+            <button v-if="!GetUserTempoReservation.isError.value && GetUserTempoReservation.data.value?.amount != -1 && GetUserTempoReservation.data.value?.tickets.length !== 0" class="select-none rounded-lg bg-green-500 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-green-500/20 transition-all hover:shadow-lg hover:shadow-green-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" @click.prevent="onNext">پرداخت</button>
             <span v-else></span>
         </template>
     </ControlSteps>
@@ -90,7 +90,7 @@ const GetSpecificConcertServiceCall = useQuery({
             method: 'Get'
         })
     },
-    
+
     enabled: true
 })
 
@@ -105,7 +105,7 @@ const GetUserTempoReservation = useQuery({
             }
         })
     },
-    refetchInterval:false,
+    refetchInterval: false,
     enabled: true
 })
 
@@ -178,13 +178,36 @@ const discountPrice = computed(() => {
     return res
 })
 
-function onNext() {}
+async function onNext() {
+    await mutate(
+        {
+            url: '/api/Billing/Pay?api-version=1.0',
+            body: JSON.stringify({
+                reservationId: GetUserTempoReservation.data.value.tempReservationId,
+                discountId: usedDiscount.value == null || usedDiscount.value === '' ? null : usedDiscount.value,
+                url : `/buy/${route.params.id}/${route.params.eventId}`
+            }),
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json',
+                Authorization: 'Bearer ' + userStore.accessToken
+            }
+        },
+        {
+            onSuccess: async (data) => {
+                
+                 console.log(data);   
+                
+            }
+        }
+    )
+}
 
 async function onPreviuos() {
     await mutate(
         {
             url: '/api/Concerts/RemoveFromResevation?api-version=1.0',
-            body: JSON.stringify(GetUserTempoReservation.data.value.tempReservationId),
+            
             method: 'POST',
             headers: {
                 'Content-type': 'application/json',

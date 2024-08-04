@@ -82,7 +82,7 @@ app.use(
     {
    
     }
-)
+);
 app.use(PerfectScrollbarPlugin, { componentName: 'Scrollbar' })
 app.use(VeeValidatePlugin)
 app.use(createPinia())
