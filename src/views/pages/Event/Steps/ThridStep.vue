@@ -185,7 +185,8 @@ async function onNext() {
             body: JSON.stringify({
                 reservationId: GetUserTempoReservation.data.value.tempReservationId,
                 discountId: usedDiscount.value == null || usedDiscount.value === '' ? null : usedDiscount.value,
-                url : `/buy/${route.params.id}/${route.params.eventId}`
+                url : `/buy/${route.params.id}/${route.params.eventId}`,
+                payService : 1
             }),
             method: 'POST',
             headers: {

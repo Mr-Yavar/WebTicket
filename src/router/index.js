@@ -107,7 +107,7 @@ const router = createRouter({
             }
         },
         {
-            path: '/buy/:id/:eventId',
+            path: '/buy/:id/:eventId/:txId',
             name: 'buyStep',
             component: () => import('@/views/pages/Event/BuyStep.vue'),
             beforeEnter: (to, form, next) => {
