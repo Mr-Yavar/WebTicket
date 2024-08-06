@@ -17,7 +17,7 @@
     </template>
     <template v-else-if="!resultOfVerify.result.success">
         <SwalErrorIcon/>
-        <p class="text-center my-2" >{{resultOfVerify.result.message}}</p>
+        <p class="text-center my-2 relative right-[32%]" >{{resultOfVerify.result.message}}</p>
         <div class="mx-auto w-fit mt-12 grid  gap-2" :class="{'grid-cols-2':expirationTimeOut!=0 , 'grid-cols-1' : expirationTimeOut==0}">
             <button class="btn btn-sm btn-info" v-show="expirationTimeOut!=0"
             @click.prevent="GoToThridStep"
