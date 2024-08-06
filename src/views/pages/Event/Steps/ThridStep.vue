@@ -44,12 +44,17 @@
 
     <ControlSteps :to-next="onNext" :to-previous="onPreviuos">
         <template #nextBtn>
-            <button v-if="!GetUserTempoReservation.isError.value && GetUserTempoReservation.data.value?.amount != -1 && GetUserTempoReservation.data.value?.tickets.length !== 0" class="select-none rounded-lg bg-green-500 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-green-500/20 transition-all hover:shadow-lg hover:shadow-green-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" @click.prevent="onNext">پرداخت</button>
+            <button v-if="!GetUserTempoReservation.isError.value && GetUserTempoReservation.data.value?.amount != -1 && GetUserTempoReservation.data.value?.tickets.length !== 0" class="select-none rounded-lg bg-green-500 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-green-500/20 transition-all hover:shadow-lg hover:shadow-green-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50  w-[40px]disabled:shadow-none" @click.prevent="onNext">
+                <span v-show="!isPending">پرداخت</span>
+                <span v-show="isPending && !isError"><PrSpinner class="animate-spin block w-full mx-auto text-lg w-[40px]" /></span>
+
+            </button>
             <span v-else></span>
         </template>
     </ControlSteps>
 </template>
 <script setup>
+import { PrSpinner } from '@kalimahapps/vue-icons/pr'
 import { Guid } from '@/config/helper'
 import { sendRequest } from '@/services/service'
 import useTicketStore from '@/stores/Ticket.js'
@@ -69,19 +74,19 @@ const props = defineProps({
     toPrevious: Function
 })
 
-const route = useRoute()
+const route = useRoute();
 
-const TicketStore = useTicketStore()
-const seatMapService = useSeatMapStore()
-const usedDiscount = ref('')
-const discountHasError = ref(false)
-const userStore = useUserStore()
-const { mutate } = useMutation({
+const TicketStore = useTicketStore();
+const seatMapService = useSeatMapStore();
+const usedDiscount = ref('');
+const discountHasError = ref(false);
+const userStore = useUserStore();
+const { mutate,isPending,isSuccess } = useMutation({
     mutationKey: ['Reservation'],
     mutationFn: CRPlacesService
-})
+});
 
-const GetSpecificConcertServiceCallKey = computed(() => ['/api/Concerts/GetConcertInfo/', route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id)])
+const GetSpecificConcertServiceCallKey = computed(() => ['/api/Concerts/GetConcertInfo/', route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id)]);
 const GetSpecificConcertServiceCall = useQuery({
     queryKey: GetSpecificConcertServiceCallKey,
     queryFn: async ({ queryKey }) => {
@@ -109,11 +114,11 @@ const GetUserTempoReservation = useQuery({
     enabled: true
 })
 
-const amount = computed(() => (GetUserTempoReservation.data.value?.amount > 0 ? GetUserTempoReservation.data.value?.amount : 0))
-const expirationTimeOut = computed(() => (new Date(GetUserTempoReservation.data.value?.expirationDate) - new Date() > 0 ? new Date(GetUserTempoReservation.data.value?.expirationDate) - new Date() : 0))
+const amount = computed(() => (GetUserTempoReservation.data.value?.amount > 0 ? GetUserTempoReservation.data.value?.amount : 0));
+const expirationTimeOut = computed(() => (new Date(GetUserTempoReservation.data.value?.expirationDate) - new Date() > 0 ? new Date(GetUserTempoReservation.data.value?.expirationDate) - new Date() : 0));
 
-const discount = ref('')
-const discountKey = computed(() => ['/api/Billing/GetDiscount/', discount])
+const discount = ref('');
+const discountKey = computed(() => ['/api/Billing/GetDiscount/', discount]);
 const GetDiscount = useQuery({
     queryKey: discountKey,
     queryFn: async ({ queryKey }) => {
@@ -126,8 +131,8 @@ const GetDiscount = useQuery({
         })
     },
     enabled: false
-})
-const ChosenEvent = computed(() => Guid({}).fromCompressedToFull(route.params.eventId))
+});
+const ChosenEvent = computed(() => Guid({}).fromCompressedToFull(route.params.eventId));
 watch([GetUserTempoReservation.data], () => {
     if (!GetUserTempoReservation.data) return
 
@@ -135,7 +140,7 @@ watch([GetUserTempoReservation.data], () => {
     GetUserTempoReservation.data.value?.tickets.forEach((ticket) => {
         TicketStore.addToTicket(ticket)
     })
-})
+});
 
 async function useDiscount() {
     if (amount.value <= 0) return
@@ -149,7 +154,7 @@ async function useDiscount() {
     } else {
         discountHasError.value = true
     }
-}
+};
 
 const concert = computed(() => GetSpecificConcertServiceCall.data.value)
 
@@ -197,11 +202,11 @@ async function onNext() {
         {
             onSuccess: async (data) => {
                 
-                 console.log(data);   
-                
+              
+                window.location.href =   data.payUrl ;
             }
         }
-    )
+    );
 }
 
 async function onPreviuos() {

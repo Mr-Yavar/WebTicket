@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import useUserStore from '@/stores/user.js'
 import { Guid } from '@/config/helper'
+import { payServices } from '@/config/PayServices';
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -107,7 +108,7 @@ const router = createRouter({
             }
         },
         {
-            path: '/buy/:id/:eventId/:txId',
+            path: '/buy/:id/:eventId/:payService/:txId',
             name: 'buyStep',
             component: () => import('@/views/pages/Event/BuyStep.vue'),
             beforeEnter: (to, form, next) => {
@@ -115,9 +116,13 @@ const router = createRouter({
                 try {
                     Guid({}).fromCompressedToFull(to.params.id);
                     Guid({}).fromCompressedToFull(to.params.eventId);
+                    Guid({}).fromCompressedToFull(to.params.txId);
+
+                    if(!Object.values(payServices).includes(to.params.payService))
+                        throw new Error();
                     next();
                 } catch (err) {
-                    return;
+                    console.log(err);
                 }
             },
             meta: {

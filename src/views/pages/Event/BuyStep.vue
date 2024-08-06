@@ -1,29 +1,74 @@
 <template>
     <div class="mx-auto my-2 text-center" v-tippy="{ content: '.در این زمان شما فرصت دارید تا خرید خود را نهایی کنید' }">
-        <vue-countdown v-show="GetUserTempoReservation.data.value?.amount != -1 && GetUserTempoReservation.data.value?.tickets.length !== 0" :time="expirationTimeOut" v-slot="{ minutes, seconds }">مدت زمان باقیمانده : {{ minutes.toString().padStart(2, '0') }}:{{ seconds.toString().padStart(2, '0') }} </vue-countdown>
+        <vue-countdown v-show="GetUserTempoReservation.data.value?.amount != -1 && GetUserTempoReservation.data.value?.tickets.length !== 0 && resultOfVerify?.result?.success !==true" :time="expirationTimeOut" v-slot="{ minutes, seconds }">مدت زمان باقیمانده : {{ minutes.toString().padStart(2, '0') }}:{{ seconds.toString().padStart(2, '0') }} </vue-countdown>
     </div>
 
-    {{ route }}
-    <ControlSteps :to-next="onNext" :to-previous="onPreviuos">
-        <template #nextBtn>
-            <button v-if="!GetUserTempoReservation.isError.value && (GetUserTempoReservation.data.value?.amount != -1 && GetUserTempoReservation.data.value?.tickets.length !== 0)" class="select-none rounded-lg bg-green-500 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-green-500/20 transition-all hover:shadow-lg hover:shadow-green-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" @click.prevent="onNext">پرداخت</button>
-            <span v-else></span>
-        </template>
+    <template v-if="!DataToVerify">
+        <SwalWarningIcon/>
+        <p class="text-center my-2" >اطلاعات پرداخت ناقص است!</p>
+        <div class="mx-auto w-fit mt-12 grid grid-cols-3 gap-2">
+            <button class="btn btn-sm btn-primary col-start-2" 
+            @click.prevent="GoToHome"
+            >بازگشت به صفحه اصلی</button>
+        </div>
+    </template>
+    <template v-else-if="isPending">
+        <PrSpinner class="animate-spin block w-full mx-auto text-3xl" />
+    </template>
+    <template v-else-if="!resultOfVerify.result.success">
+        <SwalErrorIcon/>
+        <p class="text-center my-2" >{{resultOfVerify.result.message}}</p>
+        <div class="mx-auto w-fit mt-12 grid  gap-2" :class="{'grid-cols-2':expirationTimeOut!=0 , 'grid-cols-1' : expirationTimeOut==0}">
+            <button class="btn btn-sm btn-info" v-show="expirationTimeOut!=0"
+            @click.prevent="GoToThridStep"
+            >بازگشت به مرحله 3</button>
+            <button class="btn btn-sm btn-primary " 
+            @click.prevent="GoToHome"
+            >بازگشت به صفحه اصلی</button>
+
+      
+        </div>
+        
+    </template>
+    <template v-else-if="resultOfVerify.result.success">
+        <SwalSuccessIcon/>
+        <p class="text-center  my-2">{{resultOfVerify.result.message}}</p>
+        <div class="mx-auto w-fit mt-12 grid grid-cols-2 gap-2">
+            <button class="btn btn-sm btn-info"
+            @click.prevent="GoToFourthStep"
+            >مشاهده بلیت‌ها</button>
+
+            <button class="btn btn-sm btn-primary" 
+            @click.prevent="GoToHome"
+            >بازگشت به صفحه اصلی</button>
+        </div>
+ 
+    </template>
+
+   
+    <ControlSteps :to-next="onNext" :to-previous="onPreviuos" v-show="!!resultOfVerify.result.success">
+        <template #nextBtn> </template>
     </ControlSteps>
 </template>
 <script setup>
+import { PrSpinner } from '@kalimahapps/vue-icons/pr'
 import { Guid } from '@/config/helper'
 import { sendRequest } from '@/services/service'
 import useTicketStore from '@/stores/Ticket.js'
 import SelectedTicket from '@/views/components/Pages/Event/SelectedTicket.vue'
 import { useMutation, useQuery } from '@tanstack/vue-query'
-import { computed, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, ref, watch, watchEffect } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import ControlSteps from './Steps/controlSteps.vue'
 import useUserStore from '@/stores/user'
 import { CRPlacesService } from '@/services/PlacesService'
 import useSeatMapStore from '@/stores/seatMap'
 import VueCountdown from '@chenfengyuan/vue-countdown'
+import { payServices } from '@/config/PayServices'
+import { reactive } from 'vue'
+import SwalWarningIcon from '@/views/components/Globals/SwalIcons/SwalWarningIcon.vue'
+import SwalErrorIcon from '@/views/components/Globals/SwalIcons/SwalErrorIcon.vue'
+import SwalSuccessIcon from '@/views/components/Globals/SwalIcons/SwalSuccessIcon.vue'
 
 const props = defineProps({
     stepControls: Object,
@@ -37,7 +82,7 @@ const TicketStore = useTicketStore()
 const seatMapService = useSeatMapStore()
 
 const userStore = useUserStore()
-const { mutate } = useMutation({
+const { mutate ,isPending} = useMutation({
     mutationKey: ['Reservation'],
     mutationFn: CRPlacesService
 })
@@ -51,7 +96,9 @@ const GetSpecificConcertServiceCall = useQuery({
             method: 'Get'
         })
     },
-    
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchInterval: false,
     enabled: true
 })
 
@@ -66,15 +113,13 @@ const GetUserTempoReservation = useQuery({
             }
         })
     },
-    refetchInterval:false,
+    retry:false,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchInterval: false,
     enabled: true
 })
 
-const amount = computed(() => (GetUserTempoReservation.data.value?.amount > 0 ? GetUserTempoReservation.data.value?.amount : 0))
-const expirationTimeOut = computed(() => (new Date(GetUserTempoReservation.data.value?.expirationDate) - new Date() > 0 ? new Date(GetUserTempoReservation.data.value?.expirationDate) - new Date() : 0))
-
-
-const ChosenEvent = computed(() => Guid({}).fromCompressedToFull(route.params.eventId))
 watch([GetUserTempoReservation.data], () => {
     if (!GetUserTempoReservation.data) return
 
@@ -84,14 +129,112 @@ watch([GetUserTempoReservation.data], () => {
     })
 })
 
-
+const amount = computed(() => (GetUserTempoReservation.data.value?.amount > 0 ? GetUserTempoReservation.data.value?.amount : 0))
+const expirationTimeOut = computed(() => (new Date(GetUserTempoReservation.data.value?.expirationDate) - new Date() > 0 ? new Date(GetUserTempoReservation.data.value?.expirationDate) - new Date() : 0))
 
 const concert = computed(() => GetSpecificConcertServiceCall.data.value)
+const ChosenEvent = computed(() => Guid({}).fromCompressedToFull(route.params.eventId))
+const ChosenConcert = computed(() => Guid({}).fromCompressedToFull(route.params.id))
+const transactionId = computed(() => Guid({}).fromCompressedToFull(route.params.txId))
+
+const resultOfVerify = reactive({ result : {} });
+
+const DataToVerify = computed(() => {
+    
+    switch (route.params.payService) {
+        case payServices['-1']:
+            return {
+                refId: "",
+                clientrefid: transactionId.value,
+                payService: -1
+            }
+
+        case payServices['0']:
+            return {
+                refId: route.query.refid,
+                clientrefid: transactionId.value,
+                payService: 0
+            }
+
+        case payServices['1']:
+            if (route.query.Status === 'NOK') return true
+            return {
+                refId: route.query.Authority,
+                clientrefid: transactionId.value,
+                payService: 1
+            }
+        default:
+            return true
+    }
+})
+
+watchEffect(async () => {
+    console.log(DataToVerify.value)
+    if (!DataToVerify.value) return;
+    if (DataToVerify.value===true) {
+        resultOfVerify.result = {
+            success:false,
+            message : "پرداخت ناموفق"
+        };
+        return;
+    }
 
 
-function onNext() {}
+    await mutate(
+        {
+            url: '/api/Billing/Verify?api-version=1.0',
+            body: JSON.stringify(DataToVerify.value),
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json',
+                Authorization: 'Bearer ' + userStore.accessToken
+            }
+        },
+        {
+            onSuccess: async (data) => {
+                resultOfVerify.result = {...data};
+            }
+        }
+    )
+})
 
+function GoToHome(){
+    router.push({
+        name : "home"
+    });
+}
+
+function GoToThridStep(){
+    router.push({
+        name : "event2",
+        params:{
+            ...route.params
+        }
+    });
+}
+
+function GoToFourthStep(){
+    router.push({
+        name : "event3",
+        params:{
+            ...route.params
+        }
+    });
+}
+
+function onNext() {
+    if (isPending.value) return
+}
+const router = useRouter()
 async function onPreviuos() {
+    router.push({
+        name: 'event3',
+        params: {
+            ...route.params
+        }
+    })
+
+    return true
     await mutate(
         {
             url: '/api/Concerts/RemoveFromResevation?api-version=1.0',

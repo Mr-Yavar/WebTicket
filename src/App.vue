@@ -10,6 +10,7 @@ import { computed, onMounted } from 'vue'
 import useSeatMapStore from '@/stores/seatMap.js'
 import { TicketsRepository } from '@/db/ticketsRepository.js'
 import useTicketStore from '@/stores/Ticket.js'
+import useUserStore from './stores/user'
 
 const route = useRoute()
 /**
@@ -27,6 +28,8 @@ const layout = computed(() => {
 
 const seatmap = useSeatMapStore()
 const TicketStore = useTicketStore()
+const UserStore = useUserStore()
+
 onMounted(() => {
     new TicketsRepository();
     window.fetch = new Proxy(window.fetch, {
@@ -37,7 +40,7 @@ onMounted(() => {
         temp.then((res) => {
           // After completion of request
           if (res.status === 401) {
-            
+            UserStore.logOut();
           }
         });
         return temp;

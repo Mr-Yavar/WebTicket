@@ -1,5 +1,5 @@
 <template>
-   {{ step }}
+   
     <div class="w-full px-8 py-4">
         <div class="relative flex items-center justify-between w-full">
             <div class="absolute rtl:right-0 left-0 top-2/4 h-0.5 w-full -translate-y-2/4 dark:bg-gray-600 bg-gray-300"></div>

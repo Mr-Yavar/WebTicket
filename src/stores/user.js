@@ -9,13 +9,13 @@ const useUserStore = defineStore('user', () => {
     const accessToken = ref(localStorage.getItem('jwt') ?? '')
     const refreshToken = ref('')
     const user = ref(!localStorage.getItem('user') ? {} : { user: JSON.parse(localStorage.getItem('user')), Identity: accessToken.value ? jwtDecode(accessToken.value) : {} })
-    const expireTime = ref(new Date())
+    const expireTime = ref(localStorage.getItem('jwt') ? new Date(jwtDecode(localStorage.getItem('jwt')).exp * 1000) : new Date())
     const ClientId = ref(localStorage.getItem('ClientId') ?? uuidv5(Math.random().toString(), uuidv4()))
     localStorage.setItem('ClientId', ClientId.value)
     async function logOut() {
-        isAuthenticated.value = false
-        localStorage.removeItem('user')
-        localStorage.removeItem('jwt')
+        isAuthenticated.value = false;
+        localStorage.removeItem('user');
+        localStorage.removeItem('jwt');
     }
 
     const FullName = computed(() => {
@@ -29,9 +29,10 @@ const useUserStore = defineStore('user', () => {
         try {
             accessToken.value = userData.accessToken
             refreshToken.value = userData.refreshToken
-            expireTime.value = userData.expireTime
+
             user.value.user = userData.user
             user.value.Identity = jwtDecode(userData.accessToken)
+            expireTime.value = new Date(user.value.Identity.exp * 1000)
             isAuthenticated.value = true
         } catch (e) {
             isAuthenticated.value = false

@@ -121,9 +121,10 @@ const { mutate } = useMutation({
 const AuthModalStore = useAuthModalStore()
 const userStore = useUserStore()
 async function onNext() {
-    if (!userStore.isAuthenticated) {
-        AuthModalStore.setTitle('برای ادامه حساب کاربری لازمه!')
-        AuthModalStore.toggleMenu()
+    if (!userStore.isAuthenticated && userStore.expireTime <= new Date()) {
+        userStore.logOut();
+        AuthModalStore.setTitle('برای ادامه حساب کاربری لازمه!');
+        AuthModalStore.toggleMenu();
 
         return false
     }
@@ -300,7 +301,12 @@ watchEffect(async () => {
             console.log(seatMapService.Locked_Tickets)
             //قفل کردن صندلی ها انتخاب شده و درحال پرداخت
             seatMapService.Locked_Tickets.forEach((item) => {
-                tempDoc?.querySelector(`[tid='${item}']`)?.classList.add(TicketsTypes['waiting-tickets'])
+                let elem = tempDoc?.querySelector(`[tid='${item}']`);
+                if(!elem)
+                    return;
+
+                   if(!elem.classList.contains(TicketsTypes['reserved-tickets']))
+                        elem?.classList.add(TicketsTypes['waiting-tickets'])
             })
 
             tempDoc?.querySelectorAll(`*[id^="f"]:not([tid])`).forEach((item) => {
@@ -309,7 +315,13 @@ watchEffect(async () => {
 
             //نوشتن صندلی ها انتخابی توسط کاربر
             TicketStore.Tickets.forEach((item) => {
-                tempDoc?.querySelector(`[tid='${item.id}']`)?.classList.add(TicketsTypes['selected-tickets'])
+
+                let elem = tempDoc?.querySelector(`[tid='${item.id}']`);
+                if(!elem)
+                    return;
+
+                   if(!elem.classList.contains(TicketsTypes['reserved-tickets']))
+                        elem?.classList.add(TicketsTypes['selected-tickets']);
             })
 
             let exception = Object.keys(TicketsTypes)
@@ -331,13 +343,20 @@ watch([seatMapService.Locked_Tickets], () => {
     let classesToRemove = Object.keys(TicketsTypes).map((x) => TicketsTypes[x])
     let tickets = TicketStore.Tickets.map((x) => x.id)
     seatMapService.Locked_Tickets.forEach((item) => {
+        let chair =  document.querySelector(`[tid='${item}']`);
+        if(!chair)
+            return;
+
         if (tickets.indexOf(item) !== -1) {
             TicketStore.removeTicket(item)
             userTicketsToLock.push(item)
         }
+        
+        if(chair.classList.contains(TicketsTypes['reserved-tickets']))
+        return;
 
-        document.querySelector(`[tid='${item}']`)?.classList.remove(...classesToRemove)
-        document.querySelector(`[tid='${item}']`)?.classList.add(TicketsTypes['waiting-tickets'])
+        chair?.classList.remove(...classesToRemove)
+        chair?.classList.add(TicketsTypes['waiting-tickets'])
     })
 
     if (userTicketsToLock.length !== 0) {
@@ -374,6 +393,10 @@ watch([seatMapService.UnLocked_Tickets], () => {
         if (!!chair && chair.classList.contains(TicketsTypes['waiting-tickets'])) {
             chair.classList.remove(TicketsTypes['waiting-tickets'])
         }
+
+        if(chair.classList.contains(TicketsTypes['reserved-tickets']))
+            return;
+
         chair?.classList.add(TicketsTypes['free-tickets'])
     })
 })

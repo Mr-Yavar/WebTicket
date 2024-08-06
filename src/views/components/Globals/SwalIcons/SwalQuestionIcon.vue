@@ -1,0 +1,3 @@
+<template>
+    <div class="swal2-icon swal2-question swal2-icon-show" style="display: flex"><div class="swal2-icon-content">?</div></div>
+</template>
