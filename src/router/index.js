@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import useUserStore from '@/stores/user.js'
 import { Guid } from '@/config/helper'
-import { payServices } from '@/config/PayServices';
+import { payServices } from '@/config/PayServices'
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -36,12 +36,12 @@ const router = createRouter({
             component: () => import('@/views/pages/Event/Index.vue'),
             redirect: { name: 'event0' },
             beforeEnter: (to, form, next) => {
-                console.log(to);
+                console.log(to)
                 try {
-                    Guid({}).fromCompressedToFull(to.params.id);
-                    next();
+                    Guid({}).fromCompressedToFull(to.params.id)
+                    next()
                 } catch (err) {
-                    return;
+                    return
                 }
             },
             children: [
@@ -50,30 +50,29 @@ const router = createRouter({
                     name: 'event0',
                     component: () => import('@/views/pages/Event/Steps/FirstStep.vue'),
                     beforeEnter: (to, form, next) => {
-                        
                         try {
-                            Guid({}).fromCompressedToFull(to.params.id);
-                            next();
+                            Guid({}).fromCompressedToFull(to.params.id)
+                            next()
                         } catch (err) {
-                            return;
+                            return
                         }
-                    },
+                    }
                 },
                 {
                     path: '1/:eventId',
                     name: 'event1',
-                    
+
                     component: () => import('@/views/pages/Event/Steps/SecondStep.vue'),
                     beforeEnter: (to, form, next) => {
                         try {
-                            Guid({}).fromCompressedToFull(to.params.id);
-                            Guid({}).fromCompressedToFull(to.params.eventId);
+                            Guid({}).fromCompressedToFull(to.params.id)
+                            Guid({}).fromCompressedToFull(to.params.eventId)
 
-                            next();
+                            next()
                         } catch (err) {
-                            return;
+                            return
                         }
-                    },
+                    }
                 },
                 {
                     path: '2/:eventId',
@@ -81,26 +80,27 @@ const router = createRouter({
                     component: () => import('@/views/pages/Event/Steps/ThridStep.vue'),
                     beforeEnter: (to, form, next) => {
                         try {
-                            Guid({}).fromCompressedToFull(to.params.id);
-                            Guid({}).fromCompressedToFull(to.params.eventId);
-                            next();
+                            Guid({}).fromCompressedToFull(to.params.id)
+                            Guid({}).fromCompressedToFull(to.params.eventId)
+                            next()
                         } catch (err) {
-                            return;
+                            return
                         }
-                    },
+                    }
                 },
                 {
                     path: '3/:eventId',
                     name: 'event3',
-                    component: () => import('@/views/pages/Event/Steps/FourthStep.vue'), beforeEnter: (to, form, next) => {
+                    component: () => import('@/views/pages/Event/Steps/FourthStep.vue'),
+                    beforeEnter: (to, form, next) => {
                         try {
-                            Guid({}).fromCompressedToFull(to.params.id);
-                            Guid({}).fromCompressedToFull(to.params.eventId);
-                            next();
+                            Guid({}).fromCompressedToFull(to.params.id)
+                            Guid({}).fromCompressedToFull(to.params.eventId)
+                            next()
                         } catch (err) {
-                          return;
+                            return
                         }
-                    },
+                    }
                 }
             ],
             meta: {
@@ -112,17 +112,16 @@ const router = createRouter({
             name: 'buyStep',
             component: () => import('@/views/pages/Event/BuyStep.vue'),
             beforeEnter: (to, form, next) => {
-                console.log(to);
+                console.log(to)
                 try {
-                    Guid({}).fromCompressedToFull(to.params.id);
-                    Guid({}).fromCompressedToFull(to.params.eventId);
-                    Guid({}).fromCompressedToFull(to.params.txId);
+                    Guid({}).fromCompressedToFull(to.params.id)
+                    Guid({}).fromCompressedToFull(to.params.eventId)
+                    Guid({}).fromCompressedToFull(to.params.txId)
 
-                    if(!Object.values(payServices).includes(to.params.payService))
-                        throw new Error();
-                    next();
+                    if (!Object.values(payServices).includes(to.params.payService)) throw new Error()
+                    next()
                 } catch (err) {
-                    console.log(err);
+                    console.log(err)
                 }
             },
             meta: {
@@ -293,6 +292,19 @@ const router = createRouter({
                                     }
                                 }
                             ]
+                        }
+                    ]
+                },
+                {
+                    name: 'StaticData',
+                    path:"staticdata",
+                    component: () => import('@/views/pages/AdminPanel/StaticData.vue'),
+                    redirect: { name: 'ManageStaticData' },
+                    children: [
+                        {
+                            name: 'ManageStaticData',
+                            path:"managestaticdata",
+                            component: () => import('@/views/ui/AdminPanel/StaticData/ManageStaticData.vue')
                         }
                     ]
                 }
