@@ -44,10 +44,9 @@
 
     <ControlSteps :to-next="onNext" :to-previous="onPreviuos">
         <template #nextBtn>
-            <button v-if="!GetUserTempoReservation.isError.value && GetUserTempoReservation.data.value?.amount != -1 && GetUserTempoReservation.data.value?.tickets.length !== 0" class="select-none rounded-lg bg-green-500 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-green-500/20 transition-all hover:shadow-lg hover:shadow-green-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50  w-[40px]disabled:shadow-none" @click.prevent="onNext">
+            <button v-if="!GetUserTempoReservation.isError.value && GetUserTempoReservation.data.value?.amount != -1 && GetUserTempoReservation.data.value?.tickets.length !== 0" class="select-none rounded-lg bg-green-500 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-green-500/20 transition-all hover:shadow-lg hover:shadow-green-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 w-[40px]disabled:shadow-none" @click.prevent="onNext">
                 <span v-show="!isPending">پرداخت</span>
                 <span v-show="isPending && !isError"><PrSpinner class="animate-spin block w-full mx-auto text-lg w-[40px]" /></span>
-
             </button>
             <span v-else></span>
         </template>
@@ -67,6 +66,7 @@ import useUserStore from '@/stores/user'
 import { CRPlacesService } from '@/services/PlacesService'
 import useSeatMapStore from '@/stores/seatMap'
 import VueCountdown from '@chenfengyuan/vue-countdown'
+import Swal from 'sweetalert2'
 
 const props = defineProps({
     stepControls: Object,
@@ -74,19 +74,19 @@ const props = defineProps({
     toPrevious: Function
 })
 
-const route = useRoute();
+const route = useRoute()
 
-const TicketStore = useTicketStore();
-const seatMapService = useSeatMapStore();
-const usedDiscount = ref('');
-const discountHasError = ref(false);
-const userStore = useUserStore();
-const { mutate,isPending,isSuccess } = useMutation({
+const TicketStore = useTicketStore()
+const seatMapService = useSeatMapStore()
+const usedDiscount = ref('')
+const discountHasError = ref(false)
+const userStore = useUserStore()
+const { mutate, isPending, isSuccess } = useMutation({
     mutationKey: ['Reservation'],
     mutationFn: CRPlacesService
-});
+})
 
-const GetSpecificConcertServiceCallKey = computed(() => ['/api/Concerts/GetConcertInfo/', route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id)]);
+const GetSpecificConcertServiceCallKey = computed(() => ['/api/Concerts/GetConcertInfo/', route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id)])
 const GetSpecificConcertServiceCall = useQuery({
     queryKey: GetSpecificConcertServiceCallKey,
     queryFn: async ({ queryKey }) => {
@@ -114,11 +114,11 @@ const GetUserTempoReservation = useQuery({
     enabled: true
 })
 
-const amount = computed(() => (GetUserTempoReservation.data.value?.amount > 0 ? GetUserTempoReservation.data.value?.amount : 0));
-const expirationTimeOut = computed(() => (new Date(GetUserTempoReservation.data.value?.expirationDate) - new Date() > 0 ? new Date(GetUserTempoReservation.data.value?.expirationDate) - new Date() : 0));
+const amount = computed(() => (GetUserTempoReservation.data.value?.amount > 0 ? GetUserTempoReservation.data.value?.amount : 0))
+const expirationTimeOut = computed(() => (new Date(GetUserTempoReservation.data.value?.expirationDate) - new Date() > 0 ? new Date(GetUserTempoReservation.data.value?.expirationDate) - new Date() : 0))
 
-const discount = ref('');
-const discountKey = computed(() => ['/api/Billing/GetDiscount/', discount]);
+const discount = ref('')
+const discountKey = computed(() => ['/api/Billing/GetDiscount/', discount])
 const GetDiscount = useQuery({
     queryKey: discountKey,
     queryFn: async ({ queryKey }) => {
@@ -131,8 +131,8 @@ const GetDiscount = useQuery({
         })
     },
     enabled: false
-});
-const ChosenEvent = computed(() => Guid({}).fromCompressedToFull(route.params.eventId));
+})
+const ChosenEvent = computed(() => Guid({}).fromCompressedToFull(route.params.eventId))
 watch([GetUserTempoReservation.data], () => {
     if (!GetUserTempoReservation.data) return
 
@@ -140,7 +140,7 @@ watch([GetUserTempoReservation.data], () => {
     GetUserTempoReservation.data.value?.tickets.forEach((ticket) => {
         TicketStore.addToTicket(ticket)
     })
-});
+})
 
 async function useDiscount() {
     if (amount.value <= 0) return
@@ -154,7 +154,7 @@ async function useDiscount() {
     } else {
         discountHasError.value = true
     }
-};
+}
 
 const concert = computed(() => GetSpecificConcertServiceCall.data.value)
 
@@ -184,14 +184,54 @@ const discountPrice = computed(() => {
 })
 
 async function onNext() {
+    const { value: payServiceType } = await Swal.fire({
+        title: '',
+        html: `<div class="grid grid-cols-4 gap-2 text-xl h-fit pay-body" style="">
+    <div class="col-span-full">برای ادامه، یکی از درگاه های پرداخت را انتخاب کنید</div>
+     <div class="col-span-full flex justify-between ">
+        <div class="hover:animate-pulse"><img onClick="((e)=>{  e.target.closest('.pay-body').parentElement.parentElement.querySelector('input').value=0;
+            e.target.closest('.pay-body').parentElement.parentElement.querySelector('.swal2-confirm').click();
+            
+            })(event)" src="../../../payIcon/payping.svg" width="110px"/></div>
+        <div class="hover:animate-pulse"><img onClick="((e)=>{e.target.closest('.pay-body').parentElement.parentElement.querySelector('input').value=1;
+             e.target.closest('.pay-body').parentElement.parentElement.querySelector('.swal2-confirm').click();
+            })(event)" src="../../../payIcon/zarinpal.svg" width="90px"/></div>
+        <div class="hover:animate-pulse"><img onClick="((e)=>{e.target.closest('.pay-body').parentElement.parentElement.querySelector('input').value=2;
+             e.target.closest('.pay-body').parentElement.parentElement.querySelector('.swal2-confirm').click();
+            })(event)"  src="../../../payIcon/zibal.png" width="90px"/></div>
+        </div>
+    </div>`,
+
+        input: 'text',
+        inputAttributes: {},
+        showConfirmButton: false,
+        color: 'text-black',
+        showClass: {
+            popup: 'vazir-font'
+        },
+        customClass: {
+            htmlContainer: 'h-fit min-h-52',
+            input: '!hidden'
+        },
+        background: '#fff',
+        backdrop: `
+ 
+  #17171766
+    left top
+    no-repeat
+  `
+    })
+
+ 
+    
     await mutate(
         {
             url: '/api/Billing/Pay?api-version=1.0',
             body: JSON.stringify({
                 reservationId: GetUserTempoReservation.data.value.tempReservationId,
                 discountId: usedDiscount.value == null || usedDiscount.value === '' ? null : usedDiscount.value,
-                url : `/buy/${route.params.id}/${route.params.eventId}`,
-                payService : 1
+                url: `/buy/${route.params.id}/${route.params.eventId}`,
+                payService: Number(payServiceType)
             }),
             method: 'POST',
             headers: {
@@ -201,19 +241,17 @@ async function onNext() {
         },
         {
             onSuccess: async (data) => {
-                
-              
-                window.location.href =   data.payUrl ;
+                window.location.href = data.payUrl
             }
         }
-    );
+    )
 }
 
 async function onPreviuos() {
     await mutate(
         {
             url: '/api/Concerts/RemoveFromResevation?api-version=1.0',
-            
+
             method: 'POST',
             headers: {
                 'Content-type': 'application/json',

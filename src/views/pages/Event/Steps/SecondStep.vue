@@ -179,7 +179,7 @@ async function onNext() {
                 return false;
             
                 try {
-                    await seatMapService.notifyLockTickets()
+                    await seatMapService.notifyLockTickets();
                 } catch (e) {
                     return false
                 }
@@ -335,9 +335,60 @@ watchEffect(async () => {
 
             SeatMaps.value = [...SeatMaps.value, tempDoc.body.innerHTML]
         }
-})
+});
 
-watch([seatMapService.Locked_Tickets], () => {
+watch([()=>seatMapService.Reserved_Tickets], () => {
+    console.log(seatMapService.Reserved_Tickets);
+    let userTicketsToLock = []
+    let classesToRemove = Object.keys(TicketsTypes).map((x) => TicketsTypes[x])
+    let tickets = TicketStore.Tickets.map((x) => x.id)
+    seatMapService.Reserved_Tickets.forEach((item) => {
+        let chair =  document.querySelector(`[tid='${item}']`);
+        if(!chair)
+            return;
+
+        if (tickets.indexOf(item) !== -1) {
+            TicketStore.removeTicket(item)
+            userTicketsToLock.push(item)
+        }
+        
+        if(chair.classList.contains(TicketsTypes['reserved-tickets']))
+        return;
+
+        chair?.classList.remove(...classesToRemove)
+        chair?.classList.add(TicketsTypes['reserved-tickets'])
+    })
+
+    if (userTicketsToLock.length !== 0) {
+        let floors = Object.keys(Tickets.value)
+        let msg = userTicketsToLock.map((ticket) => {
+            for (let i = 0; i < floors.length; i++) {
+                let temp = Tickets.value[floors[i]].filter((item) => {
+                    return item.id === ticket
+                })
+
+                if (!!temp && temp.length === 1) {
+                    let [floor, row, column] = temp[0].name.replace('f', '').replace('r', '').replace('c', '').split('_')
+
+                    let txt = `<br/><p dir="rtl">${column}  ستون : ${row} ردیف : ${Floors.value[floors[i]]}  طبقه : `
+                    txt += '   </p>'
+                    return txt
+                }
+            }
+        })
+
+        Swal.fire({
+            title: '',
+            html: 'برخی از صندلیها انتخابی شما توسط شخص دیگری رزرو شده‌اند!<br/>' + msg,
+            icon: 'info',
+            showConfirmButton: false,
+            showCloseButton: true,
+            showClass: { popup: 'direction-rtl vazir-font' }
+        })
+    }
+});
+
+watch([()=>seatMapService.Locked_Tickets], () => {
     console.log(seatMapService.Locked_Tickets)
     let userTicketsToLock = []
     let classesToRemove = Object.keys(TicketsTypes).map((x) => TicketsTypes[x])
@@ -386,8 +437,10 @@ watch([seatMapService.Locked_Tickets], () => {
             showClass: { popup: 'direction-rtl vazir-font' }
         })
     }
-})
-watch([seatMapService.UnLocked_Tickets], () => {
+});
+
+watch([()=>seatMapService.UnLocked_Tickets], () => {
+    console.log(seatMapService.UnLocked_Tickets)
     seatMapService.UnLocked_Tickets.forEach((item) => {
         let chair = document.querySelector(`[tid='${item}']`)
         if (!!chair && chair.classList.contains(TicketsTypes['waiting-tickets'])) {
@@ -399,7 +452,7 @@ watch([seatMapService.UnLocked_Tickets], () => {
 
         chair?.classList.add(TicketsTypes['free-tickets'])
     })
-})
+});
 
 function panZoomInit(map, index) {
     if (!map || !document.querySelector('#seatMap' + index)) return

@@ -17,7 +17,7 @@
     </template>
     <template v-else-if="!resultOfVerify.result.success">
         <SwalErrorIcon/>
-        <p class="text-center my-2 relative right-[32%]" >{{resultOfVerify.result.message}}</p>
+        <p class="text-center my-2 w-full" >{{resultOfVerify.result.message}}</p>
         <div class="mx-auto w-fit mt-12 grid  gap-2" :class="{'grid-cols-2':expirationTimeOut!=0 , 'grid-cols-1' : expirationTimeOut==0}">
             <button class="btn btn-sm btn-info" v-show="expirationTimeOut!=0"
             @click.prevent="GoToThridStep"
@@ -32,22 +32,24 @@
     </template>
     <template v-else-if="resultOfVerify.result.success">
         <SwalSuccessIcon/>
-        <p class="text-center  my-2">{{resultOfVerify.result.message}}</p>
+        <p class="text-center my-2 w-full relative bottom-0">{{resultOfVerify.result.message}}</p>
         <div class="mx-auto w-fit mt-12 grid grid-cols-2 gap-2">
+            <button class="btn btn-sm btn-primary" 
+            @click.prevent="GoToHome"
+            >بازگشت به صفحه اصلی</button>
             <button class="btn btn-sm btn-info"
             @click.prevent="GoToFourthStep"
             >مشاهده بلیت‌ها</button>
 
-            <button class="btn btn-sm btn-primary" 
-            @click.prevent="GoToHome"
-            >بازگشت به صفحه اصلی</button>
+   
         </div>
  
     </template>
 
    
     <ControlSteps :to-next="onNext" :to-previous="onPreviuos" v-show="!!resultOfVerify.result.success">
-        <template #nextBtn> </template>
+        <template #previousBtn v-if="resultOfVerify.result.success"><span></span></template>
+        <template #nextBtn><span></span></template>
     </ControlSteps>
 </template>
 <script setup>
@@ -55,7 +57,6 @@ import { PrSpinner } from '@kalimahapps/vue-icons/pr'
 import { Guid } from '@/config/helper'
 import { sendRequest } from '@/services/service'
 import useTicketStore from '@/stores/Ticket.js'
-import SelectedTicket from '@/views/components/Pages/Event/SelectedTicket.vue'
 import { useMutation, useQuery } from '@tanstack/vue-query'
 import { computed, ref, watch, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -163,6 +164,13 @@ const DataToVerify = computed(() => {
                 clientrefid: transactionId.value,
                 payService: 1
             }
+        case payServices['2']:
+           
+            return {
+                refId: route.query.trackId,
+                clientrefid: transactionId.value,
+                payService: 1
+            }
         default:
             return true
     }
@@ -193,6 +201,10 @@ watchEffect(async () => {
         {
             onSuccess: async (data) => {
                 resultOfVerify.result = {...data};
+                if(data.success){
+                    await seatMapService.notifyReservedTickets();
+                    await TicketStore.removeAllTickets();
+                }
             }
         }
     )

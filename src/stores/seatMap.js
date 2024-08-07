@@ -14,22 +14,20 @@ const useSeatMapStore = defineStore('SeatMap', () => {
     const seatMapMutate = useMutation({
         mutationKey: ['seatMapMutate'],
         mutationFn: async (variables) => {
-            
-                let res = await fetch(variables[0], {
-                    headers: { ...variables[1].headers },
-                    method: variables[1].method,
-                    body: !variables[1].body ? null : JSON.stringify(variables[1].body)
-                })
+            let res = await fetch(variables[0], {
+                headers: { ...variables[1].headers },
+                method: variables[1].method,
+                body: !variables[1].body ? null : JSON.stringify(variables[1].body)
+            })
 
-                if (!res.ok) {
-                    throw new Error(await res.text())
-                } else {
-                    let data = await res.text()
+            if (!res.ok) {
+                throw new Error(await res.text())
+            } else {
+                let data = await res.text()
 
-                    if (data.length !== 0) return JSON.parse(data)
-                    else return data
-                }
-          
+                if (data.length !== 0) return JSON.parse(data)
+                else return data
+            }
         }
     })
 
@@ -100,35 +98,76 @@ const useSeatMapStore = defineStore('SeatMap', () => {
             }
         )
     }
-    const Locked_Tickets = ref([])
-    const UnLocked_Tickets = ref([])
+
+    async function notifyReservedTickets() {
+        if (TicketStore.selectedShowing === '' || TicketStore.Tickets.length === 0) return
+
+        await seatMapMutate.mutateAsync(
+            [
+                SEATMAP_SERVICE_BASE_URL + '/api/SeatMap/ReservedTickets?EventId=' + TicketStore.selectedShowing,
+                {
+                    method: 'POST',
+                    body: [...TicketStore.Tickets.map((ticket) => ticket.id)],
+                    headers: {
+                        'Content-Type': 'application/json; charset=utf-8'
+                    }
+                }
+            ],
+            {
+                onError: (error, variables, context) => {
+                    Swal.fire({
+                        title: 'خطا !',
+                        text: 'ارتباط به سرویس قطع شده است',
+                        icon: 'error',
+                        showConfirmButton: false,
+                        showCloseButton: true,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        showClass: { popup: 'direction-rtl vazir-font' }
+                    })
+                    console.log(error, variables, context)
+                    throw new Error()
+                },
+                onSuccess: () => {
+                    JoinGroup(TicketStore.selectedShowing)
+                }
+            }
+        )
+    }
+
+    const Locked_Tickets = ref([]);
+    const UnLocked_Tickets = ref([]);
+    const Reserved_Tickets = ref([]);
     // const seatMapService = new EventSource(SEATMAP_SERVICE_BASE_URL+"/seatmap-sse-endpoint?cid="+user.ClientId);
-    const seatMapService = new useEventSource(SEATMAP_SERVICE_BASE_URL + '/seatmap-sse-endpoint?cid=' + user.ClientId, ['All_Locked_Tickets', 'Locked_Ticket', 'UnLocked_Ticket'])
+    const seatMapService = new useEventSource(SEATMAP_SERVICE_BASE_URL + '/seatmap-sse-endpoint?cid=' + user.ClientId, ['All_Locked_Tickets', 'Locked_Ticket', 'UnLocked_Ticket','Reserved_Tickets'])
     //['All_Locked_Tickets', 'Locked_Ticket', 'UnLocked_Ticket']
 
-    watch([seatMapService.lastEventId, seatMapService.data, seatMapService.event,seatMapService], () => {
-        console.log(seatMapService.lastEventId, seatMapService.data, seatMapService.event);
+    watch([seatMapService.lastEventId, seatMapService.data, seatMapService.event,()=>seatMapService], () => {
+        console.log(seatMapService.lastEventId.value, seatMapService.data.value, seatMapService.event.value)
         switch (seatMapService.event.value) {
             case 'All_Locked_Tickets':
-                console.log( Locked_Tickets.value,seatMapService.data.value)
-                Locked_Tickets.value = [...JSON.parse(seatMapService.data.value)];
-            
+                console.log(Locked_Tickets.value, seatMapService.data.value)
+                Locked_Tickets.value = [...JSON.parse(seatMapService.data.value)]
+
                 break
             case 'Locked_Ticket':
                 Locked_Tickets.value = JSON.parse(seatMapService.data.value).Message;
                 break
-            case 'UnLocked_Ticket':{
+            case 'Reserved_Tickets':
+                Reserved_Tickets.value = JSON.parse(seatMapService.data.value).Message;
+                console.log(Reserved_Tickets.value);
+                break
+            case 'UnLocked_Ticket':
+                {
+                    const unlocked = JSON.parse(seatMapService.data.value).Message;
+                    for (let id of unlocked) {
+                        let index = Locked_Tickets.value.findIndex((x) => x === id)
+                        if (index !== -1) Locked_Tickets.value.splice(index, 1)
+                    }
 
-                const unlocked = JSON.parse(seatMapService.data.value).Message;
-                for (let id of unlocked) {
-                    let index = Locked_Tickets.value.findIndex((x) => x === id)
-                    if (index !== -1) Locked_Tickets.value.splice(index, 1)
+                    UnLocked_Tickets.value = [...unlocked]
                 }
-
-              
-                UnLocked_Tickets.value = [...unlocked];
-            }
-                break;
+                break
             default:
                 break
         }
@@ -161,22 +200,21 @@ const useSeatMapStore = defineStore('SeatMap', () => {
             })
 
         groupId.value = undefined
-        Locked_Tickets.value = [];
+        Locked_Tickets.value = []
     }
 
     async function JoinGroup(group) {
-        
         if (groupId.value !== undefined) return false
         Locked_Tickets.value = []
         groupId.value = group
-        console.log(group);
-        const res = await talkToServer('/api/SeatMap/ChooseEvent/' + user.ClientId + '/' + group, { method: 'GET', headers: {} });
-        const msg = JSON.parse(res);
-   
-        Locked_Tickets.value = [...JSON.parse(msg.data)];
+        console.log(group)
+        const res = await talkToServer('/api/SeatMap/ChooseEvent/' + user.ClientId + '/' + group, { method: 'GET', headers: {} })
+        const msg = JSON.parse(res)
+
+        Locked_Tickets.value = [...JSON.parse(msg.data)]
     }
 
-    return { groupId, LeaveGroup, JoinGroup, notifyLockTickets, notifyUnLockTickets, Locked_Tickets, UnLocked_Tickets }
+    return { groupId, LeaveGroup, JoinGroup, notifyLockTickets, notifyUnLockTickets, notifyReservedTickets, Locked_Tickets, UnLocked_Tickets, Reserved_Tickets }
 })
 
 export default useSeatMapStore
