@@ -89,13 +89,13 @@ const router = createRouter({
                     }
                 },
                 {
-                    path: '3/:eventId',
+                    path: '3/:reservationId',
                     name: 'event3',
                     component: () => import('@/views/pages/Event/Steps/FourthStep.vue'),
                     beforeEnter: (to, form, next) => {
                         try {
-                            Guid({}).fromCompressedToFull(to.params.id)
-                            Guid({}).fromCompressedToFull(to.params.eventId)
+                            Guid({}).fromCompressedToFull(to.params.id);
+                            Guid({}).fromCompressedToFull(to.params.reservationId);
                             next()
                         } catch (err) {
                             return

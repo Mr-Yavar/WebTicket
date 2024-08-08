@@ -75,20 +75,20 @@ const props = defineProps({
     stepControls: Object,
     toNext: Function,
     toPrevious: Function
-})
+});
 
-const route = useRoute()
+const route = useRoute();
 
-const TicketStore = useTicketStore()
-const seatMapService = useSeatMapStore()
+const TicketStore = useTicketStore();
+const seatMapService = useSeatMapStore();
 
-const userStore = useUserStore()
+const userStore = useUserStore();
 const { mutate ,isPending} = useMutation({
     mutationKey: ['Reservation'],
     mutationFn: CRPlacesService
-})
+});
 
-const GetSpecificConcertServiceCallKey = computed(() => ['/api/Concerts/GetConcertInfo/', route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id)])
+const GetSpecificConcertServiceCallKey = computed(() => ['/api/Concerts/GetConcertInfo/', route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id)]);
 const GetSpecificConcertServiceCall = useQuery({
     queryKey: GetSpecificConcertServiceCallKey,
     queryFn: async ({ queryKey }) => {
@@ -101,7 +101,7 @@ const GetSpecificConcertServiceCall = useQuery({
     refetchOnWindowFocus: false,
     refetchInterval: false,
     enabled: true
-})
+});
 
 const GetUserTempoReservation = useQuery({
     queryKey: ['/api/Concerts/GetReservation'],
@@ -112,14 +112,14 @@ const GetUserTempoReservation = useQuery({
             headers: {
                 Authorization: 'Bearer ' + userStore.accessToken
             }
-        })
+        });
     },
     retry:false,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchInterval: false,
     enabled: true
-})
+});
 
 watch([GetUserTempoReservation.data], () => {
     if (!GetUserTempoReservation.data) return
@@ -226,10 +226,12 @@ function GoToThridStep(){
 }
 
 function GoToFourthStep(){
+ console.log(resultOfVerify);
     router.push({
         name : "event3",
         params:{
-            ...route.params
+            ...route.params,
+            reservationId : Guid({}).fromFullToCompressed(resultOfVerify.result.reservationId)
         }
     });
 }
