@@ -8,7 +8,7 @@
             </tr>
         </thead>
     </table>
-    <div class="max-h-[500px] min-h-[500px] overflow-y-scroll bg-gray-50 shadow-inner">
+    <PerfectScrollbar  >
         <table :class="tableClass">
             <tbody :class="tbodyClass">
                 <tr v-for="(row, index) in data" :key="'row' + index" :class="trClass">
@@ -19,15 +19,16 @@
             </tbody>
             
         </table>
-    </div>
+    </PerfectScrollbar>
     <div :class="' sticky bottom-0 ' + ''">
         <slot name="pagination" ></slot>
     </div>
 </template>
 
 <script setup>
-import { reactive } from 'vue';
-import { ref } from 'vue';
+
+import { PerfectScrollbar  } from 'vue3-perfect-scrollbar';
+
 
 const props = defineProps({
     columns: Object,
@@ -48,4 +49,9 @@ const props = defineProps({
 
 </script>
 
-<style></style>
+<style scoped>
+@import 'vue3-perfect-scrollbar/style.css';
+.ps {
+    height: calc(100dvh - 300px); /* or max-height: 400px; */
+  }
+</style>

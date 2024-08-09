@@ -55,6 +55,14 @@ import Support from '@/views/components/Layouts/AdminLayout/component/Support.vu
                 <v-icon name="fa-chart-pie" class="ml-4 flex-shrink-0 h-6 w-6 text-gray-900 group-[.active]:text-white" aria-hidden="true" />
                 برگزارکنندگان
             </RouterLink>
+            <RouterLink :to="{ name: 'ManageStaticData' }" active-class="active" class="text-gray-900 hover:bg-gray-100 group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md">
+                <v-icon name="fa-chart-pie" class="ml-4 flex-shrink-0 h-6 w-6 text-gray-900 group-[.active]:text-white" aria-hidden="true" />
+                تنظیمات صفحات
+            </RouterLink>
+            <RouterLink :to="{ name: 'ManageUsers' }" active-class="active" class="text-gray-900 hover:bg-gray-100 group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md">
+                <v-icon name="fa-chart-pie" class="ml-4 flex-shrink-0 h-6 w-6 text-gray-900 group-[.active]:text-white" aria-hidden="true" />
+                کاربران
+            </RouterLink>
             <!-- <div class="mx-auto w-full max-w-md rounded-md bg-white">
                 <Disclosure v-slot="{ open }">
                     <DisclosureButton class="w-full justify-start rounded-md text-gray-900 hover:bg-gray-100 group flex items-center px-2 py-2 text-sm leading-6 font-medium">

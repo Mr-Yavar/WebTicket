@@ -40,4 +40,10 @@
     .bg-neutral {
         background-color: rgb(229 229 229);
     }
+
+    
+    .tippy-box{
+        @apply vazir-font;
+    }
 }
+

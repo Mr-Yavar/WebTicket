@@ -307,6 +307,19 @@ const router = createRouter({
                             component: () => import('@/views/ui/AdminPanel/StaticData/ManageStaticData.vue')
                         }
                     ]
+                },
+                {
+                    name: 'ManageUsers',
+                    path:"manageusers",
+                    component: () => import('@/views/pages/AdminPanel/StaticData.vue'),
+                    redirect: { name: 'manageallusers' },
+                    children: [
+                        {
+                            name: 'manageallusers',
+                            path:"manageallusers",
+                            component: () => import('@/views/ui/AdminPanel/StaticData/ManageStaticData.vue')
+                        }
+                    ]
                 }
             ]
         }

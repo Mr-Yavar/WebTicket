@@ -3,12 +3,12 @@ import DataTable_V1 from '@/views/components/Globals/DataTables/DataTable_V1.vue
 import Splitter from '@/views/components/Splitter/Splitter.vue'
 import { useQuery } from '@tanstack/vue-query'
 import { sendRequest } from '@/services/service'
-import { ref } from 'vue';
-import { computed } from 'vue';
-const pageIndex = ref(0);
-const pageSize = ref(1);
-import EditConcertModal from '@/views/components/Layouts/AdminLayout/Modal/EditConcertModal.vue';
-const queryKey = computed(()=>([{ url: '/api/Manager/GetAllConcerts', pageSize: pageSize.value, currentPage: pageIndex.value+1 }]));
+import { ref } from 'vue'
+import { computed } from 'vue'
+const pageIndex = ref(0)
+const pageSize = ref(10)
+import EditConcertModal from '@/views/components/Layouts/AdminLayout/Modal/EditConcertModal.vue'
+const queryKey = computed(() => [{ url: '/api/Manager/GetAllConcerts', pageSize: pageSize.value, currentPage: pageIndex.value + 1 }])
 const getAllConcert = useQuery({
     queryKey: queryKey,
     queryFn: ({ queryKey }) =>
@@ -17,37 +17,33 @@ const getAllConcert = useQuery({
             method: 'GET',
             headers: {}
         }),
-        refetchOnMount:true,
+    refetchOnMount: true,
     enabled: true
 })
 
-const totalCount = computed (()=>getAllConcert.data.value?.totalCount ?? 0);
+const totalCount = computed(() => getAllConcert.data.value?.totalCount ?? 0)
 
-const totalPage = computed (()=>Math.ceil(totalCount.value / pageSize.value));
+const totalPage = computed(() => Math.ceil(totalCount.value / pageSize.value))
 
-const dateFormat = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false };
+const dateFormat = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }
 
-function action(step){
+function action(step) {
+    if (step > 0 && pageIndex.value + step >= totalPage.value) return
 
+    if (step < 0 && pageIndex.value + step < 0) return
 
-    if(step>0 && pageIndex.value+step >= totalPage.value)
-    return;
-
-    if(step<0 && pageIndex.value+step < 0)
-    return;
-    
-
-    pageIndex.value += step;
-
+    pageIndex.value += step
 }
+
+
+
 const showTermsModal = ref(false)
 
 function toggleTermsModal() {
     showTermsModal.value = !showTermsModal.value
 }
 
-const selectedConcert = ref("");
-
+const selectedConcert = ref('')
 </script>
 
 <template>
@@ -63,7 +59,6 @@ const selectedConcert = ref("");
                 <button class="btn btn-success btn-sm" @click.prevent="$router.push({ name: 'createConcert' })">اضافه کردن</button>
             </div>
             <DataTable_V1
-
                 :columns="[
                     {
                         title: '#',
@@ -73,6 +68,10 @@ const selectedConcert = ref("");
                         title: 'عنوان',
                         key: 'title',
                         colSpan: 2
+                    },
+                    {
+                        title: 'محل برگزاری',
+                        key: 'place.name'
                     },
                     {
                         title: 'دسته بندی',
@@ -93,25 +92,24 @@ const selectedConcert = ref("");
                         key: 'options'
                     }
                 ]"
-                :data="getAllConcert.data.value?.concerts ? getAllConcert.data.value?.concerts : []"
-                :tableClass="'table table-fixed w-full shadow-inner '"
-                :theadClass="'!bg-[#2563eb] text-white antialised'"
-                :tbodyClass="'shadow-inner'"
+                :data="getAllConcert.data.value?.data ? Array(20).fill(getAllConcert.data.value?.data[0]) : []"
+                :tableClass="'table table-fixed w-full  !shadow-sm'"
+                :theadClass="'!bg-gray-700 text-white antialised'"
+                :thead-t-r-class="'!bg-gray-600'"
+                :tbodyClass="'!shadow-inner'"
                 :thClass="'text-center p-2'"
                 :tdClass="'text-center p-1'"
-                :trClass="'odd:!bg-[#e4e4e7] even:!bg-gary-100'"
-                :theadTRClass="'!bg-info'"
-
+                :trClass="'odd:!bg-gray-200 even:!bg-gray-50'"
             >
                 <template #[`tbodyconcertid`]="{ data }">{{ '-' }}</template>
                 <template #[`tbodytitle`]="{ data }">{{ data.title }}</template>
+                <template #[`tbodyplace.name`]="{ data }">{{ data.place.name }}</template>
                 <template #[`tbodycategory`]="{ data }">{{ data.category }}</template>
                 <template #[`tbodystartDate`]="{ data }">{{ new Date(data.startDate).toLocaleString('fa-ir', dateFormat).split(',').reverse().join(' ') }}</template>
                 <template #[`tbodyendDate`]="{ data }">{{ new Date(data.endDate).toLocaleString('fa-ir', dateFormat).split(',').reverse().join(' ') }}</template>
                 <template #[`tbodyoptions`]="{ data }">
                     <div class="flex justify-around">
-                        <button
-                            class="btn btn-warning btn-sm"
+                        <div
                             @click.prevent="
                                 () => {
                                     $router.push({
@@ -121,33 +119,50 @@ const selectedConcert = ref("");
                                 }
                             "
                         >
-                            ویرایش
-                        </button>
+                            <v-icon name="hi-pencil" fill="black" class="hover:animate-bounce" />
+                        </div>
 
-                        <button
-                        class=""
-                        @click.prevent="
-                            () => {
-                                selectedConcert = data.concertid;
-                                toggleTermsModal();
-                            }
-                        "
-                    >
-                        ⚙️
-                    </button>
+                        <div
+                            @click.prevent="
+                                () => {
+                                    selectedConcert = data.concertid
+                                    toggleTermsModal()
+                                }
+                            "
+                        >
+                            <v-icon name="md-settings-outlined" fill="orange" class="hover:animate-spin" />
+                        </div>
                     </div>
                 </template>
 
-
                 <template #[`pagination`]>
-                    <div class="flex justify-center">
-                        <div @click="action(5)" class="text-xl">{{ '▶️' }}</div>
-                        <div @click="action(1)" class="text-base self-center">{{ '▶️' }}</div>
-                        <div class="mx-5">{{ pageIndex+1  }} از {{totalPage}}</div>
-                        <div @click="action(-1)" class="text-base self-center">{{'◀️'}}</div>
-                        <div @click="action(-5)" class="text-xl">{{'◀️'}}</div>
+                    <div class="flex justify-center mt-2">
+                        <div @click="action(5)" class="rounded-full bg-gray-300 w-8 h-8 flex justify-center mx-0.5" v-tippy="{content:  '+5' }">
+                            <v-icon name="bi-chevron-double-right" class="self-center" scale="1.2" />
+                        </div>
+                        <div @click="action(1)" class="rounded-full bg-gray-300 w-8 h-8 flex justify-center mx-1" v-tippy="{content:'+1'}">
+                            <v-icon class="self-center" name="bi-chevron-right" scale="1.2" />
+                        </div>
+                        <div class="mx-5 rounded-lg bg-gray-300 w-24 text-center align-middle">
+                            <span class="leading-8">{{ pageIndex + 1 }} از {{ totalPage }}</span>
+                        </div>
+                        <div @click="action(-1)" class="rounded-full bg-gray-300 w-8 h-8 flex justify-center mx-1" v-tippy="{content:'-1'}">
+                            <v-icon class="self-center" name="bi-chevron-left" scale="1.2" />
+                        </div>
+                        <div @click="action(-5)" class="rounded-full bg-gray-300 w-8 h-8 flex justify-center mx-0.5" v-tippy="{content:'-5'}">
+                            <v-icon class="self-center" name="bi-chevron-double-left" scale="1.2" />
+                        </div>
+                        <div class="mx-12 inline-block">
+                            
+                            <select class="form-input inline-block py-1" v-tippy="{content:'تعداد آیتم ها در هر صفحه'}" v-model="pageSize">
+                                <option value="10">10</option>
+                                <option value="15">15</option>
+                                <option value="20">20</option>
 
+                            </select>
+                        </div>
                     </div>
+                  
                 </template>
             </DataTable_V1>
         </div>
