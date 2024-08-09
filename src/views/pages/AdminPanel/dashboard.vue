@@ -1,5 +1,37 @@
 <script setup>
 import { FaMoneyBillTrendUp } from '@kalimahapps/vue-icons/fa'
+import DataTable_V1 from '@/views/components/Globals/DataTables/DataTable_V1.vue'
+import { computed, ref } from 'vue'
+import { sendRequest } from '@/services/service'
+import { useQuery } from '@tanstack/vue-query'
+const pageIndex = ref(0)
+const pageSize = ref(10)
+const queryKey = computed(() => [{ url: '/api/Manager/GetAllActiveConcerts', pageSize: pageSize.value, currentPage: pageIndex.value + 1 }])
+const getAllConcert = useQuery({
+    queryKey: queryKey,
+    queryFn: ({ queryKey }) =>
+        sendRequest({
+            url: queryKey[0].url + '/' + queryKey[0].pageSize + '/' + queryKey[0].currentPage,
+            method: 'GET',
+            headers: {}
+        }),
+    refetchOnMount: true,
+    enabled: true
+})
+
+const totalCount = computed(() => getAllConcert.data.value?.totalCount ?? 0)
+
+const totalPage = computed(() => Math.ceil(totalCount.value / pageSize.value))
+
+const dateFormat = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }
+
+function action(step) {
+    if (step > 0 && pageIndex.value + step >= totalPage.value) return
+
+    if (step < 0 && pageIndex.value + step < 0) return
+
+    pageIndex.value += step
+}
 </script>
 
 <template>
@@ -82,7 +114,7 @@ import { FaMoneyBillTrendUp } from '@kalimahapps/vue-icons/fa'
     </div>
 
     <div class="mx-auto mt-3">
-        <h2 class="text-lg leading-6 font-medium text-gray-900 mx-4 sm:mx-6 lg:mx-8">کنسرت ها</h2>
+        <h2 class="text-lg leading-6 font-medium text-gray-900 mx-4 sm:mx-6 lg:mx-8">کنسرت های فعال</h2>
         <!-- Activity list (smallest breakpoint only) -->
         <div class="shadow sm:hidden mx-4">
             <ul role="list" class="mt-2 divide-y divide-gray-200 overflow-hidden shadow sm:hidden">
@@ -118,66 +150,91 @@ import { FaMoneyBillTrendUp } from '@kalimahapps/vue-icons/fa'
             <div class="mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex flex-col mt-2">
                     <div class="align-middle min-w-full overflow-x-auto shadow overflow-hidden sm:rounded-lg">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead>
-                                <tr>
-                                    <th class="px-6 py-3 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">معامله</th>
-                                    <th class="px-6 py-3 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">مقدار</th>
-                                    <th class="hidden px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider md:block">وضعیت</th>
-                                    <th class="px-6 py-3 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">تاریخ</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <tr v-for="transaction in transactions" :key="transaction.id" class="bg-white">
-                                    <td class="max-w-0 w-full px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        <div class="flex">
-                                            <a :href="transaction.href" class="group inline-flex space-x-2 space-x-reverse truncate text-sm">
-                                                <CashIcon class="flex-shrink-0 h-5 w-5 text-gray-400 group-hover:text-gray-500" aria-hidden="true" />
-                                                <p class="text-gray-500 truncate group-hover:text-gray-900">
-                                                    {{ transaction.name }}
-                                                </p>
-                                            </a>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 text-right whitespace-nowrap text-sm text-gray-500">
-                                        <span class="text-gray-900 font-medium">{{ transaction.amount }} </span>
-                                        {{ transaction.currency }}
-                                    </td>
-                                    <td class="hidden px-6 py-4 whitespace-nowrap text-sm text-gray-500 md:block">
-                                        <span :class="[statusStyles[transaction.status], 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize']">
-                                            {{ transaction.status }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 text-right whitespace-nowrap text-sm text-gray-500">
-                                        <time :datetime="transaction.datetime">{{ transaction.date }}</time>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <!-- Pagination -->
-                        <nav class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6" aria-label="Pagination">
-                            <div class="hidden sm:block">
-                                <p class="text-sm text-gray-700">
-                                    نمایش
-                                    {{ ' ' }}
-                                    <span class="font-medium">1</span>
-                                    {{ ' ' }}
-                                    تا
-                                    {{ ' ' }}
-                                    <span class="font-medium">10</span>
-                                    {{ ' ' }}
-                                    از
-                                    {{ ' ' }}
-                                    <span class="font-medium">20</span>
-                                    {{ ' ' }}
-                                    نتیجه
-                                </p>
-                            </div>
-                            <div class="flex-1 flex justify-between sm:justify-end">
-                                <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"> قبلی </a>
-                                <a href="#" class="mr-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"> بعدی </a>
-                            </div>
-                        </nav>
+                        <DataTable_V1
+                            class="!rounded-md overflow-hidden"
+                            :columns="[
+                                {
+                                    title: '#',
+                                    key: 'concertid'
+                                },
+                                {
+                                    title: 'عنوان',
+                                    key: 'title',
+                                    colSpan: 2
+                                },
+                                {
+                                    title: 'برگزار کننده ',
+                                    key: 'promoter.title'
+                                },
+                                {
+                                    title: 'محل برگزاری',
+                                    key: 'place.name'
+                                },
+
+                                {
+                                    title: 'دسته بندی',
+                                    key: 'category'
+                                },
+
+                                {
+                                    title: 'زمان شروع',
+                                    key: 'startDate'
+                                },
+
+                                {
+                                    title: 'زمان پایان',
+                                    key: 'endDate'
+                                }
+                            ]"
+                            :data="getAllConcert.data.value?.data ?? []"
+                            :tableClass="'min-w-full divide-y divide-gray-300 table-fixed'"
+                            :theadClass="''"
+                            :thead-t-r-class="''"
+                            :tbodyClass="'!bg-white divide-y divide-gray-200'"
+                            :thClass="'px-6 py-4 bg-gray-300 text-sm font-medium text-gray-900 uppercase text-center'"
+                            :tdClass="'max-w-0  px-6 py-4 text-center whitespace-nowrap text-sm text-gray-900'"
+                            :trClass="'odd:bg-white even:bg-gray-100'"
+                            :scrollBarHeight="'calc(100dvh - 500px)'"
+                        >
+                            <template #[`tbodyconcertid`]="{ data }">{{ '-' }}</template>
+                            <template #[`tbodytitle`]="{ data }">{{ data.title }}</template>
+                            <template #[`tbodypromoter.title`]="{ data }">{{ data.promoter.title }}</template>
+                            <template #[`tbodyplace.name`]="{ data }">{{ data.place.name }}</template>
+                            <template #[`tbodycategory`]="{ data }">{{ data.category }}</template>
+                            <template #[`tbodystartDate`]="{ data }">{{ new Date(data.startDate).toLocaleString('fa-ir', dateFormat).split(',').reverse().join(' ') }}</template>
+                            <template #[`tbodyendDate`]="{ data }">{{ new Date(data.endDate).toLocaleString('fa-ir', dateFormat).split(',').reverse().join(' ') }}</template>
+
+                            <template #[`pagination`]>
+                                <nav class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6" aria-label="Pagination">
+                                    <div class="hidden sm:block">
+                                        <p class="text-sm text-gray-700">
+                                            نمایش
+                                            {{ ' ' }}
+                                            <span class="font-medium">{{ pageIndex * pageSize + 1 }}</span>
+                                            {{ ' ' }}
+                                            تا
+                                            {{ ' ' }}
+                                            <span class="font-medium">{{ (pageIndex + 1) * pageSize }}</span>
+                                            {{ ' ' }}
+                                            از
+                                            {{ ' ' }}
+                                            <span class="font-medium">{{ totalCount }}</span>
+                                            {{ ' ' }}
+                                            نتیجه
+                                        </p>
+                                    </div>
+                                    <div class="flex-1 flex justify-between sm:justify-end">
+                                        <select class="form-input inline-block w-fit mx-2.5 py-1" v-tippy="{ content: 'تعداد آیتم ها در هر صفحه' }" v-model="pageSize">
+                                            <option value="10">10</option>
+                                            <option value="15">15</option>
+                                            <option value="20">20</option>
+                                        </select>
+                                        <a @click="action(-1)" href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"> قبلی </a>
+                                        <a @click="action(1)" href="#" class="mr-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"> بعدی </a>
+                                    </div>
+                                </nav>
+                            </template>
+                        </DataTable_V1>
                     </div>
                 </div>
             </div>

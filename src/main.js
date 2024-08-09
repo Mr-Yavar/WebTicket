@@ -19,12 +19,12 @@ import { addIcons, OhVueIcon } from 'oh-vue-icons'
 
 import { OiLocation ,
  RiCalendarEventFill,RiMenu2Line ,
- FaRegularStar, FaSearch, FaTicketAlt, FaTimes,FaChartPie ,
+ FaRegularStar, FaSearch, FaTicketAlt, FaTimes,FaChartPie , FaTrashAlt,
  IoSettingsOutline, IoGridOutline, IoDocumentsOutline, IoTicketSharp, IoArrowForwardOutline, IoTrashOutline, IoTicketOutline ,
  PrSpinner ,MdSettingssuggestOutlined ,
  PxCalendarTomorrow, PxClock, PxGps ,
  HiChevronDown, HiQuestionMarkCircle, HiSolidCheckCircle, HiTable ,
- SiOpenstreetmap, 
+ SiOpenstreetmap, CoPlus ,
 MdCategoryOutlined, MdDashboardOutlined, MdDiscountTwotone, MdAttachmoneyOutlined,
 BiBarChartLine, BiPencil, BiShieldCheck, BiChevronLeft,BiChevronRight,BiChevronDoubleRight ,BiChevronDoubleLeft,
  CoHeart,CoBell,MdSettingsOutlined ,HiPencil ,
@@ -35,7 +35,7 @@ import Vue3PersianDatetimePicker from 'vue3-persian-datetime-picker'
 
 
 
-addIcons(HiPencil,MdSettingsOutlined,LaFileInvoiceDollarSolid, IoTicketOutline, MdAttachmoneyOutlined, CoHeart, FaRegularStar, BiChevronLeft, HiChevronDown, BiShieldCheck, HiQuestionMarkCircle, RiMenu2Line, IoGridOutline, IoDocumentsOutline, FaChartPie, IoSettingsOutline, BiPencil, LaTimesSolid, MdDashboardOutlined, HiTable, CoBell, BiBarChartLine, FaSearch, LaUserCircle, MdDiscountTwotone, IoTrashOutline, MdCategoryOutlined, SiOpenstreetmap, OiLocation, RiCalendarEventFill, FaSearch, FaTicketAlt, IoTicketSharp, IoArrowForwardOutline, FaTimes, PrSpinner, PxCalendarTomorrow, PxClock, PxGps, HiSolidCheckCircle,BiChevronDoubleRight,BiChevronRight,BiChevronDoubleLeft,MdSettingssuggestOutlined)
+addIcons(CoPlus ,HiPencil,MdSettingsOutlined,LaFileInvoiceDollarSolid, IoTicketOutline, MdAttachmoneyOutlined, CoHeart, FaRegularStar, BiChevronLeft, HiChevronDown, BiShieldCheck, HiQuestionMarkCircle, RiMenu2Line, IoGridOutline, IoDocumentsOutline, FaChartPie, IoSettingsOutline, BiPencil, LaTimesSolid, MdDashboardOutlined, HiTable, CoBell, BiBarChartLine, FaSearch, LaUserCircle, MdDiscountTwotone, IoTrashOutline, MdCategoryOutlined, SiOpenstreetmap, OiLocation, RiCalendarEventFill, FaSearch, FaTicketAlt, IoTicketSharp, IoArrowForwardOutline, FaTimes, PrSpinner, PxCalendarTomorrow, PxClock, PxGps, HiSolidCheckCircle,BiChevronDoubleRight,BiChevronRight,BiChevronDoubleLeft,MdSettingssuggestOutlined,FaTrashAlt)
 
 import DatePicker from '@alireza-ab/vue3-persian-datepicker'
 const app = createApp(App)

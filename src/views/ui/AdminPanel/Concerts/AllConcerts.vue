@@ -5,10 +5,12 @@ import { useQuery } from '@tanstack/vue-query'
 import { sendRequest } from '@/services/service'
 import { ref } from 'vue'
 import { computed } from 'vue'
-const pageIndex = ref(0)
-const pageSize = ref(10)
+
 import EditConcertModal from '@/views/components/Layouts/AdminLayout/Modal/EditConcertModal.vue'
-const queryKey = computed(() => [{ url: '/api/Manager/GetAllConcerts', pageSize: pageSize.value, currentPage: pageIndex.value + 1 }])
+import Swal from 'sweetalert2'
+const pageIndex = ref(0);
+const pageSize = ref(1);
+const queryKey = computed(() => [{ url: '/api/Manager/GetAllConcerts', pageSize: pageSize.value, currentPage: pageIndex.value + 1 }]);
 const getAllConcert = useQuery({
     queryKey: queryKey,
     queryFn: ({ queryKey }) =>
@@ -19,11 +21,11 @@ const getAllConcert = useQuery({
         }),
     refetchOnMount: true,
     enabled: true
-})
+});
 
-const totalCount = computed(() => getAllConcert.data.value?.totalCount ?? 0)
+const totalCount = computed(() => getAllConcert.data.value?.totalCount ?? 0);
 
-const totalPage = computed(() => Math.ceil(totalCount.value / pageSize.value))
+const totalPage = computed(() => Math.ceil(totalCount.value / pageSize.value));
 
 const dateFormat = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }
 
@@ -43,7 +45,9 @@ function toggleTermsModal() {
     showTermsModal.value = !showTermsModal.value
 }
 
-const selectedConcert = ref('')
+const selectedConcert = ref('');
+
+
 </script>
 
 <template>
@@ -54,11 +58,12 @@ const selectedConcert = ref('')
             </div>
         </div>
 
-        <div class="w-full h-fit !rounded-md overflow-hidden m-0">
+        <div class="w-full h-fit  overflow-hidden m-0">
             <div class="flex my-1 rtl:justify-end">
                 <button class="btn btn-success btn-sm" @click.prevent="$router.push({ name: 'createConcert' })">اضافه کردن</button>
             </div>
             <DataTable_V1
+            class="!rounded-md overflow-hidden"
                 :columns="[
                     {
                         title: '#',
@@ -68,6 +73,10 @@ const selectedConcert = ref('')
                         title: 'عنوان',
                         key: 'title',
                         colSpan: 2
+                    },
+                    {
+                        title: 'برگزار کننده ',
+                        key: 'promoter.title'
                     },
                     {
                         title: 'محل برگزاری',
@@ -93,16 +102,18 @@ const selectedConcert = ref('')
                     }
                 ]"
                 :data="getAllConcert.data.value?.data ? Array(20).fill(getAllConcert.data.value?.data[0]) : []"
-                :tableClass="'table table-fixed w-full  !shadow-sm'"
-                :theadClass="'!bg-gray-700 text-white antialised'"
-                :thead-t-r-class="'!bg-gray-600'"
-                :tbodyClass="'!shadow-inner'"
-                :thClass="'text-center p-2'"
-                :tdClass="'text-center p-1'"
-                :trClass="'odd:!bg-gray-200 even:!bg-gray-50'"
+                :tableClass="'min-w-full divide-y divide-gray-300 table-fixed'"
+                :theadClass="''"
+                :thead-t-r-class="''"
+                :tbodyClass="'!bg-white divide-y divide-gray-200'"
+                :thClass="'px-6 py-4 bg-gray-300 text-sm font-medium text-gray-900 uppercase text-center'"
+                :tdClass="'max-w-0  px-6 py-4 text-center whitespace-nowrap text-sm text-gray-900'"
+                :trClass="'odd:bg-white even:bg-gray-100'"
+                :scrollBarHeight="'calc(100dvh - 300px)'"
             >
                 <template #[`tbodyconcertid`]="{ data }">{{ '-' }}</template>
                 <template #[`tbodytitle`]="{ data }">{{ data.title }}</template>
+                <template #[`tbodypromoter.title`]="{ data }">{{ data.promoter.title }}</template>
                 <template #[`tbodyplace.name`]="{ data }">{{ data.place.name }}</template>
                 <template #[`tbodycategory`]="{ data }">{{ data.category }}</template>
                 <template #[`tbodystartDate`]="{ data }">{{ new Date(data.startDate).toLocaleString('fa-ir', dateFormat).split(',').reverse().join(' ') }}</template>
@@ -119,7 +130,7 @@ const selectedConcert = ref('')
                                 }
                             "
                         >
-                            <v-icon name="hi-pencil" fill="black" class="hover:animate-bounce" />
+                            <v-icon name="hi-pencil" fill="black" class="hover:animate-pulse " />
                         </div>
 
                         <div

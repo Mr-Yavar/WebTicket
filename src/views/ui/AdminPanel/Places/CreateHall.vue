@@ -124,7 +124,7 @@ const onSubmit = handleSubmit(async (data) => {
             }
         )
     }
-})
+});
 
 const styles = useCssModule('map')
 const tab = ref(null)

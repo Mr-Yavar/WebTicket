@@ -1,6 +1,5 @@
 <script setup>
-import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
-import { PxZoomOut, PxZoomIn } from '@kalimahapps/vue-icons/px'
+
 import { FlFilledZoomFit } from '@kalimahapps/vue-icons/fl'
 import { Field, useFieldArray, useForm } from 'vee-validate'
 import Splitter from '@/views/components/Splitter/Splitter.vue'
@@ -10,7 +9,7 @@ import { CiCircleChevLeft } from '@kalimahapps/vue-icons/ci'
 import Swal from 'sweetalert2'
 import { useRoute, useRouter } from 'vue-router'
 import { computed, reactive, ref, useCssModule, watch } from 'vue'
-import { FILE_PROVIDER, FILE_PROVIDER2 } from '@/config/appConfig'
+import { FILE_PROVIDER2 } from '@/config/appConfig'
 import { PrSpinner } from '@kalimahapps/vue-icons/pr'
 import vueSelectUmd from 'vue-select'
 import { sendRequest, getFile } from '@/services/service'
@@ -20,14 +19,7 @@ import Panzoom from '@panzoom/panzoom'
 
 import dateHelper from '@/utils/dateHelper'
 
-const dateOption = {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false
-}
+
 const router = useRouter()
 const route = useRoute()
 // تنظمیات فرم

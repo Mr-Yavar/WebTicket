@@ -1,5 +1,6 @@
 <template>
-    <table :class="tableClass + ' sticky top-6 ' + ''">
+   <div :class="$attrs.class" :style="'--scrol-ps-height :' + scrollBarHeight">
+    <table :class="tableClass + ' ' + ''">
         <thead :class="theadClass">
             <tr :class="theadTRClass">
                 <th v-for="item in columns" :key="'th' + item.key" :class="thClass" :colspan="!item.colSpan ? 1 : item.colSpan">
@@ -23,6 +24,7 @@
     <div :class="' sticky bottom-0 ' + ''">
         <slot name="pagination" ></slot>
     </div>
+</div>
 </template>
 
 <script setup>
@@ -40,7 +42,8 @@ const props = defineProps({
     trClass: String,
     tdClass: String,
     theadTRClass: String,
-    pageSizes : Array
+    pageSizes : Array,
+    scrollBarHeight :String
 });
 
 
@@ -51,7 +54,7 @@ const props = defineProps({
 
 <style scoped>
 @import 'vue3-perfect-scrollbar/style.css';
-.ps {
-    height: calc(100dvh - 300px); /* or max-height: 400px; */
-  }
+.ps{
+    height: var(--scrol-ps-height);
+}
 </style>
