@@ -43,7 +43,23 @@
 
     
     .tippy-box{
-        @apply vazir-font;
+        @apply !vazir-font;
     }
+
+ 
+    .vs__dropdown-menu li:nth-child(2n + 1) {
+        @apply bg-gray-50 text-black !vazir-font md:!text-sm text-xs;
+    }
+    .vs__dropdown-menu li:nth-child(2n) {
+        @apply bg-white text-black !vazir-font md:!text-sm text-xs;
+    }
+    .vs__dropdown-menu li:hover {
+        @apply !text-gray-50 !bg-info shadow-md !vazir-font md:!text-sm text-xs;
+    }
+
+    .vs__selected strong{
+        @apply md:!text-sm text-xs;
+    }
+
 }
 

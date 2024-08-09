@@ -9,6 +9,7 @@
         <div class="rounded-sm mx-2">
             <div class="text-center">پارامتر</div>
             <vueSelectUmd
+             :appendToBody="true"
                 v-model="selectedItem"
                 :options="[...parents]"
                 :reduce="
@@ -31,9 +32,7 @@
                     </div>
                 </template>
             </vueSelectUmd>
-            <div class="my-2">
-                <button class="btn btn-md btn-success" @click.prevent="handleSubmit(onSubmit)()">ثبت</button>
-            </div>
+           
         </div>
         <div class="col-span-2 rounded-md overflow-hidden mx-2">
             <form @submit.prevent="onSubmit">
@@ -47,9 +46,10 @@
                     </div>
                     <template v-for="(filed, id) in fields" :key="'event' + id">
                         <div class="grid grid-cols-5 gap-2 odd:bg-gray-50 even:bg-gray-100 py-2">
-                            <div class="col-span-1">
+                            <div class="md:col-span-1 col-span-2">
                                 <Field :name="`dynparams[${id}].valueType`" v-slot="{ filed, componentField }">
                                     <vueSelectUmd
+                                        :appendToBody="true"
                                         :clearable="false"
                                         v-bind="componentField"
                                         :options="[
@@ -66,19 +66,19 @@
                                     >
                                         <template #selected-option="{ label }">
                                             <div style="display: flex; align-items: baseline; padding: 0">
-                                                <strong class="text-sm"> {{ label }} </strong>
+                                                <strong class=""> {{ label }} </strong>
                                             </div>
                                         </template>
 
                                         <template #option="{ label }">
                                             <div class="text-right">
-                                                <h3 style="margin: 0">{{ label }}</h3>
+                                                <span style="margin: 0">{{ label }}</span>
                                             </div>
                                         </template>
                                     </vueSelectUmd>
                                 </Field>
                             </div>
-                            <div class="col-span-4 flex">
+                            <div class="md:col-span-4 col-span-3 flex">
                                 <Field :name="`dynparams[${id}].value`" v-slot="{ field, componentField }">
                                     <template v-if="values.dynparams?.[id]?.valueType == 0">
                                         <input
@@ -111,7 +111,7 @@
                         </div>
                     </template>
                 </PerfectScrollbar>
-                <div class="mx-auto w-fit mt-1">
+                <div class="mx-auto w-full mt-1 flex justify-between">
                     <button
                         class="btn btn-sm bg-gray-600 hover:!shadow-md btn-block sticky bottom-0"
                         type="button"
@@ -130,7 +130,11 @@
                             <v-icon name="co-plus" fill="" />
                         </div>
                     </button>
+                   
+                        <button class="btn btn-md btn-success" >ثبت</button>
+                    
                 </div>
+               
             </form>
         </div>
     </div>
@@ -318,4 +322,6 @@ const onSubmit = handleSubmit(async (data) => {
     @apply bg-gray-100 shadow-inner rounded-b-md;
     position: relative;
 }
+
+
 </style>

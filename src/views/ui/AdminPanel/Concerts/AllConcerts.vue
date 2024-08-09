@@ -101,7 +101,7 @@ const selectedConcert = ref('');
                         key: 'options'
                     }
                 ]"
-                :data="getAllConcert.data.value?.data ? Array(20).fill(getAllConcert.data.value?.data[0]) : []"
+                :data="getAllConcert.data.value?.data ? getAllConcert.data.value?.data : []"
                 :tableClass="'min-w-full divide-y divide-gray-300 table-fixed'"
                 :theadClass="''"
                 :thead-t-r-class="''"

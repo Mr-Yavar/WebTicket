@@ -46,7 +46,7 @@ const searchText = ref('')
                             <Vselect
                                 multiple
                                 v-model="selectedCities"
-                                :options="Cities.map((x) => ({ value: x, label: x }))"
+                                :options="Cities"
                                 :reduce="
                                     (city) => {
                                         return city.value

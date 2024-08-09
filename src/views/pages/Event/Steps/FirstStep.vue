@@ -2,7 +2,7 @@
     <div>
         <div class="relative overflow-hidden rounded-lg mb-3">
             <div class="w-full event-cover bg-transparent">
-                <img class="h-fit w-full rounded-lg" :src="FILE_PROVIDER2 + concert?.poster" border="0" />
+                <img class="h-fit w-full rounded-lg" :src="fileUrl + concert?.poster" border="0" />
                 <h1 class="bg-none bg-transparent rounded-md text-white font-bold absolute bottom-2 right-2 z-10">کنسرت {{ concert?.title }}</h1>
             </div>
         </div>
@@ -56,7 +56,7 @@
                                 }
                             "
                             :options="{
-                                mapKey: 'web.5b632ac9f6354a3f8bcba1b4c043a009',
+                                mapKey: mapKey,
                                 mapType: MapTypes.neshanRaster,
                                 isTouchPlatform: true,
                                 mapTypeControllerOptions: { show: false, position: 'top-right' },
@@ -117,7 +117,7 @@
     </div>
 </template>
 
-<script>
+<script >
 import ConcertTermsModal from '@/views/components/Globals/modal/ConcertTermsModal.vue'
 import Ticket from '@/views/components/Pages/Event/Ticket.vue'
 
@@ -131,12 +131,15 @@ import { GetSpecificConcertService } from '@/services/ConcertsService'
 import { useQuery } from '@tanstack/vue-query'
 import { useRoute, useRouter } from 'vue-router'
 import { Guid } from '@/config/helper'
+import { FILE_PROVIDER2, MAP_API } from '@/config/appConfig';
 
 export default {
     components: { ConcertTermsModal, Ticket, MapComponent },
     props:{stepControls: Object},
     setup: () => {
-     
+       
+        const mapKey = ref(MAP_API);
+        const fileUrl = ref(FILE_PROVIDER2);
         const route = useRoute()
         const GetSpecificConcertServiceCallKey = computed(()=>['api/Concerts/GetSpecificConcert', route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id)]);
         const GetSpecificConcertServiceCall = useQuery({
@@ -205,7 +208,7 @@ export default {
 
         const router = useRouter()
 
-        return { concert, router, route,seatMap, handleStartMap, toggleTermsModal, termsAgreed, TicketStore, eventsDate ,MapTypes,Guid}
+        return { concert, router, route,seatMap, handleStartMap, toggleTermsModal, termsAgreed, TicketStore, eventsDate ,MapTypes,Guid,fileUrl,mapKey}
         // same as beforeRouteUpdate option but with no access to `this`
     },
     beforeRouteEnter: async (to, from, next) => {
@@ -213,5 +216,7 @@ export default {
         next();
     }
 }
+
+
 </script>
 <style scoped></style>

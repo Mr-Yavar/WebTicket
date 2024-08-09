@@ -6,11 +6,15 @@ import { CRPlacesService, GetPlaceService } from '@/services/PlacesService.js'
 import { CiCircleChevLeft } from '@kalimahapps/vue-icons/ci'
 import Swal from 'sweetalert2'
 import { useRoute, useRouter } from 'vue-router'
-import { watch } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import Cities from '@/assets/data/city.json'
 const router = useRouter()
 const route = useRoute()
 import Vselect from 'vue-select'
+import { MapComponent, MapTypes } from '@neshan-maps-platform/mapbox-gl-vue'
+import '@neshan-maps-platform/mapbox-gl-vue/dist/style.css'
+import nmp_mapboxgl from '@neshan-maps-platform/mapbox-gl'
+import { MAP_API, MAP_SERVICE_API } from '@/config/appConfig'
 const placeId = !route.params.id ? null : route.params.id
 
 const getPlaceServiceCall = useQuery({
@@ -24,11 +28,69 @@ const { resetForm, defineField, handleSubmit } = useForm({
         place: getPlaceServiceCall.data?.value
     }
 })
-
+const marker = new nmp_mapboxgl.Marker({
+            color: 'black',
+            title: 'محل برگزاری',
+            draggable: false,
+            clickTolerance: 0
+        });
 watch([getPlaceServiceCall.data], () => {
-    if (placeId) resetForm({ values: { place: { ...getPlaceServiceCall.data?.value } } })
+    if (placeId){ 
+        
+        
+        resetForm({ values: { place: { ...getPlaceServiceCall.data?.value,city: getPlaceServiceCall.data?.value.cityId} } });
+       
+        placeLat.value =getPlaceServiceCall.data?.value.lat;
+        placeLng.value = getPlaceServiceCall.data?.value.lng;
+        marker.setLngLat([placeLng.value ,placeLat.value]);
+        marker.addTo(neshanMap.map);
+}
     else resetForm({ values: {} })
-})
+});
+
+
+const neshanMap = reactive({map:null});
+
+function handleStartMap(map) {
+    map.fitBounds(map.getBounds(), {
+        padding: { top: 50, bottom: 50, left: 50, right: 50 },
+        center: [51.375, 35.7449],
+        maxZoom: 20,
+        zoom: 15,
+        minZoom: 7,
+        animate: true,
+        around: [51.375, 35.7449]
+    })
+    neshanMap.map = map; 
+   
+    map.on('click', (e) => {
+        console.log(e)
+        marker.setLngLat(Object.values(e.lngLat));
+        placeLat.value = e.lngLat.lat;
+        placeLng.value = e.lngLat.lng;
+        marker.addTo(map);
+    });
+
+   
+   
+}
+
+const searchLocation = async () => {
+      if (placeAddress.value) {
+        const response = await fetch(`https://api.neshan.org/v4/geocoding?address=${placeAddress.value}`, {
+           
+          headers: {
+            'Api-Key': MAP_SERVICE_API, // Replace with your Neshan API key
+          }
+        });
+        const data = await response.json();
+        if (data ) {
+          const { x, y } = data.location; // Get the first result
+          neshanMap.map.flyTo({ center: [ x,y], zoom: 14 }); // Fly to the location
+        }
+      }
+    };
+
 
 const [placeTile] = defineField('place.title')
 const [placeDesc] = defineField('place.description')
@@ -54,7 +116,7 @@ const onSubmit = handleSubmit(async (data) => {
             Title: data.place.title,
             Address: data.place.address,
             Description: data.place.description,
-            City: data.place.city,
+            CityId: data.place.city,
             lat: Number(data.place.lat),
             lng: Number(data.place.lng)
         })
@@ -113,6 +175,11 @@ const onSubmit = handleSubmit(async (data) => {
         )
     }
 })
+
+const location = reactive()
+watch(location, () => {
+    console.log(location)
+})
 </script>
 
 <template>
@@ -136,7 +203,7 @@ const onSubmit = handleSubmit(async (data) => {
                     <label for="place-name" class="block text-sm font-medium text-gray-700">شهر</label>
                     <Vselect
                         v-model="placeCity"
-                        :options="Cities.map((x) => ({ value: x, label: x }))"
+                        :options="Cities"
                         :reduce="
                             (city) => {
                                 return city.value
@@ -160,16 +227,37 @@ const onSubmit = handleSubmit(async (data) => {
                 </div>
                 <div class="col-span-4 col-start-2">
                     <label for="place-name" class="block text-sm font-medium text-gray-700">نشانی</label>
-                    <input type="text" v-model="placeAddress" id="place-name" placeholder="تهران،بلوار ... " class="mt-1 py-2 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                    <input type="text" v-model="placeAddress" @blur="searchLocation" id="place-name" placeholder="تهران،بلوار ... " class="mt-1 py-2 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                 </div>
-                <div class="col-span-2 col-start-2">
+                <div class="col-start-2 col-span-4">
+                    <div class="h-[400px]">
+                        <MapComponent
+                            class="rounded-lg"
+                            :map-setter="
+                                (map) => {
+                                    handleStartMap(map)
+                                }
+                            "
+                            :map-click="(e) => console.log(e)"
+                            v-model="location"
+                            :options="{
+                                mapKey: MAP_API,
+                                mapType: MapTypes.neshanRaster,
+                                isTouchPlatform: true,
+                              
+                                poi: true
+                            }"
+                        />
+                    </div>
+                </div>
+                <!-- <div class="col-span-2 col-start-2 hidden">
                     <label class="block text-sm font-medium text-gray-700">lat</label>
                     <input v-model="placeLat" class="appearance-none mt-1 py-2 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" type="number" />
                 </div>
-                <div class="col-span-2 col-start-4">
-                    <label class="block text-sm font-medium text-gray-700">lng</label>
+                <div class="col-span-2 col-start-4 hidden">
+                    <label class="block text-sm font-medium text-gray-700 ">lng</label>
                     <input v-model="placeLng" class="appearance-none mt-1 py-2 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" type="number" />
-                </div>
+                </div> -->
                 <div class="col-span-2 col-start-2">
                     <label class="block text-sm font-medium text-gray-700" for="place-name">تصویر مکان برگزاری</label>
                     <input

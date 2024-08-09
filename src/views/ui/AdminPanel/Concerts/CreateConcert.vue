@@ -1,5 +1,5 @@
 <script setup>
-
+import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
 import { FlFilledZoomFit } from '@kalimahapps/vue-icons/fl'
 import { Field, useFieldArray, useForm } from 'vee-validate'
 import Splitter from '@/views/components/Splitter/Splitter.vue'
