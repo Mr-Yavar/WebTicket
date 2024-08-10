@@ -63,11 +63,13 @@ const selectedConcert = ref('');
                 <button class="btn btn-success btn-sm" @click.prevent="$router.push({ name: 'createConcert' })">اضافه کردن</button>
             </div>
             <DataTable_V1
-            class="!rounded-md overflow-hidden"
+            class="!rounded-md overflow-hidden md:text-sm text-xs"
                 :columns="[
                     {
                         title: '#',
-                        key: 'concertid'
+                        key: 'concertid',
+                        tdClass : 'md:table-cell hidden',
+                        thClass : 'md:table-cell hidden',
                     },
                     {
                         title: 'عنوان',
@@ -76,7 +78,9 @@ const selectedConcert = ref('');
                     },
                     {
                         title: 'برگزار کننده ',
-                        key: 'promoter.title'
+                        key: 'promoter.title',
+                        tdClass : 'md:table-cell hidden',
+                        thClass : 'md:table-cell hidden',
                     },
                     {
                         title: 'محل برگزاری',
@@ -84,17 +88,22 @@ const selectedConcert = ref('');
                     },
                     {
                         title: 'دسته بندی',
-                        key: 'category'
+                        key: 'category',
+                        tdClass : 'md:table-cell hidden',
+                        thClass : 'md:table-cell hidden',
                     },
 
                     {
                         title: 'زمان شروع',
-                        key: 'startDate'
+                        key: 'startDate',
+                        tdClass :'text-wrap break-space'
                     },
 
                     {
                         title: 'زمان پایان',
-                        key: 'endDate'
+                        key: 'endDate',
+                        tdClass :'text-wrap break-space'
+
                     },
                     {
                         title: '-',

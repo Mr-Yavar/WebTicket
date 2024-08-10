@@ -94,8 +94,8 @@ const router = createRouter({
                     component: () => import('@/views/pages/Event/Steps/FourthStep.vue'),
                     beforeEnter: (to, form, next) => {
                         try {
-                            Guid({}).fromCompressedToFull(to.params.id);
-                            Guid({}).fromCompressedToFull(to.params.reservationId);
+                            Guid({}).fromCompressedToFull(to.params.id)
+                            Guid({}).fromCompressedToFull(to.params.reservationId)
                             next()
                         } catch (err) {
                             return
@@ -297,26 +297,49 @@ const router = createRouter({
                 },
                 {
                     name: 'StaticData',
-                    path:"staticdata",
+                    path: 'staticdata',
                     component: () => import('@/views/pages/AdminPanel/StaticData.vue'),
                     redirect: { name: 'ManageStaticData' },
                     children: [
                         {
                             name: 'ManageStaticData',
-                            path:"managestaticdata",
+                            path: 'managestaticdata',
                             component: () => import('@/views/ui/AdminPanel/StaticData/ManageStaticData.vue')
                         }
                     ]
                 },
                 {
+                    name: 'discount',
+                    path: 'discount',
+                    component: () => import('@/views/pages/AdminPanel/StaticData.vue'),
+                    redirect: { name: 'Managediscount' },
+                    children: [
+                        {
+                            name: 'Managediscount',
+                            path: 'managediscount',
+                            component: () => import('@/views/ui/AdminPanel/Discount/AllDiscount.vue')
+                        },
+                        {
+                            name: 'createDiscount',
+                            path: 'createDiscount',
+                            component: () => import('@/views/ui/AdminPanel/Discount/CreateDiscount.vue')
+                        },
+                        {
+                            name: 'editDiscount',
+                            path: 'editDiscount/:id',
+                            component: () => import('@/views/ui/AdminPanel/Discount/CreateDiscount.vue')
+                        }
+                    ]
+                },
+                {
                     name: 'ManageUsers',
-                    path:"manageusers",
+                    path: 'manageusers',
                     component: () => import('@/views/pages/AdminPanel/StaticData.vue'),
                     redirect: { name: 'manageallusers' },
                     children: [
                         {
                             name: 'manageallusers',
-                            path:"manageallusers",
+                            path: 'manageallusers',
                             component: () => import('@/views/ui/AdminPanel/StaticData/ManageStaticData.vue')
                         }
                     ]

@@ -252,10 +252,12 @@ function showSeatMap(seatMap_url, floorSeats, key, idx, EventId) {
             let seatElem = tempDoc.querySelector(`*[id="${seat.name}"]`)
             if (!seatElem) return
 
-            if (!seat.isReserved) seatElem?.setAttribute('tid', seat.floorSeatId)
-            seatElem?.setAttribute('tIndex', index)
-            seatElem?.setAttribute('eventIndex', EventId)
-            seatElem?.setAttribute('floorIndex', idx)
+            if (seat.isReserved)    seatElem?.setAttribute('reserved', true)
+             seatElem?.setAttribute('tid', seat.floorSeatId);
+          
+            seatElem?.setAttribute('tIndex', index);
+            seatElem?.setAttribute('eventIndex', EventId);
+            seatElem?.setAttribute('floorIndex', idx);
 
             if (seat.price > 0) {
                 if (!priceClassColor[EventId]) priceClassColor[EventId] = {}
@@ -327,13 +329,13 @@ function setupTippy(map) {
     map.querySelectorAll(`*[id^="f"][tid]`).forEach((item) => {
         tippy(item, {
             onTrigger(instance, event) {
-                if (!event.target.getAttribute('eventIndex')) setTicket(event, Number(event.target.getAttribute('eventIndex')))
+                if (event.target.getAttribute('eventindex') && !event.target.getAttribute('reserved')) setTicket(event, Number(event.target.getAttribute('eventIndex')))
 
-                const [floor, row, column] = event.target.id.replace('f', '').replace('r', '').replace('c', '').split('_')
-                const listPrice = priceClassColor[Number(event.target.getAttribute('eventIndex'))]
-                const price = Object.keys(listPrice).find((key) => listPrice[key] === event.target.style.fill) ?? 'تعیین نشده'
-
-                instance.setContent(`<div class="direction-rtl vazir-font text-right"><p>طبقه : ${floor}</p><p>ردیف : ${row}</p><p>ستون :${column}</p><p style="background:${event.target.style.fill}">قیمت : ${price} تومان</p></div>`)
+                const [floor, row, column] = event.target.id.replace('f', '').replace('r', '').replace('c', '').split('_');
+                const listPrice = priceClassColor[Number(event.target.getAttribute('eventIndex'))];
+                const price = Object.keys(listPrice).find((key) => listPrice[key] === event.target.style.fill) ?? 'تعیین نشده';
+                let isReserved = !event.target.getAttribute('reserved') ? "" : "<p class='text-center animate-pulse'>رزرو شده❗</p>";
+                instance.setContent(`<div class="direction-rtl vazir-font text-right">${isReserved}<p>طبقه : ${floor}</p><p>ردیف : ${row}</p><p>ستون :${column}</p><p style="background:${event.target.style.fill}">قیمت : ${price} تومان</p></div>`)
             },
             allowHTML: true
         })
