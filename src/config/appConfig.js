@@ -7,4 +7,6 @@ export const FILE_PROVIDER2 = API_BASE_URL + '/api/FileProvider/File?FileId='
 
 export const MAP_API = 'web.5b632ac9f6354a3f8bcba1b4c043a009';
 export const MAP_SERVICE_API = 'service.gsofBgoSgDkMnHqudtlWo3KkprwgWL1cdprPFQHW';
+//export const MAP_SERVICE_API = 'service.gsofBgoSgDkMnHqudtlWo3KkprwgWL1cdprPFQHW';
+//export const MAP_API = 'web.5b632ac9f6354a3f8bcba1b4c043a009';
 export default API_BASE_URL

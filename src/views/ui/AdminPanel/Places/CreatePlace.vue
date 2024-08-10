@@ -1,13 +1,13 @@
 <script setup>
 import { useForm } from 'vee-validate'
 import Splitter from '@/views/components/Splitter/Splitter.vue'
-import { useMutation, useQuery } from '@tanstack/vue-query'
+import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { CRPlacesService, GetPlaceService } from '@/services/PlacesService.js'
 import { CiCircleChevLeft } from '@kalimahapps/vue-icons/ci'
 import Swal from 'sweetalert2'
 import { useRoute, useRouter } from 'vue-router'
-import { reactive, ref, watch } from 'vue'
-import Cities from '@/assets/data/city.json'
+import { reactive, ref, watch, watchEffect } from 'vue'
+
 const router = useRouter()
 const route = useRoute()
 import Vselect from 'vue-select'
@@ -15,41 +15,60 @@ import { MapComponent, MapTypes } from '@neshan-maps-platform/mapbox-gl-vue'
 import '@neshan-maps-platform/mapbox-gl-vue/dist/style.css'
 import nmp_mapboxgl from '@neshan-maps-platform/mapbox-gl'
 import { MAP_API, MAP_SERVICE_API } from '@/config/appConfig'
-const placeId = !route.params.id ? null : route.params.id
-
+import { computed } from 'vue'
+import { nextTick } from 'vue'
+import PlaceCard from '@/views/components/Layouts/AdminLayout/Cards/PlaceCard.vue'
+const placeId = !route.params.id ? null : route.params.id;
 const getPlaceServiceCall = useQuery({
     queryKey: ['api/place/GetPlaceService', route.params.id],
     queryFn: () => GetPlaceService(route.params.id),
     enabled: !!route.params.id
-})
-
-const { resetForm, defineField, handleSubmit } = useForm({
+});
+const { resetForm, defineField, handleSubmit,setFieldValue } = useForm({
     initialValues: {
         place: getPlaceServiceCall.data?.value
     }
-})
+});
+const [placeTile] = defineField('place.title');
+const [placeDesc] = defineField('place.description');
+const [placeCity] = defineField('place.city');
+const [placeAddress] = defineField('place.address');
+const [placeLat] = defineField('place.lat');
+const placeImage = defineField('place.image');
+const [placeLng] = defineField('place.lng');
+
+const neshanMap = reactive({map:null});
+
+const queryClient = useQueryClient();
+
 const marker = new nmp_mapboxgl.Marker({
             color: 'black',
             title: 'محل برگزاری',
             draggable: false,
             clickTolerance: 0
         });
-watch([getPlaceServiceCall.data], () => {
-    if (placeId){ 
-        
-        
-        resetForm({ values: { place: { ...getPlaceServiceCall.data?.value,city: getPlaceServiceCall.data?.value.cityId} } });
+watch([getPlaceServiceCall.data],async () => {
+    if (placeId){   
+
+        await nextTick();
+        resetForm({ values: { place: { ...getPlaceServiceCall.data?.value} } });
        
         placeLat.value =getPlaceServiceCall.data?.value.lat;
         placeLng.value = getPlaceServiceCall.data?.value.lng;
+        placeCity.value=getPlaceServiceCall.data?.value.cityId;
         marker.setLngLat([placeLng.value ,placeLat.value]);
         marker.addTo(neshanMap.map);
-}
+        neshanMap.map.flyTo({ center: [ placeLng.value,placeLat.value], zoom: 14 }); 
+    }
     else resetForm({ values: {} })
 });
 
+const Point = computed(()=> !placeLat.value || !placeLng.value ? null : [placeLng.value,placeLat.value]);
+watch(Point,()=>{
+    if(Point.value)
+    neshanMap.map.flyTo({ center: [ placeLng.value,placeLat.value], zoom: 14 }); 
+});
 
-const neshanMap = reactive({map:null});
 
 function handleStartMap(map) {
     map.fitBounds(map.getBounds(), {
@@ -92,13 +111,6 @@ const searchLocation = async () => {
     };
 
 
-const [placeTile] = defineField('place.title')
-const [placeDesc] = defineField('place.description')
-const [placeCity] = defineField('place.city')
-const [placeAddress] = defineField('place.address')
-const [placeLat] = defineField('place.lat')
-const placeImage = defineField('place.image')
-const [placeLng] = defineField('place.lng')
 
 const { mutate } = useMutation({
     mutationKey: ['CU/Places'],
@@ -176,9 +188,17 @@ const onSubmit = handleSubmit(async (data) => {
     }
 })
 
-const location = reactive()
-watch(location, () => {
-    console.log(location)
+const t =computed(()=>queryClient.getQueryData(["AllCities"]));
+watchEffect(async ()=>{
+    if(t.value){
+    
+        await nextTick();
+        
+            setFieldValue("place.city",getPlaceServiceCall.data?.value.cityId);
+       
+    
+    }
+    
 })
 </script>
 
@@ -203,12 +223,16 @@ watch(location, () => {
                     <label for="place-name" class="block text-sm font-medium text-gray-700">شهر</label>
                     <Vselect
                         v-model="placeCity"
-                        :options="Cities"
+                        :options="queryClient.getQueryData(['AllCities'])"
+                        
                         :reduce="
                             (city) => {
                                 return city.value
                             }
                         "
+                        :value="placeCity"
+                        @input="e=>console.log(e)"
+                        :key="'select'+queryClient.getQueryData(['AllCities'])?.length"
                         label="label"
                         class="mt-1 py-1 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md style-chooser"
                     >
@@ -238,13 +262,13 @@ watch(location, () => {
                                     handleStartMap(map)
                                 }
                             "
-                            :map-click="(e) => console.log(e)"
-                            v-model="location"
+                       
+                         
                             :options="{
                                 mapKey: MAP_API,
                                 mapType: MapTypes.neshanRaster,
                                 isTouchPlatform: true,
-                              
+                                
                                 poi: true
                             }"
                         />

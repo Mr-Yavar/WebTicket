@@ -10,13 +10,21 @@ import { useQuery } from '@tanstack/vue-query'
 import { CRPlacesService, GetAllPlacesService } from '@/services/PlacesService.js'
 import Splitter from '@/views/components/Splitter/Splitter.vue'
 import Swal from 'sweetalert2'
+import Cities from '@/assets/data/city.json';
+
+const GetAllCities = useQuery({
+    queryKey: ['AllCities'],
+    queryFn: ()=>Cities,
+    enabled: true
+});
+
 
 const GetAllPlaceServiceCall = useQuery({
     queryKey: ['api/place/GetAllPlaces'],
     queryFn: GetAllPlacesService,
     refetchOnMount:true,
     enabled: true
-})
+});
 const { mutate } = useMutation({
     mutationKey: ['CU/Places'],
     mutationFn: CRPlacesService
