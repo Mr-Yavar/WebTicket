@@ -1,5 +1,5 @@
 <script setup>
-import { useForm } from 'vee-validate'
+import { Field, useForm } from 'vee-validate'
 import Splitter from '@/views/components/Splitter/Splitter.vue'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { CRPlacesService, GetPlaceService } from '@/services/PlacesService.js'
@@ -17,22 +17,22 @@ import dateHelper from '@/utils/dateHelper'
 import { sendRequest } from '@/services/service'
 import { GetAllConcertService } from '@/services/ConcertsService'
 
-
-
 const discountId = !route.params.id ? null : route.params.id
 const getDiscountServiceCall = useQuery({
     queryKey: ['/api/Manager/GetDiscountById/', discountId],
-    queryFn: ({queryKey}) =>   sendRequest({
+    queryFn: ({ queryKey }) =>
+        sendRequest({
             url: queryKey.join(''),
             method: 'GET'
         }),
+        refetchOnMount:true,
     enabled: !!discountId
 })
-const { resetForm, defineField, handleSubmit, setFieldValue,values } = useForm({
+const { resetForm, defineField, handleSubmit, setFieldValue, values } = useForm({
     initialValues: {
-        discount: getDiscountServiceCall.data?.value
-    }
-});
+        discount: {}
+    },
+})
 
 const dp = {
     numberingSystem: 'latn',
@@ -44,26 +44,31 @@ const dp = {
     hour12: false
 }
 
-const [dTitle] = defineField('discount.title')
-const [dPercentage] = defineField('discount.percentage')
-const [dMaxDiscount] = defineField('discount.maxDiscount')
-const [dExpirationDate] = defineField('discount.expirationDate')
-const [dIsActive] = defineField('discount.isActive')
-const [dObjectId] = defineField('discount.objectId')
-const [dDiscountType] = defineField('discount.discountType')
-const [dCode] = defineField('discount.code')
+const [dTitle] = defineField('discount.title');
+const [dPercentage] = defineField('discount.percentage');
+const [dMaxDiscount] = defineField('discount.maxDiscount');
+const [dExpirationDate] = defineField('discount.expirationDate');
+const [dIsActive] = defineField('discount.isActive');
+const [dObjectId] = defineField('discount.objectId');
+const [dDiscountType] = defineField('discount.discountType');
+const [dCode] = defineField('discount.code');
+const [dLimitOfUses] = defineField('discount.limitOfUses');
 
-watch(getDiscountServiceCall.data,()=>{
+watchEffect(() => {
+    
+    if (!getDiscountServiceCall.data?.value) return;
 
-if(!getDiscountServiceCall.data?.value)
-return;
-resetForm({
-    values:{discount : {
-        ...getDiscountServiceCall.data?.value,
-        expirationDate : getDiscountServiceCall.data?.value.expirationDate.replace("T"," ").replace("Z"," ")
-    }}
-});
-console.log(new Date(getDiscountServiceCall.data?.value.expirationDate).toLocaleString('fa-ir', dp).replace(',', ''));
+  
+    resetForm({
+        values: {
+            discount: {
+                ...getDiscountServiceCall.data?.value,
+                expirationDate: getDiscountServiceCall.data?.value.expirationDate.replace('T', ' ').split('.')[0].slice(0, 16)
+            }
+        }
+    });
+
+  
 });
 
 const { mutate } = useMutation({
@@ -72,17 +77,18 @@ const { mutate } = useMutation({
 })
 
 const onSubmit = handleSubmit(async (data) => {
-    console.log(data);
+    console.log(data)
     const formDate = {
         id: discountId ?? null,
-        expirationDate: dateHelper.persianStringToISO(data.discount.expirationDate),
+        expirationDate: dateHelper.dateToISO(dateHelper.gregorianStringToDate(data.discount.expirationDate)),
         title: data.discount.title,
-        code:data.discount.code,
+        code: data.discount.code,
         isActive: data.discount.isActive,
         objectId: data.discount.objectId ?? null,
         discountType: data.discount.discountType,
         maxDiscount: data.discount.maxDiscount,
-        percentage: data.discount.percentage
+        percentage: [""].includes(data.discount.percentage) ? null : data.discount.percentage ,
+        limitOfUses : data.discount.limitOfUses
     }
 
     if (!discountId) {
@@ -91,8 +97,8 @@ const onSubmit = handleSubmit(async (data) => {
                 url: '/api/Manager/AddDiscount?api-version=1.0',
                 body: JSON.stringify(formDate),
                 method: 'POST',
-                headers:{
-                    "Content-Type" : "application/json"
+                headers: {
+                    'Content-Type': 'application/json'
                 }
             },
             {
@@ -116,8 +122,8 @@ const onSubmit = handleSubmit(async (data) => {
                 url: '/api/Manager/UpdateDiscount?api-version=1.0',
                 body: JSON.stringify(formDate),
                 method: 'PUT',
-                 headers:{
-                    "Content-Type" : "application/json"
+                headers: {
+                    'Content-Type': 'application/json'
                 }
             },
             {
@@ -193,16 +199,16 @@ const restrictOptions = computed(() => ({
     1: [...(getPromotersServiceCall.data.value?.map((x) => ({ label: x.title, value: x.id })) ?? [])],
     2: [...Cities],
     3: [...(getPlacesServiceCall.data.value?.map((x) => ({ label: x.title, value: x.id })) ?? [])]
-}))
+}));
 
-watch([dDiscountType], () => {
-    dObjectId.value = restrictOptions.value[dDiscountType.value][0].value
-})
+watch(dDiscountType, () => {
+    dObjectId.value = restrictOptions.value[dDiscountType.value][0]?.value
+});
 </script>
 
 <template>
     <div>
-        {{ values }}
+        
         <div class="sticky top-0">
             <div class="bg-white">
                 <Splitter title="ایجاد یک کد تخفیف" border-class=" border-black " type="middle" title-class="text-black" />
@@ -289,34 +295,30 @@ watch([dDiscountType], () => {
                 </div>
                 <div class="col-start-2 col-span-2">
                     <label for="place-name" class="block text-sm font-medium text-gray-700">تاریخ انقضاء </label>
-                    
-                    <AB-Date-Picker mode="single" type="datetime" click-on="all" format="jYYYY/jMM/jDD HH:mm" inputFormat="jYYYY/jMM/jDD HH:mm" locale="fa" :column="1" :modal="false" auto-submit :show="false" display-format="jYYYY/jMM/jDD HH:mm" v-model="dExpirationDate"/>
+           
+                  
+                        <AB-Date-Picker mode="single" type="datetime" click-on="all" format="YYYY-MM-DD HH:mm" inputFormat="jYYYY/jMM/jDD HH:mm" locale="fa" :column="1" :modal="false" auto-submit :show="false" display-format="jYYYY/jMM/jDD HH:mm" v-model="dExpirationDate"   />
+                  
+                  
                 </div>
-                <div class="col-span-2 col-start-4 flex items-end justify-end place-items-center">
-            
-                    <div class="inline-flex  self-center flex-row mt-7">
-                        <label class="mt-px font-light text-gray-700 cursor-pointer select-none" htmlFor="ripple-on">
-                            فعال ؟ 
-                          </label>
-                        <label class="relative flex items-center p-1 rounded-full cursor-pointer" htmlFor="ripple-on"
-                          data-ripple-dark="true">
-                          <input id="ripple-on" v-model="dIsActive" type="checkbox"
-                            class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-6 before:w-6 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-gray-900 checked:bg-gray-900 checked:before:bg-gray-900 hover:before:opacity-10" />
-                          <span
-                            class="absolute text-white transition-opacity opacity-0 pointer-events-none top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor"
-                              stroke="currentColor" stroke-width="1">
-                              <path fill-rule="evenodd"
-                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                clip-rule="evenodd"></path>
-                            </svg>
-                          </span>
-                        </label>
-                        
-                      </div>
-                </div>
-               
+                <div class="col-start-4 col-span-2">
+                    <label for="place-name" class="block text-sm font-medium text-gray-700">تعداد دفعات قابل استفاده</label>
 
+                    <input type="number" min="0" v-model="dLimitOfUses" id="place-name" placeholder="(بدون محدودیت)" class="mt-1 py-2 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                </div>
+                <div class="col-span-2 col-start-2 flex items-end justify-end place-items-center">
+                    <div class="inline-flex self-center flex-row mt-7">
+                        <label class="mt-px font-light text-gray-700 cursor-pointer select-none" htmlFor="ripple-on"> فعال ؟ </label>
+                        <label class="relative flex items-center p-1 rounded-full cursor-pointer" htmlFor="ripple-on" data-ripple-dark="true">
+                            <input id="ripple-on" v-model="dIsActive" type="checkbox" class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-6 before:w-6 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-gray-900 checked:bg-gray-900 checked:before:bg-gray-900 hover:before:opacity-10" />
+                            <span class="absolute text-white transition-opacity opacity-0 pointer-events-none top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                            </span>
+                        </label>
+                    </div>
+                </div>
 
                 <div class="col-span-2 col-start-3">
                     <button v-if="!discountId" type="submit" class="block mx-auto items-center px-4 py-2 w-fit border border-transparent rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">ایجاد</button>

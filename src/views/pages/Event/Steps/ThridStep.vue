@@ -118,12 +118,12 @@ const amount = computed(() => (GetUserTempoReservation.data.value?.amount > 0 ? 
 const expirationTimeOut = computed(() => (new Date(GetUserTempoReservation.data.value?.expirationDate) - new Date() > 0 ? new Date(GetUserTempoReservation.data.value?.expirationDate) - new Date() : 0))
 
 const discount = ref('')
-const discountKey = computed(() => ['/api/Billing/GetDiscount/', discount])
+const discountKey = computed(() => ['/api/Billing/GetDiscount',  GetUserTempoReservation.data.value?.tempReservationId,discount])
 const GetDiscount = useQuery({
     queryKey: discountKey,
     queryFn: async ({ queryKey }) => {
         return sendRequest({
-            url: queryKey.join(''),
+            url: queryKey.join('/'),
             method: 'Get',
             headers: {
                 Authorization: 'Bearer ' + userStore.accessToken

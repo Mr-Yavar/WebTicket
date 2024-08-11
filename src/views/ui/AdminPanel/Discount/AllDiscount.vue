@@ -8,7 +8,7 @@ import { ref } from 'vue'
 import { computed } from 'vue'
 
 const pageIndex = ref(0);
-const pageSize = ref(1);
+const pageSize = ref(10);
 const queryKey = computed(() => [{ url: '/api/Manager/GetAllDiscount', pageSize: pageSize.value, currentPage: pageIndex.value + 1 }]);
 const GetAllDiscount = useQuery({
     queryKey: queryKey,

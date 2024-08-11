@@ -9,7 +9,7 @@ import { computed } from 'vue'
 import EditConcertModal from '@/views/components/Layouts/AdminLayout/Modal/EditConcertModal.vue'
 import Swal from 'sweetalert2'
 const pageIndex = ref(0);
-const pageSize = ref(1);
+const pageSize = ref(10);
 const queryKey = computed(() => [{ url: '/api/Manager/GetAllConcerts', pageSize: pageSize.value, currentPage: pageIndex.value + 1 }]);
 const getAllConcert = useQuery({
     queryKey: queryKey,
