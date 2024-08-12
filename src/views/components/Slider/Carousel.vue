@@ -4,15 +4,21 @@
         :scrollbar="{
             hide: true
         }"
-        :modules="modules"
+        :modules="[Scrollbar, Autoplay]"
+        watch-slides-progress
+        :space-between="1"
+        :autoplay="{
+            delay: 3000,
+            reverseDirection: true,
+
+            pauseOnMouseEnter: true
+        }"
         class="mySwiper"
     >
-        <swiper-slide><img src="/assets/images/carousel1.jpeg" /></swiper-slide>
-        <swiper-slide><img src="/assets/images/carousel2.jpeg" /></swiper-slide>
-        <swiper-slide><img src="/assets/images/carousel3.jpeg" /></swiper-slide>
+        <swiper-slide v-for="value in GetSlider.data.value?.values ?? []" :key="value.id"><img :src="FILE_PROVIDER2 + value.value" /></swiper-slide>
     </swiper>
 </template>
-<script>
+<script setup>
 // Import Swiper Vue.js components
 import { Swiper, SwiperSlide } from 'swiper/vue'
 
@@ -20,21 +26,23 @@ import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/css'
 
 import 'swiper/css/scrollbar'
+import 'swiper/css/autoplay'
 
 // import required modules
-import { Scrollbar } from 'swiper/modules'
-
-export default {
-    components: {
-        Swiper,
-        SwiperSlide
-    },
-    setup() {
-        return {
-            modules: [Scrollbar]
-        }
-    }
-}
+import { Scrollbar, Autoplay } from 'swiper/modules'
+import { useQuery } from '@tanstack/vue-query'
+import { sendRequest } from '@/services/service'
+import { FILE_PROVIDER2 } from '@/config/appConfig'
+const GetSlider = useQuery({
+    queryKey: ['/api/BaseInfo/GetParametersByKey/HomeSlider'],
+    queryFn: ({ queryKey }) =>
+        sendRequest({
+            url: queryKey[0],
+            method: 'GET'
+        }),
+    refetchOnMount: true,
+    enabled: true
+})
 </script>
 
 <style scoped>

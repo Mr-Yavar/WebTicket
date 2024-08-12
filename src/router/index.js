@@ -23,6 +23,37 @@ const router = createRouter({
             }
         },
         {
+            path: '/profile',
+            name: 'profile',
+            component: () => import('@/views/pages/Account/Profile.vue'),
+            meta: {
+                layout: 'Default'
+            }
+        },
+        {
+            path: '/myreservations',
+            name: 'MyReservations',
+            component: () => import('@/views/pages/Account/UserReservation.vue'),
+            meta: {
+                layout: 'Default'
+            },
+            children:[
+                {
+                    path : "/:reservationId",
+                    name:"MyReservationTicket",
+                    component: () => import('@/views/pages/Account/ReservationTickets.vue'),
+                }
+            ]
+        },
+        {
+            path: '/mypayments',
+            name: 'MyPayments',
+            component: () => import('@/views/pages/Account/UserTransactions.vue'),
+            meta: {
+                layout: 'Default'
+            }
+        },
+        {
             path: '/check',
             name: 'check',
             component: () => import('@/views/pages/Home/CheckTicket.vue'),
