@@ -5,35 +5,35 @@
         </div>
     </div>
     <div class="grid grid-cols-2">
-        <vee-form :validation-schema="schema1" @submit="updateProfile" autocomplete="off" :initialValues="formValues" :key="formValues" v-slot="{ values }">
+        <vee-form :validation-schema="schema1" @submit="updateProfile" autocomplete="off" :aria-autocomplete="'off'" :initialValues="formValues" :key="formValues" >
             <!-- Name -->
             <div class="mb-3 grid grid-cols-3">
-                <label class="inline-block text-sm leading-9 text-center text-gray-800 dark:text-gray-100">نام </label>
+                <label class="inline-block text-xs md:text-sm leading-9 text-center text-gray-800 dark:text-gray-100">نام </label>
                 <div class="col-span-2">
                     <vee-field type="text" name="firstName" class="block w-full py-0.5 px-3 text-gray-800 !bg-white dark:!bg-gray-600 dark:text-white border border-gray-400 dark:border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded input-sm" placeholder="نام" />
-                    <ErrorMessage class="text-red-600 text-sm" name="firstName" />
+                    <ErrorMessage class="text-red-600 text-xs md:text-sm" name="firstName" />
                 </div>
             </div>
             <!-- Family name -->
             <div class="mb-3 grid grid-cols-3">
-                <label class="inline-block text-sm leading-9 text-center text-gray-800 dark:text-gray-100">نام خانوادگی </label>
+                <label class="inline-block text-xs md:text-sm leading-9 text-center text-gray-800 dark:text-gray-100">نام خانوادگی </label>
                 <div class="col-span-2">
                     <vee-field type="text" name="lastName" class="block w-full py-0.5 px-3 text-gray-800 !bg-white dark:!bg-gray-600 dark:text-white border border-gray-400 transition duration-500 focus:outline-none focus:border-black rounded input-sm" placeholder="نام خانوادگی" />
-                    <ErrorMessage class="text-red-600 text-sm" name="lastName" />
+                    <ErrorMessage class="text-red-600 text-xs md:text-sm" name="lastName" />
                 </div>
             </div>
             <!-- Family name -->
             <div class="mb-3 grid grid-cols-3">
-                <label class="inline-block col-span-1 leading-9 text-sm text-center text-gray-800 dark:text-gray-100">نام کاربری</label>
+                <label class="inline-block col-span-1 leading-9 text-xs md:text-sm text-center text-gray-800 dark:text-gray-100">نام کاربری</label>
 
                 <div class="col-span-2">
                     <vee-field type="text" name="userName" class="block w-full py-0.5 px-3 text-gray-800 !bg-white dark:!bg-gray-600 dark:text-white border border-gray-400 transition duration-500 focus:outline-none focus:border-black rounded input-sm" placeholder="نام کاربری" />
-                    <ErrorMessage class="text-red-600 text-sm" name="userName" />
+                    <ErrorMessage class="text-red-600 text-xs md:text-sm" name="userName" />
                 </div>
             </div>
             <!-- Family name -->
             <!--    <div class="mb-3 grid grid-cols-3">-->
-            <!--      <label class="inline-block text-sm leading-9 text-center  text-gray-800 dark:text-gray-100">جنسیت</label>-->
+            <!--      <label class="inline-block text-xs md:text-sm leading-9 text-center  text-gray-800 dark:text-gray-100">جنسیت</label>-->
             <!--      <div class="col-span-2">-->
             <!--        <vee-field-->
             <!--            as="select"-->
@@ -45,16 +45,16 @@
             <!--          <option value="men">مرد</option>-->
             <!--          <option value="women">زن</option>-->
             <!--        </vee-field>-->
-            <!--        <ErrorMessage class="text-red-600 text-sm" name="gender"/>-->
+            <!--        <ErrorMessage class="text-red-600 text-xs md:text-sm" name="gender"/>-->
             <!--      </div>-->
             <!--    </div>-->
 
             <!-- Phone number -->
             <div class="mb-3 grid grid-cols-3">
-                <label class="inline-block text-sm leading-9 text-center text-gray-800 dark:text-gray-100">شماره همراه </label>
+                <label class="inline-block text-xs md:text-sm leading-9 text-center text-gray-800 dark:text-gray-100">شماره همراه </label>
                 <div class="col-span-2">
                     <vee-field type="text" name="phoneNumber" class="block w-full py-0.5 px-3 text-gray-800 !bg-white dark:!bg-gray-600 dark:text-white border border-gray-400 transition duration-500 focus:outline-none focus:border-black rounded input-sm" placeholder="شماره همراه" />
-                    <ErrorMessage class="text-red-600 text-sm" name="phoneNumber" />
+                    <ErrorMessage class="text-red-600 text-xs md:text-sm" name="phoneNumber" />
                 </div>
             </div>
 
@@ -76,27 +76,27 @@
         <vee-form :validation-schema="schema2" @submit="updatePassword" autocomplete="off" v-slot="{ values }">
             <!-- Password -->
             <div class="mb-3 grid grid-cols-3">
-                <label class="inline-block text-sm leading-9 text-center text-gray-800 dark:text-gray-100">رمز فعلی </label>
+                <label class="inline-block text-xs md:text-sm leading-9 text-center text-gray-800 dark:text-gray-100">رمز فعلی </label>
                 <div class="col-span-2">
                     <vee-field type="password" name="currentPassword" class="block w-full py-0.5 px-3 text-gray-800 !bg-white dark:!bg-gray-600 dark:text-white border border-gray-400 transition duration-500 focus:outline-none focus:border-black rounded input-sm" placeholder="رمز فعلی" />
-                    <ErrorMessage class="text-red-600 text-sm" name="currentPassword" />
+                    <ErrorMessage class="text-red-600 text-xs md:text-sm" name="currentPassword" />
                 </div>
             </div>
 
             <!-- Password -->
             <div class="mb-3 grid grid-cols-3">
-                <label class="inline-block text-sm leading-9 text-center text-gray-800 dark:text-gray-100">رمز جدید </label>
+                <label class="inline-block text-xs md:text-sm leading-9 text-center text-gray-800 dark:text-gray-100">رمز جدید </label>
                 <div class="col-span-2">
                     <vee-field type="password" name="password" class="block w-full py-0.5 px-3 text-gray-800 !bg-white dark:!bg-gray-600 dark:text-white border border-gray-400 transition duration-500 focus:outline-none focus:border-black rounded input-sm" placeholder="رمز عبور" />
-                    <ErrorMessage class="text-red-600 text-sm" name="password" />
+                    <ErrorMessage class="text-red-600 text-xs md:text-sm" name="password" />
                 </div>
             </div>
             <!-- confirm_password -->
             <div class="mb-3 grid grid-cols-3">
-                <label class="inline-block text-sm leading-9 text-center text-gray-800 dark:text-gray-100">تکرار </label>
+                <label class="inline-block text-xs md:text-sm leading-9 text-center text-gray-800 dark:text-gray-100">تکرار </label>
                 <div class="col-span-2">
                     <vee-field type="password" name="confirm_password" class="block w-full py-0.5 px-3 text-gray-800 !bg-white dark:!bg-gray-600 dark:text-white border border-gray-400 transition duration-500 focus:outline-none focus:border-black rounded input-sm" placeholder="تکرار رمز عبور" />
-                    <ErrorMessage class="text-red-600 text-sm" name="confirm_password" />
+                    <ErrorMessage class="text-red-600 text-xs md:text-sm" name="confirm_password" />
                 </div>
             </div>
             <div class="mb-3 grid grid-cols-3">

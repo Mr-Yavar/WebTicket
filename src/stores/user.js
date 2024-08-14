@@ -17,7 +17,10 @@ const useUserStore = defineStore('user', () => {
         isAuthenticated.value = false;
         localStorage.removeItem('user');
         localStorage.removeItem('jwt');
-        location.reload();
+        accessToken.value = null;
+        refreshToken.value = null;
+        user.value ={user:null,Identity:null};
+        //location.reload();
     }
 
     const FullName = computed(() => {
@@ -31,15 +34,16 @@ const useUserStore = defineStore('user', () => {
         try {
             accessToken.value = userData.accessToken
             refreshToken.value = userData.refreshToken
-
-            user.value.user = userData.user
-            user.value.Identity = jwtDecode(userData.accessToken)
+            
+            user.value.user = userData.user;
+            user.value.Identity = jwtDecode(userData.accessToken);
             expireTime.value = new Date(user.value.Identity.exp * 1000)
             isAuthenticated.value = true
         } catch (e) {
+            console.log(e)
             isAuthenticated.value = false
         }
-        console.log(user)
+        
     }
 
     return { isAuthenticated, user, accessToken, refreshToken, expireTime, ClientId, GetAuthenticated, logOut, FullName }

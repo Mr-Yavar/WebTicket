@@ -44,8 +44,8 @@ import { useAuthModalStore } from '@/stores/componentStore/authModal.js'
 import useUserStore from '@/stores/user.js'
 import { sweetAlertAuthConfigure } from '@/config/alertConfigure.js'
 
-const authModal = useAuthModalStore()
-const userStore = useUserStore()
+const authModal = useAuthModalStore();
+const userStore = useUserStore();
 const schema = {
     userName: 'required',
     password: 'required'
@@ -95,7 +95,7 @@ const loginServiceCall = useMutation({
             icon: 'error',
             html: message,
             ...sweetAlertAuthConfigure
-        })
+        });
     }
 })
 

@@ -432,7 +432,7 @@ const router = createRouter({
     ]
 });
 
-router.beforeEach(async (to) => {
+router.beforeEach(async (to,from,next) => {
     // redirect to login page if not logged in and trying to access a restricted page
     
     const authRequired = !!to.meta.auth;
@@ -440,8 +440,10 @@ router.beforeEach(async (to) => {
     console.log(to);
     if (authRequired && !auth.isAuthenticated) {
         auth.returnUrl = to.fullPath;
-        return '/';
+        next('/');
+        return;
     }
+    next();
 });
 
 export default router
