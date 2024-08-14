@@ -77,7 +77,7 @@
                         <label class="mt-px font-light text-gray-700 cursor-pointer select-none" for="link">
                             <p class="flex font-sans antialiased font-medium leading-relaxed text-blue-gray-900 md:!text-base !text-sm">
                                 با
-                                <a @click.prevent="toggleTermsModal()" href="#" class="block font-sans antialiased font-medium leading-relaxed text-blue-500 transition-colors hover:text-blue-700"> &nbsp;شرایط و قوانین کنسرت &nbsp; </a>
+                                <a @click.prevent="()=>toggleTermsModal()" href="#" class="block font-sans antialiased font-medium leading-relaxed text-blue-500 transition-colors hover:text-blue-700"> &nbsp;شرایط و قوانین کنسرت &nbsp; </a>
                                 موافقم.
                             </p>
                         </label>
@@ -118,7 +118,7 @@
 </template>
 
 <script >
-import ConcertTermsModal from '@/views/components/Globals/modal/ConcertTermsModal.vue'
+
 import Ticket from '@/views/components/Pages/Event/Ticket.vue'
 
 import { MapComponent, MapTypes } from '@neshan-maps-platform/mapbox-gl-vue'
@@ -132,10 +132,11 @@ import { useQuery } from '@tanstack/vue-query'
 import { useRoute, useRouter } from 'vue-router'
 import { Guid } from '@/config/helper'
 import { FILE_PROVIDER2, MAP_API } from '@/config/appConfig';
+import ConcertTermsModal from '@/views/components/Globals/modal/ConcertTermsModal.vue'
 
 export default {
     components: { ConcertTermsModal, Ticket, MapComponent },
-    props:{stepControls: Object},
+    props:{stepControls: Object,toNext : Function,toPrevious:Function},
     setup: () => {
        
         const mapKey = ref(MAP_API);
@@ -179,6 +180,7 @@ export default {
         const showTermsModal = ref(false)
 
         function toggleTermsModal() {
+            console.log(showTermsModal.value);
             showTermsModal.value = !showTermsModal.value
         }
 
@@ -208,7 +210,7 @@ export default {
 
         const router = useRouter()
 
-        return { concert, router, route,seatMap, handleStartMap, toggleTermsModal, termsAgreed, TicketStore, eventsDate ,MapTypes,Guid,fileUrl,mapKey}
+        return { concert, router, route,seatMap, handleStartMap, toggleTermsModal, termsAgreed, TicketStore, eventsDate ,MapTypes,Guid,fileUrl,mapKey,showTermsModal,}
         // same as beforeRouteUpdate option but with no access to `this`
     },
     beforeRouteEnter: async (to, from, next) => {

@@ -40,9 +40,20 @@
                                     <div>
                                         <div class="px-2 py-2 w-fit vazir-font direction-rtl">
                                             <div class="my-1">
-                                                <div>
-                                                    <v-icon name="oi-location" />
-                                                    <span>تست</span>
+                                                <div @click.prevent="$router.push({name:'profile'})"> 
+                                                 
+                                                    <span class="text-sm rounded-full hover:bg-gray-50 block py-1 px-2">پروفایل</span>
+                                                </div>
+                                            </div>
+                                            <div class="my-1">
+                                                <div @click.prevent="$router.push({name:'MyReservations'})"> 
+                                                 
+                                                    <span class="text-sm rounded-full hover:bg-gray-50 block py-1 px-2">رزروهای من</span>
+                                                </div>
+                                            </div>
+                                            <div class="my-1">
+                                                <div @click.prevent="$router.push({name:'MyPayments'})">
+                                                    <span class="text-sm rounded-full hover:bg-gray-50 block py-1 px-2">تراکنش‌های من</span>
                                                 </div>
                                             </div>
                                             <div class="my-1">
@@ -83,9 +94,6 @@
                             <router-link :to="{ name: 'home' }" active-class="active" class="flex items-center" href="#">صفحه اصلی</router-link>
                         </li>
                         <li class="block p-1 font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 hover:border-b-2">
-                            <a class="flex items-center" href="#">حساب کاربری</a>
-                        </li>
-                        <li class="block p-1 font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 hover:border-b-2">
                             <router-link :to="{ name: 'about' }" active-class="active" class="flex items-center" href="#">درباره ما</router-link>
                         </li>
                         <li class="block p-1 font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 hover:border-b-2">
@@ -112,9 +120,20 @@
                                 <div>
                                     <div class="px-2 py-2 w-fit vazir-font direction-rtl">
                                         <div class="my-1">
-                                            <div>
-                                                <v-icon name="oi-location" />
-                                                <span>تست</span>
+                                            <div @click.prevent="$router.push({name:'profile'})"> 
+                                             
+                                                <span class="text-sm rounded-full hover:bg-gray-50 block py-1 px-2">پروفایل</span>
+                                            </div>
+                                        </div>
+                                        <div class="my-1">
+                                            <div @click.prevent="$router.push({name:'MyReservations'})"> 
+                                             
+                                                <span class="text-sm rounded-full hover:bg-gray-50 block py-1 px-2">رزروهای من</span>
+                                            </div>
+                                        </div>
+                                        <div class="my-1">
+                                            <div @click.prevent="$router.push({name:'MyPayments'})">
+                                                <span class="text-sm rounded-full hover:bg-gray-50 block py-1 px-2">تراکنش‌های من</span>
                                             </div>
                                         </div>
                                         <div class="my-1">

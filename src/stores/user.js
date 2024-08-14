@@ -4,18 +4,20 @@ import { jwtDecode } from 'jwt-decode'
 import { v5 as uuidv5 } from 'uuid'
 import { v4 as uuidv4 } from 'uuid'
 const useUserStore = defineStore('user', () => {
-    const isAuthenticated = ref(!!localStorage.getItem('jwt'))
+    const expireTime = ref(localStorage.getItem('jwt') ? new Date(jwtDecode(localStorage.getItem('jwt')).exp * 1000) : new Date())
+    const isAuthenticated = ref(expireTime.value > new Date())
 
     const accessToken = ref(localStorage.getItem('jwt') ?? '')
     const refreshToken = ref('')
     const user = ref(!localStorage.getItem('user') ? {} : { user: JSON.parse(localStorage.getItem('user')), Identity: accessToken.value ? jwtDecode(accessToken.value) : {} })
-    const expireTime = ref(localStorage.getItem('jwt') ? new Date(jwtDecode(localStorage.getItem('jwt')).exp * 1000) : new Date())
+
     const ClientId = ref(localStorage.getItem('ClientId') ?? uuidv5(Math.random().toString(), uuidv4()))
     localStorage.setItem('ClientId', ClientId.value)
     async function logOut() {
         isAuthenticated.value = false;
         localStorage.removeItem('user');
         localStorage.removeItem('jwt');
+        location.reload();
     }
 
     const FullName = computed(() => {

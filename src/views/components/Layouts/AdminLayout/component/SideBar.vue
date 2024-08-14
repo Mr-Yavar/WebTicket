@@ -1,7 +1,8 @@
-<script setup>
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
-import Support from '@/views/components/Layouts/AdminLayout/component/Support.vue'
+<script setup lang="ts">
+import { RouterLink } from 'vue-router';
 </script>
+
+
 
 <template>
     <div class="flex-shrink-0 flex items-center px-4">
@@ -9,10 +10,10 @@ import Support from '@/views/components/Layouts/AdminLayout/component/Support.vu
     </div>
     <nav class="mt-5 flex-shrink-0 h-full divide-y divide-blue-800 overflow-y-auto" aria-label="Sidebar">
         <div class="px-2 space-y-1">
-            <router-link active-class="active" :to="{ name: 'AdminDashboard' }" replace class="text-gray-900 hover:bg-gray-100 group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md">
+            <RouterLink active-class="active" :to="{ name: 'AdminDashboard' }" replace class="text-gray-900 hover:bg-gray-100 group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md">
                 <v-icon name="io-grid-outline" class="ml-4 flex-shrink-0 h-6 w-6 group-[.active]:!text-white" fill="white" />
                 داشبورد
-            </router-link>
+            </RouterLink>
             <!-- <div class="mx-auto w-full max-w-md rounded-md">
                 <Disclosure v-slot="{ open }">
                     <DisclosureButton class="w-full justify-start rounded-md text-gray-900 hover:bg-gray-100 group flex items-center px-2 py-2 text-sm leading-6 font-medium">
@@ -80,7 +81,7 @@ import Support from '@/views/components/Layouts/AdminLayout/component/Support.vu
         </div>
         <div class="mt-6 pt-6">
             <div class="px-2 space-y-1">
-                <RouterLink v-for="item in secondaryNavigation" :key="item.name" :to="item.to" class="group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md text-gray-900 hover:bg-gray-100">
+                <RouterLink v-for="item in []" :key="item.name" :to="item.to" class="group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md text-gray-900 hover:bg-gray-100">
                     <v-icon :name="item.icon" class="ml-4 h-6 w-6 text-gray-900 group-[.active]:text-white" aria-hidden="true" />
                     {{ item.name }}
                 </RouterLink>

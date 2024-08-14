@@ -7,9 +7,9 @@ export async function sendRequest(data) {
     })
 
     if (res.ok) {
-        return await res.json()
+        return await res.json();
     } else {
-        throw new Error('Error occurred while fetching PlacesService')
+        throw new Error(await res.text());
     }
 }
 

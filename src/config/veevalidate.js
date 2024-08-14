@@ -9,7 +9,8 @@ const FaNames = {
     gender: 'جنسیت',
     phoneNumber: 'شماره تماس',
     password: 'رمز عبور',
-    confirm_password: 'تکرار رمز'
+    confirm_password: 'تکرار رمز',
+      currentPassword: 'رمز '
 }
 
 export default {
