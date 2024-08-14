@@ -1,18 +1,26 @@
 <template>
-    <Swiper dir="rtl" class="mySwiper" :navigation="true" :modules="[Navigation, Pagination]" :pagination="{ clickable: true, type: 'fraction' }" :on-pagination-render="''">
-        <swiper-slide v-for="(ticket) in data" :key="ticket.id" >
-            <div class="mb-8">
-                <TicketForPrint :ticket="ticket"/>
-                </div
-        ></swiper-slide>
-    
-    </Swiper>
+    <div v-if="GetUserReservation.isLoading.value">
+        <PrSpinner class="animate-spin block w-full mx-auto text-3xl mt-8" />
+    </div>
+    <template v-else>
+        <PerfectScrollbar>
+            <div ref="componentRef">
+                <template v-for="ticket in data" :key="ticket.id">
+                    <div class="my-1">
+                        <TicketForPrint :ticket="ticket" />
+                    </div>
+                </template>
+            </div>
+        </PerfectScrollbar>
+    </template>
 
     <div class="mx-auto w-fit mt-12 grid grid-cols-2 gap-2">
         <button class="btn btn-sm btn-primary" @click.prevent="GoToHome">بازگشت به صفحه اصلی</button>
     </div>
 </template>
 <script setup>
+import { VueToPrint } from 'vue-to-print'
+import { PrSpinner } from '@kalimahapps/vue-icons/pr'
 import { sendRequest } from '@/services/service'
 import useUserStore from '@/stores/user'
 import TicketForPrint from '@/views/components/Pages/Event/TicketForPrint.vue'

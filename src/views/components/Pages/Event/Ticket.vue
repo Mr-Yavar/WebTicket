@@ -31,7 +31,10 @@
                     </span>
 
                     <span class="text-center block" v-else>
-                        <button class="select-none rounded-lg bg-gray-50 dark:bg-gray-700 text-orange-400 border-[2px] border-orange-400 py-2 px-6 text-center align-middle font-sans text-sm font-bold shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" type="button">غیرفعال</button>
+                        <vue-countdown :time="expirationTimeOut" v-slot="{ days,hours,minutes, seconds }">
+                                    {{ seconds.toString().padStart(2, '0') }}″    {{ minutes.toString().padStart(2, '0') }}′  {{ days }}d    {{ hours }}h     
+                             </vue-countdown>
+
                     </span>
                 </div>
             </div>
@@ -50,7 +53,7 @@
 </template>
 
 <script setup>
-
+import VueCountdown from '@chenfengyuan/vue-countdown'
 import { computed } from 'vue'
 
 const props = defineProps({
@@ -61,7 +64,7 @@ const props = defineProps({
 
 const executionDate = computed(() => new Date(props.event.executionDate))
 const startSaleDate = computed(() => new Date(props.event.startSaleDate));
-
+const expirationTimeOut = computed(()=> new Date(props.event.startSaleDate) -  new Date() );
 </script>
 
 <style scoped>
