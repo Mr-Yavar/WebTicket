@@ -149,7 +149,7 @@ const router = createRouter({
             ],
             meta: {
                 layout: 'Default',
-                auth:true
+               
             }
         },
         {
@@ -464,7 +464,7 @@ router.beforeEach(async (to,from,next) => {
     
     const authRequired = !!to.meta.auth;
     const auth = useUserStore();
-    console.log(to);
+    console.log(to,authRequired);
     if (authRequired && !auth.isAuthenticated) {
         auth.returnUrl = to.fullPath;
         next('/');

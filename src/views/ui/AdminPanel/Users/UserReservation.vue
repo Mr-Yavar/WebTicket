@@ -78,7 +78,7 @@
                                             نتیجه
                                         </p>
                                     </div>
-                                    <div class="flex-1 flex justify-between sm:justify-end">
+                                    <div class="flex-1 flex justify-end sm:justify-end">
                                         <select class="form-input inline-block w-fit mx-2.5 py-1" v-tippy="{ content: 'تعداد آیتم ها در هر صفحه' }" v-model="pageSize">
                                             <option value="10">10</option>
                                             <option value="15">15</option>
