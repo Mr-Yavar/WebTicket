@@ -155,7 +155,9 @@ function action(step) {
                             :columns="[
                                 {
                                     title: '#',
-                                    key: 'concertid'
+                                    key: 'concertid',
+                                    thClass : 'md:table-cell hidden',
+                                    tdClass : 'md:table-cell hidden',
                                 },
                                 {
                                     title: 'عنوان',
@@ -173,17 +175,31 @@ function action(step) {
 
                                 {
                                     title: 'دسته بندی',
-                                    key: 'category'
+                                    key: 'category',
+                                    thClass : 'md:table-cell hidden',
+                                    tdClass : 'md:table-cell hidden',
                                 },
+                                {
+                                    title: 'کل بلیت ها',
+                                    key: 'Allticket'
+                                },
+                                {
+                                    title: 'رزرو شده',
+                                    key: 'ReservedTciket',
 
+                                },
                                 {
                                     title: 'زمان شروع',
-                                    key: 'startDate'
+                                    key: 'startDate',
+                                     tdClass :'text-wrap break-space md:table-cell hidden',
+                                     thClass : 'md:table-cell hidden',
                                 },
 
                                 {
                                     title: 'زمان پایان',
-                                    key: 'endDate'
+                                    key: 'endDate',
+                                     tdClass :'text-wrap break-space md:table-cell hidden',
+                                     thClass : 'md:table-cell hidden',
                                 }
                             ]"
                             :data="getAllConcert.data.value?.data ?? []"
@@ -201,6 +217,10 @@ function action(step) {
                             <template #[`tbodypromoter.title`]="{ data }">{{ data.promoter.title }}</template>
                             <template #[`tbodyplace.name`]="{ data }">{{ data.place.name }}</template>
                             <template #[`tbodycategory`]="{ data }">{{ data.category }}</template>
+
+                            <template #[`tbodyAllticket`]="{ data }">{{ data.ticketCount }}</template>
+                            <template #[`tbodyReservedTciket`]="{ data }">{{ data.reservedTicketCount }}</template>
+
                             <template #[`tbodystartDate`]="{ data }">{{ new Date(data.startDate).toLocaleString('fa-ir', dateFormat).split(',').reverse().join(' ') }}</template>
                             <template #[`tbodyendDate`]="{ data }">{{ new Date(data.endDate).toLocaleString('fa-ir', dateFormat).split(',').reverse().join(' ') }}</template>
 
@@ -223,7 +243,7 @@ function action(step) {
                                             نتیجه
                                         </p>
                                     </div>
-                                    <div class="flex-1 flex justify-between sm:justify-end">
+                                    <div class="flex-1 flex justify-end sm:justify-end">
                                         <select class="form-input inline-block w-fit mx-2.5 py-1" v-tippy="{ content: 'تعداد آیتم ها در هر صفحه' }" v-model="pageSize">
                                             <option value="10">10</option>
                                             <option value="15">15</option>

@@ -1,7 +1,7 @@
 <template>
     <div class="sticky top-0">
         <div class="bg-white">
-            <Splitter title="رزروهای من" border-class=" border-black relative " type="middle" title-class="text-black" />
+            <Splitter title="تراکنش‌های من" border-class=" border-black relative " type="middle" title-class="text-black" />
         </div>
     </div>
 

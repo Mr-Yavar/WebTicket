@@ -5,8 +5,8 @@ import { RouterLink } from 'vue-router';
 
 
 <template>
-    <div class="flex-shrink-0 flex items-center px-4">
-        <img class="h-8 w-auto" src="/logo.svg" alt="logo" />
+    <div class=" flex items-center px-4">
+        <div class="text-center text-xl w-full py-4">مدیریت</div>
     </div>
     <nav class="mt-5 flex-shrink-0 h-full divide-y divide-blue-800 overflow-y-auto" aria-label="Sidebar">
         <div class="px-2 space-y-1">
@@ -63,6 +63,10 @@ import { RouterLink } from 'vue-router';
             <RouterLink :to="{ name: 'ManageUsers' }" active-class="active" class="text-gray-900 hover:bg-gray-100 group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md">
                 <v-icon name="fa-chart-pie" class="ml-4 flex-shrink-0 h-6 w-6 text-gray-900 group-[.active]:text-white" aria-hidden="true" />
                 کاربران
+            </RouterLink>
+            <RouterLink :to="{ name: 'discount' }" active-class="active" class="text-gray-900 hover:bg-gray-100 group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md">
+                <v-icon name="fa-chart-pie" class="ml-4 flex-shrink-0 h-6 w-6 text-gray-900 group-[.active]:text-white" aria-hidden="true" />
+                کد ‌های تخفیف
             </RouterLink>
             <!-- <div class="mx-auto w-full max-w-md rounded-md bg-white">
                 <Disclosure v-slot="{ open }">

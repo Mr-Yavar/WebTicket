@@ -30,6 +30,14 @@
                                 },
 
                                 {
+                                    title: 'مبلغ پرداختی',
+                                    key: 'billAmount'
+                                },
+                                {
+                                    title: 'تعداد بلیت ',
+                                    key: 'ticketCount'
+                                },
+                                {
                                     title: '-',
                                     key: 'options',
                                     tdClass:'text-info '
@@ -49,6 +57,9 @@
                             <template #[`tbodytitle`]="{ data }">{{ data.concertInfo.title }}</template>
                             <template #[`tbodyplace.name`]="{ data }">{{ data.place.name }}</template>
                             <template #[`tbodyreservationDate`]="{ data }">{{ new Date(data.reservationDate).toLocaleString('fa-ir', dateFormat).split(',').reverse().join(' ') }}</template>
+                            
+                             <template #[`tbodybillAmount`]="{ data }">{{ data.transaction.billAmount }}</template>
+                             <template #[`tbodyticketCount`]="{ data }">{{ data.ticketCount}}</template>
                             <template #[`tbodyoptions`]="{ data }"><div class="text-center !text-blue-900"><span class="!text-info hover:border-b-2 hover:border-gray-700 cursor-pointer" @click.prevent="()=>{
                             $router.push({
                                 name :'MyReservationTicket',

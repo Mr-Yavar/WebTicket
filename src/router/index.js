@@ -420,11 +420,38 @@ const router = createRouter({
                         {
                             name: 'manageallusers',
                             path: 'manageallusers',
-                            component: () => import('@/views/ui/AdminPanel/StaticData/ManageStaticData.vue'),
+                            component: () => import('@/views/ui/AdminPanel/Users/Users.vue'),
                             meta:{
                                 auth:true
-                            }
+                            },
+                            children:[
+                                {
+                                    name: 'editUser',
+                                    path: 'edit/:id',
+                                    component: () => import('@/views/ui/AdminPanel/Users/EditUser.vue'),
+                                    meta:{
+                                        auth:true
+                                    }
+                                },
+                                {
+                                    name: 'UserPayments',
+                                    path: 'userpayments/:id',
+                                    component: () => import('@/views/ui/AdminPanel/Users/UserTransactions.vue'),
+                                    meta:{
+                                        auth:true
+                                    }
+                                },
+                                {
+                                    name: 'UserReservations',
+                                    path: 'UserReservations/:id',
+                                    component: () => import('@/views/ui/AdminPanel/Users/UserReservation.vue'),
+                                    meta:{
+                                        auth:true
+                                    }
+                                },
+                            ]
                         }
+                       
                     ]
                 }
             ]

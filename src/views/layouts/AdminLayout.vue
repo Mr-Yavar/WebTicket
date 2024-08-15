@@ -73,7 +73,9 @@
                                         <a :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']" href="/settings">تنظیمات</a>
                                     </MenuItem>
                                     <MenuItem v-slot="{ active }">
-                                        <a :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']" href="#">خروج</a>
+                                        <a 
+                                        @click.prevent="()=>{userStore.logOut();  $router.push($route) }"
+                                        :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']" href="#">خروج</a>
                                     </MenuItem>
                                 </MenuItems>
                             </transition>
@@ -102,7 +104,7 @@ const sidebarOpen = ref(false)
 
 const route = useRoute()
 const userStore = useUserStore()
-console.log(route.matched)
+
 </script>
 
 <style>
