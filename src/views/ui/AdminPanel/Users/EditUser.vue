@@ -56,6 +56,20 @@
                     </div>
                 </div>
 
+                <div class="mb-3 grid grid-cols-3 gap-3">
+                    <label class="col-span-1 inline-block text-xs md:text-sm leading-9 text-center text-gray-800 dark:text-gray-100">نقش</label>
+                    
+                    <div class="flex justify-center" >
+                        <label for="user" class="inline-block text-xs md:text-sm  text-center text-gray-800 dark:text-gray-100 mx-2">کاربر</label>
+                        <vee-field type="radio" id="user"  name="role" class="" value="User" />
+                    </div>
+                    <div class="flex justify-center">
+                        <label for="Admin" class="inline-block text-xs md:text-sm  text-center text-gray-800 dark:text-gray-100 mx-2">مدیر</label>
+                        <vee-field type="radio" id="Admin"  name="role" class="" value="Admin"/>
+                    </div>
+                    
+                </div>
+
                 <div class="mb-3 grid grid-cols-3">
                     <!--      <div class="col-span-1 py-2 me-1">-->
                     <!--        <button type="button" class="rtl:fa-font block w-full select-none rounded-lg border border-gray-900 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-gray-900 transition-all hover:opacity-75 focus:ring focus:ring-gray-300 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"> <v-icon name="io-arrow-forward-outline" scale="0.75" /> برگشت</button>-->
@@ -112,7 +126,7 @@ const schema1 = {
     lastName: 'required|min:3|max:100|persian_text',
     userName: 'required|min:3|max:100',
     phoneNumber: 'required|phone_number',
-    password: 'required|min:9|max:100|excluded:password'
+    password: 'min:9|max:100|excluded:password'
 }
 
 const formValues = computed(() => GetUserProfile.data.value)

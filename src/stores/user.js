@@ -10,7 +10,7 @@ const useUserStore = defineStore('user', () => {
     const accessToken = ref(localStorage.getItem('jwt') ?? '')
     const refreshToken = ref('')
     const user = ref(!localStorage.getItem('user') ? {} : { user: JSON.parse(localStorage.getItem('user')), Identity: accessToken.value ? jwtDecode(accessToken.value) : {} })
-
+    const roles = ref((user.value?.Identity["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]) ? [(user.value?.Identity["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"])] : []);
     const ClientId = ref(localStorage.getItem('ClientId') ?? uuidv5(Math.random().toString(), uuidv4()))
     localStorage.setItem('ClientId', ClientId.value)
     async function logOut() {
@@ -20,6 +20,7 @@ const useUserStore = defineStore('user', () => {
         accessToken.value = null;
         refreshToken.value = null;
         user.value ={user:null,Identity:null};
+        roles.value = [];
         //location.reload();
     }
 
@@ -37,7 +38,8 @@ const useUserStore = defineStore('user', () => {
             
             user.value.user = userData.user;
             user.value.Identity = jwtDecode(userData.accessToken);
-            expireTime.value = new Date(user.value.Identity.exp * 1000)
+            expireTime.value = new Date(user.value.Identity.exp * 1000);
+            roles.value = [user.value.Identity["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]];
             isAuthenticated.value = true
         } catch (e) {
             console.log(e)
@@ -46,6 +48,6 @@ const useUserStore = defineStore('user', () => {
         
     }
 
-    return { isAuthenticated, user, accessToken, refreshToken, expireTime, ClientId, GetAuthenticated, logOut, FullName }
+    return { isAuthenticated, user, accessToken, refreshToken, expireTime, ClientId, GetAuthenticated, logOut, FullName,roles }
 })
 export default useUserStore
