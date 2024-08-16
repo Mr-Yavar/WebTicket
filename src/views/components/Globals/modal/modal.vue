@@ -30,8 +30,18 @@
     </div>
 </template>
 <script setup>
+import { watchEffect } from 'vue';
+
 const props = defineProps({
     onCloseFn: Function,
     show: Boolean
-})
+});
+
+
+watchEffect(()=>{
+    if(props.show)
+        document.body.classList.add("overflow-hidden");
+    else
+        document.body.classList.remove("overflow-hidden");
+});
 </script>

@@ -27,15 +27,15 @@ import { OiLocation ,
  SiOpenstreetmap, CoPlus ,
 MdCategoryOutlined, MdDashboardOutlined, MdDiscountTwotone, MdAttachmoneyOutlined,
 BiBarChartLine, BiPencil, BiShieldCheck, BiChevronLeft,BiChevronRight,BiChevronDoubleRight ,BiChevronDoubleLeft,
- CoHeart,CoBell,MdSettingsOutlined ,HiPencil ,
-MdReceiptOutlined,MdReceiptlongSharp,
+ CoHeart,CoBell,MdSettingsOutlined ,HiPencil ,RiPagesLine ,BiCalendarWeek ,PrUsers,MdLocationonOutlined ,IoHomeOutline ,
+MdReceiptOutlined,MdReceiptlongSharp ,MdDiscountOutlined ,LaUsersCogSolid ,
 LaFileInvoiceDollarSolid,LaTimesSolid,LaUserCircle } from 'oh-vue-icons/icons'
 import { PerfectScrollbarPlugin } from 'vue3-perfect-scrollbar'
 import Vue3PersianDatetimePicker from 'vue3-persian-datetime-picker'
 
 
 
-addIcons(CoPlus ,MdReceiptlongSharp,MdReceiptOutlined,HiPencil,MdSettingsOutlined,LaFileInvoiceDollarSolid, IoTicketOutline, MdAttachmoneyOutlined, CoHeart, FaRegularStar, BiChevronLeft, HiChevronDown, BiShieldCheck, HiQuestionMarkCircle, RiMenu2Line, IoGridOutline, IoDocumentsOutline, FaChartPie, IoSettingsOutline, BiPencil, LaTimesSolid, MdDashboardOutlined, HiTable, CoBell, BiBarChartLine, FaSearch, LaUserCircle, MdDiscountTwotone, IoTrashOutline, MdCategoryOutlined, SiOpenstreetmap, OiLocation, RiCalendarEventFill, FaSearch, FaTicketAlt, IoTicketSharp, IoArrowForwardOutline, FaTimes, PrSpinner, PxCalendarTomorrow, PxClock, PxGps, HiSolidCheckCircle,BiChevronDoubleRight,BiChevronRight,BiChevronDoubleLeft,MdSettingssuggestOutlined,FaTrashAlt)
+addIcons(IoHomeOutline,BiCalendarWeek ,PrUsers,MdLocationonOutlined,LaUsersCogSolid,CoPlus,RiPagesLine,MdDiscountOutlined ,MdReceiptlongSharp,MdReceiptOutlined,HiPencil,MdSettingsOutlined,LaFileInvoiceDollarSolid, IoTicketOutline, MdAttachmoneyOutlined, CoHeart, FaRegularStar, BiChevronLeft, HiChevronDown, BiShieldCheck, HiQuestionMarkCircle, RiMenu2Line, IoGridOutline, IoDocumentsOutline, FaChartPie, IoSettingsOutline, BiPencil, LaTimesSolid, MdDashboardOutlined, HiTable, CoBell, BiBarChartLine, FaSearch, LaUserCircle, MdDiscountTwotone, IoTrashOutline, MdCategoryOutlined, SiOpenstreetmap, OiLocation, RiCalendarEventFill, FaSearch, FaTicketAlt, IoTicketSharp, IoArrowForwardOutline, FaTimes, PrSpinner, PxCalendarTomorrow, PxClock, PxGps, HiSolidCheckCircle,BiChevronDoubleRight,BiChevronRight,BiChevronDoubleLeft,MdSettingssuggestOutlined,FaTrashAlt)
 import VueQrcode from '@chenfengyuan/vue-qrcode';
 import DatePicker from '@alireza-ab/vue3-persian-datepicker'
 const app = createApp(App);

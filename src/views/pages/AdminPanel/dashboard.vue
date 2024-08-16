@@ -1,10 +1,12 @@
 <script setup>
 import { FaMoneyBillTrendUp } from '@kalimahapps/vue-icons/fa'
 import DataTable_V1 from '@/views/components/Globals/DataTables/DataTable_V1.vue'
-import { ByChevronLeft } from '@kalimahapps/vue-icons/by';
+import { ByChevronLeft } from '@kalimahapps/vue-icons/by'
 import { computed, ref } from 'vue'
 import { sendRequest } from '@/services/service'
 import { useQuery } from '@tanstack/vue-query'
+import useUserStore from '@/stores/user'
+const userStore = useUserStore()
 const pageIndex = ref(0)
 const pageSize = ref(10)
 const queryKey = computed(() => [{ url: '/api/Manager/GetAllActiveConcerts', pageSize: pageSize.value, currentPage: pageIndex.value + 1 }])
@@ -14,12 +16,29 @@ const getAllConcert = useQuery({
         sendRequest({
             url: queryKey[0].url + '/' + queryKey[0].pageSize + '/' + queryKey[0].currentPage,
             method: 'GET',
-            headers: {}
+            headers: {
+                Authorization: 'Bearer ' + userStore.accessToken
+            }
         }),
     refetchOnMount: true,
     enabled: true
 })
 
+const getCardInfo = useQuery({
+    queryKey: ['/api/Manager/GetDashboardItem'],
+    queryFn: ({ queryKey }) =>
+        sendRequest({
+            url: queryKey[0],
+            method: 'GET',
+            headers: {
+                Authorization: 'Bearer ' + userStore.accessToken
+            }
+        }),
+    refetchOnMount: true,
+    enabled: true
+})
+
+//
 const totalCount = computed(() => getAllConcert.data.value?.totalCount ?? 0)
 
 const totalPage = computed(() => Math.ceil(totalCount.value / pageSize.value))
@@ -45,14 +64,22 @@ function action(step) {
                     <div class="flex items-center">
                         <div class="w-0 flex-1">
                             <dl class="space-y-2">
-                                <dt class="text-sm font-medium text-gray-500 truncate">درآمد کل</dt>
+                                <dt class="text-sm font-medium text-gray-500 truncate">درآمد 7 روز گذشته</dt>
                                 <dd>
-                                    <div class="text-xl font-medium text-gray-900">30,659.450</div>
+                                    <div class="text-xl font-medium text-gray-900">{{ getCardInfo.data.value?.weekIncome?.amount }}</div>
                                 </dd>
                                 <dd>
                                     <div class="text-xs font-medium text-gray-500">
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium text-green-500"> %2.1+ </span>
-                                        از هفته گذشته تاکنون
+                                        <span
+                                            class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
+                                            :class="{
+                                                'text-green-500': getCardInfo.data.value?.weekIncome?.changePercent > 0,
+                                                'text-red-500': getCardInfo.data.value?.weekIncome?.changePercent < 0
+                                            }"
+                                        >
+                                            %{{ getCardInfo.data.value?.weekIncome?.changePercent }} {{ getCardInfo.data.value?.weekIncome?.changePercent > 0 ? '+' : '-' }}
+                                        </span>
+                                        به هفته گذشته
                                     </div>
                                 </dd>
                             </dl>
@@ -71,11 +98,19 @@ function action(step) {
                             <dl class="space-y-2">
                                 <dt class="text-sm font-medium text-gray-500 truncate">درآمد امروز</dt>
                                 <dd>
-                                    <div class="text-xl font-medium text-gray-900">500,000</div>
+                                    <div class="text-xl font-medium text-gray-900">{{ getCardInfo.data.value?.dayIncome?.amount }}</div>
                                 </dd>
                                 <dd>
                                     <div class="text-xs font-medium text-gray-500">
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded font-medium text-red-500"> &1.2 - </span>
+                                        <span
+                                            class="inline-flex items-center px-2 py-0.5 rounded font-medium"
+                                            :class="{
+                                                'text-green-500': getCardInfo.data.value?.dayIncome?.changePercent > 0,
+                                                'text-red-500': getCardInfo.data.value?.dayIncome?.changePercent < 0
+                                            }"
+                                        >
+                                            %{{ getCardInfo.data.value?.dayIncome?.changePercent }} {{ getCardInfo.data.value?.dayIncome?.changePercent > 0 ? '+' : '-' }}</span
+                                        >
                                         از دیروز تاکنون
                                     </div>
                                 </dd>
@@ -95,11 +130,20 @@ function action(step) {
                             <dl class="space-y-2">
                                 <dt class="text-sm font-medium text-gray-500 truncate">تعداد بلیتهای فروخته شده</dt>
                                 <dd>
-                                    <div class="text-xl font-medium text-gray-900">264,000</div>
+                                    <div class="text-xl font-medium text-gray-900">{{getCardInfo.data.value?.dailySale?.amount}}</div>
                                 </dd>
                                 <dd>
                                     <div class="text-xs font-medium text-gray-500">
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium text-green-500"> %2.1+ </span>
+                                        <span
+                                            class="inline-flex items-center px-2 py-0.5 rounded font-medium"
+                                            :class="{
+                                                'text-green-500': getCardInfo.data.value?.dailySale?.changePercent > 0,
+                                                'text-red-500': getCardInfo.data.value?.dailySale?.changePercent < 0
+                                            }"
+                                        >
+                                            %{{ getCardInfo.data.value?.dailySale?.changePercent }} {{ getCardInfo.data.value?.dailySale?.changePercent > 0 ? '+' : '-' }}</span
+                                        >
+
                                         از دیروز تاکنون
                                     </div>
                                 </dd>
@@ -154,7 +198,6 @@ function action(step) {
                         <DataTable_V1
                             class="!rounded-md overflow-hidden"
                             :columns="[
-                              
                                 {
                                     title: 'عنوان',
                                     key: 'title',
@@ -172,8 +215,8 @@ function action(step) {
                                 {
                                     title: 'دسته بندی',
                                     key: 'category',
-                                    thClass : 'md:table-cell hidden',
-                                    tdClass : 'md:table-cell hidden',
+                                    thClass: 'md:table-cell hidden',
+                                    tdClass: 'md:table-cell hidden'
                                 },
                                 {
                                     title: 'کل بلیت ها',
@@ -181,21 +224,20 @@ function action(step) {
                                 },
                                 {
                                     title: 'رزرو شده',
-                                    key: 'ReservedTciket',
-
+                                    key: 'ReservedTciket'
                                 },
                                 {
                                     title: 'زمان شروع',
                                     key: 'startDate',
-                                     tdClass :'text-wrap break-space md:table-cell hidden',
-                                     thClass : 'md:table-cell hidden',
+                                    tdClass: 'text-wrap break-space md:table-cell hidden',
+                                    thClass: 'md:table-cell hidden'
                                 },
 
                                 {
                                     title: 'زمان پایان',
                                     key: 'endDate',
-                                     tdClass :'text-wrap break-space md:table-cell hidden',
-                                     thClass : 'md:table-cell hidden',
+                                    tdClass: 'text-wrap break-space md:table-cell hidden',
+                                    thClass: 'md:table-cell hidden'
                                 }
                             ]"
                             :data="getAllConcert.data.value?.data ?? []"
@@ -208,7 +250,6 @@ function action(step) {
                             :trClass="'odd:bg-white even:bg-gray-100'"
                             :scrollBarHeight="'calc(100dvh - 500px)'"
                         >
-                          
                             <template #[`tbodytitle`]="{ data }">{{ data.title }}</template>
                             <template #[`tbodypromoter.title`]="{ data }">{{ data.promoter.title }}</template>
                             <template #[`tbodyplace.name`]="{ data }">{{ data.place.name }}</template>

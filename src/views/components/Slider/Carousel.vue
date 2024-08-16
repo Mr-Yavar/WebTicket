@@ -15,7 +15,7 @@
         }"
         class="mySwiper"
     >
-        <swiper-slide v-for="value in GetSlider.data.value?.values ?? []" :key="value.id"><img :src="FILE_PROVIDER2 + value.value" /></swiper-slide>
+        <swiper-slide v-for="value in (GetSlider.data.value?.values.filter(x=>x.valueType==0) ?? [])" :key="value.id"><img :src="FILE_PROVIDER2 + value.value" /></swiper-slide>
     </swiper>
 </template>
 <script setup>

@@ -28,7 +28,7 @@ import { RouterLink } from 'vue-router';
                 </Disclosure>
             </div> -->
             <RouterLink :to="{ name: 'AllPlaces' }" active-class="active" class="text-gray-900 hover:bg-gray-100 group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md">
-                <v-icon name="bi-pencil" class="ml-4 flex-shrink-0 h-6 w-6 text-gray-900 group-[.active]:text-white" aria-hidden="true" />
+                <v-icon name="md-locationon-outlined" class="ml-4 flex-shrink-0 h-6 w-6 text-gray-900 group-[.active]:text-white" aria-hidden="true" />
                 مکانهای برگزاری
             </RouterLink>
             <!-- <div class="mx-auto w-full max-w-md rounded-md bg-white">
@@ -49,23 +49,23 @@ import { RouterLink } from 'vue-router';
                 </Disclosure>
             </div> -->
             <RouterLink :to="{ name: 'ManageConcerts' }" active-class="active" class="text-gray-900 hover:bg-gray-100 group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md">
-                <v-icon name="fa-chart-pie" class="ml-4 flex-shrink-0 h-6 w-6 text-gray-900 group-[.active]:text-white" aria-hidden="true" />
+                <v-icon name="bi-calendar-week" class="ml-4 flex-shrink-0 h-6 w-6 text-gray-900 group-[.active]:text-white" aria-hidden="true" />
                 کنسرت‌ها
             </RouterLink>
             <RouterLink :to="{ name: 'ManagePromoters' }" active-class="active" class="text-gray-900 hover:bg-gray-100 group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md">
-                <v-icon name="fa-chart-pie" class="ml-4 flex-shrink-0 h-6 w-6 text-gray-900 group-[.active]:text-white" aria-hidden="true" />
+                <v-icon name="pr-users" class="ml-4 flex-shrink-0 h-6 w-6 text-gray-900 group-[.active]:text-white" aria-hidden="true" />
                 برگزارکنندگان
             </RouterLink>
             <RouterLink :to="{ name: 'ManageStaticData' }" active-class="active" class="text-gray-900 hover:bg-gray-100 group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md">
-                <v-icon name="fa-chart-pie" class="ml-4 flex-shrink-0 h-6 w-6 text-gray-900 group-[.active]:text-white" aria-hidden="true" />
+                <v-icon name="ri-pages-line" class="ml-4 flex-shrink-0 h-6 w-6 text-gray-900 group-[.active]:text-white" aria-hidden="true" />
                 تنظیمات صفحات
             </RouterLink>
             <RouterLink :to="{ name: 'ManageUsers' }" active-class="active" class="text-gray-900 hover:bg-gray-100 group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md">
-                <v-icon name="fa-chart-pie" class="ml-4 flex-shrink-0 h-6 w-6 text-gray-900 group-[.active]:text-white" aria-hidden="true" />
+                <v-icon name="la-users-cog-solid" class="ml-4 flex-shrink-0 h-6 w-6 text-gray-900 group-[.active]:text-white" aria-hidden="true" />
                 کاربران
             </RouterLink>
             <RouterLink :to="{ name: 'discount' }" active-class="active" class="text-gray-900 hover:bg-gray-100 group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md">
-                <v-icon name="fa-chart-pie" class="ml-4 flex-shrink-0 h-6 w-6 text-gray-900 group-[.active]:text-white" aria-hidden="true" />
+                <v-icon name="md-discount-outlined" class="ml-4 flex-shrink-0 h-6 w-6 text-gray-900 group-[.active]:text-white" aria-hidden="true" />
                 کد ‌های تخفیف
             </RouterLink>
             <!-- <div class="mx-auto w-full max-w-md rounded-md bg-white">
@@ -85,7 +85,7 @@ import { RouterLink } from 'vue-router';
         </div>
         <div class="mt-6 pt-6">
             <div class="px-2 space-y-1">
-                <RouterLink v-for="item in []" :key="item.name" :to="item.to" class="group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md text-gray-900 hover:bg-gray-100">
+                <RouterLink v-for="item in [{name :'صفحه اصلی برنامه' ,to:{name:'home'} , icon :'io-home-outline' }]" :key="item.name" :to="item.to" class="group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md text-gray-900 hover:bg-gray-100">
                     <v-icon :name="item.icon" class="ml-4 h-6 w-6 text-gray-900 group-[.active]:text-white" aria-hidden="true" />
                     {{ item.name }}
                 </RouterLink>
