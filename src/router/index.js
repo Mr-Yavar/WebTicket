@@ -207,7 +207,8 @@ const router = createRouter({
             meta: {
                 layout: 'Admin',
                 label: 'صفحه اصلی',
-                auth:true
+                auth:true,
+                roles:["Admin"]
             },
             children: [
                 {
@@ -472,9 +473,12 @@ router.beforeEach(async (to,from,next) => {
     // redirect to login page if not logged in and trying to access a restricted page
     
     const authRequired = !!to.meta.auth;
+    const rolesRequired = !to.meta.roles || to.meta.roles.length===0 ? [] : to.meta.roles;
+
     const auth = useUserStore();
 
-    if (authRequired && !auth.isAuthenticated) {
+    if ((authRequired && !auth.isAuthenticated) || ((rolesRequired.length!=0 && !rolesRequired.some(role=>auth.roles.includes(role)) ))) {
+        
         auth.returnUrl = to.fullPath;
         next('/');
         return;

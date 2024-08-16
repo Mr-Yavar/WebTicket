@@ -24,6 +24,7 @@ const useUserStore = defineStore('user', () => {
         refreshToken.value = null;
         user.value ={user:null,Identity:null};
         roles.value = [];
+        userId.value = null;
         //location.reload();
     }
 
@@ -43,6 +44,7 @@ const useUserStore = defineStore('user', () => {
             user.value.Identity = jwtDecode(userData.accessToken);
             expireTime.value = new Date(user.value.Identity.exp * 1000);
             roles.value = [user.value.Identity["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]];
+            userId.value =user.value.Identity["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
             isAuthenticated.value = true
         } catch (e) {
             console.log(e)
