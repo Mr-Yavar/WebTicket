@@ -108,6 +108,7 @@ const GetSpecificEventServiceCall = useQuery({
 })
 import { useAuthModalStore } from '@/stores/componentStore/authModal.js'
 import { CRPlacesService } from '@/services/PlacesService'
+import v4 from 'uuid/dist/v4'
 const props = defineProps({
     stepControls: Object,
     concert: Object,
@@ -288,7 +289,7 @@ watchEffect(async () => {
             })
 
             CriticalIds.forEach((id) => {
-                let newId = id + '_' + floor.floorId
+                let newId = v4().replaceAll("-","_")
                 tempDoc.body.innerHTML = tempDoc.body.innerHTML.replaceAll('id="' + id + '"', 'id="' + newId + '"')
                 tempDoc.body.innerHTML = tempDoc.body.innerHTML.replaceAll('#' + id, '#' + newId)
             })
