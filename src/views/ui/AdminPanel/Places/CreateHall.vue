@@ -11,6 +11,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { reactive, ref, useCssModule, watch } from 'vue'
 import {  FILE_PROVIDER2 } from '@/config/appConfig'
 import { PrSpinner } from '@kalimahapps/vue-icons/pr'
+import { v4 } from 'uuid'
 const router = useRouter()
 const route = useRoute()
 
@@ -149,7 +150,7 @@ function showSeatMap(files, key, idx) {
         })
 
         CriticalIds.forEach((tagId) => {
-            let newId = tagId + '_' + idx
+            let newId = v4().replaceAll("-","_");
             tempDoc.querySelector('svg').innerHTML = tempDoc.querySelector('svg').innerHTML.replaceAll('id="' + tagId + '"', 'id="' + newId + '"')
             tempDoc.querySelector('svg').innerHTML = tempDoc.querySelector('svg').innerHTML.replaceAll('#' + tagId, '#' + newId)
         })
