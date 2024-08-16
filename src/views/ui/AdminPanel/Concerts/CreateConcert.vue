@@ -16,8 +16,10 @@ import { sendRequest, getFile } from '@/services/service'
 import randomColor from 'randomcolor'
 import tippy from 'tippy.js'
 import Panzoom from '@panzoom/panzoom'
-
+import { PxZoomIn,PxZoomOut } from '@kalimahapps/vue-icons/px'
 import dateHelper from '@/utils/dateHelper'
+import { v4 } from 'uuid'
+
 
 
 const router = useRouter()
@@ -246,7 +248,7 @@ function showSeatMap(seatMap_url, floorSeats, key, idx, EventId) {
         })
 
         CriticalIds.forEach((tagId) => {
-            let newId = tagId + '_' + EventId + '_' + +idx
+            let newId = v4().replaceAll("-","_");
             tempDoc.querySelector('svg').innerHTML = tempDoc.querySelector('svg').innerHTML.replaceAll('id="' + tagId + '"', 'id="' + newId + '"')
             tempDoc.querySelector('svg').innerHTML = tempDoc.querySelector('svg').innerHTML.replaceAll('#' + tagId, '#' + newId)
         })
@@ -281,7 +283,7 @@ function showSeatMap(seatMap_url, floorSeats, key, idx, EventId) {
         try {
             panZoomInit(document.querySelector('#event_' + EventId + '_' + key + '_' + idx), idx)
         } catch (err) {
-            //console.log(err)
+            console.log(err)
         }
 
         setFieldValue('events[' + EventId + ']SeatsInfo[' + idx + ']', [...AllSeats])
@@ -326,19 +328,24 @@ function setupTippy(map) {
 
     if (!document.getElementById(map.id).querySelector('svg')) return
 
-    if (map.getAttribute('setupTippy')) return
-    map.setAttribute('setupTippy', 'true')
+    if (document.getElementById(map.id).querySelector('svg').getAttribute('setupTippy')) return
+    document.getElementById(map.id).querySelector('svg').setAttribute('setupTippy', 'true');
 
     map.querySelectorAll(`*[id^="f"][tid]`).forEach((item) => {
         tippy(item, {
             onTrigger(instance, event) {
-                if (event.target.getAttribute('eventindex') && !event.target.getAttribute('reserved')) setTicket(event, Number(event.target.getAttribute('eventIndex')))
-
+                
                 const [floor, row, column] = event.target.id.replace('f', '').replace('r', '').replace('c', '').split('_');
-                const listPrice = priceClassColor[Number(event.target.getAttribute('eventIndex'))];
+                const listPrice = priceClassColor[Number(event.target.getAttribute('eventIndex'))] ?? {};
+                
                 const price = Object.keys(listPrice).find((key) => listPrice[key] === event.target.style.fill) ?? 'تعیین نشده';
                 let isReserved = !event.target.getAttribute('reserved') ? "" : "<p class='text-center animate-pulse'>رزرو شده❗</p>";
-                instance.setContent(`<div class="direction-rtl vazir-font text-right">${isReserved}<p>طبقه : ${floor}</p><p>ردیف : ${row}</p><p>ستون :${column}</p><p style="background:${event.target.style.fill}">قیمت : ${price} تومان</p></div>`)
+                instance.setContent(`<div class="direction-rtl vazir-font text-right">${isReserved}<p>طبقه : ${floor}</p><p>ردیف : ${row}</p><p>ستون :${column}</p><p style="background:${event.target.style.fill}">قیمت : ${price} تومان</p></div>`);
+
+
+                if (event.target.getAttribute('eventindex') && !event.target.getAttribute('reserved')) setTicket(event, Number(event.target.getAttribute('eventIndex')))
+
+               
             },
             allowHTML: true
         })

@@ -21,7 +21,7 @@
             <div class="col-span-full">
                 <div class="p-2 rounded-2xl shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset]">
                     <div class="tabs grid flex-end align-center tabs-boxed mb-2 !bg-gray-100 dark:bg-gray-600 !text-black dark:!text-white" role="tablist">
-                        <template v-for="(floor) in Floors" :key="`tab` + floor">
+                        <template v-for="floor in Floors" :key="`tab` + floor">
                             <a :class="{ 'tab-active': tab === floor }" class="tab" role="tab" @click.prevent="changeTab(floor)">{{ floor }}</a>
                         </template>
                     </div>
@@ -61,7 +61,7 @@
         <div class="grid md:grid-cols-2 grid-cols-1 mt-2 gap-2 p-4 rounded-2xl shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset]">
             <div class="col-span-full dark:text-gray-200 text-black font-bold">بلیت های انتخابی شما:</div>
             <div v-if="TicketStore.Tickets.length === 0" class="col-span-full text-center dark:text-gray-200 text-black text-md font-bold">هیچ بلیتی انتخاب نشده است!</div>
-            <SelectedTicket :concertTitle="concert?.title" v-for="(item) in TicketStore.Tickets ?? []" :key="item.id" :handleDelete="() => handleClickOnDeleteSeat(item.id)" :has-delete="true" :index="item.id" :seatInfo="item" />
+            <SelectedTicket :concertTitle="concert?.title" v-for="item in TicketStore.Tickets ?? []" :key="item.id" :handleDelete="() => handleClickOnDeleteSeat(item.id)" :has-delete="true" :index="item.id" :seatInfo="item" />
         </div>
     </div>
 
@@ -71,7 +71,7 @@
 <script setup>
 import 'vue-zoomable/dist/style.css'
 import { FlFilledZoomFit } from '@kalimahapps/vue-icons/fl'
-import { PxZoomIn,PxZoomOut } from '@kalimahapps/vue-icons/px'
+import { PxZoomIn, PxZoomOut } from '@kalimahapps/vue-icons/px'
 
 import { computed, ref, useCssModule, watch, watchEffect } from 'vue'
 import SelectedTicket from '@/views/components/Pages/Event/SelectedTicket.vue'
@@ -79,7 +79,7 @@ import useTicketStore from '@/stores/Ticket.js'
 import Panzoom from '@panzoom/panzoom'
 import tippy from 'tippy.js'
 import { Guid } from '@/config/helper'
-import {useRoute } from 'vue-router'
+import { useRoute } from 'vue-router'
 import ControlSteps from './controlSteps.vue'
 import useUserStore from '@/stores/user'
 import { useMutation, useQuery } from '@tanstack/vue-query'
@@ -108,7 +108,7 @@ const GetSpecificEventServiceCall = useQuery({
 })
 import { useAuthModalStore } from '@/stores/componentStore/authModal.js'
 import { CRPlacesService } from '@/services/PlacesService'
-import v4 from 'uuid/dist/v4'
+import { v4 } from 'uuid'
 const props = defineProps({
     stepControls: Object,
     concert: Object,
@@ -124,9 +124,9 @@ const AuthModalStore = useAuthModalStore()
 const userStore = useUserStore()
 async function onNext() {
     if (!userStore.isAuthenticated && userStore.expireTime <= new Date()) {
-        userStore.logOut();
-        AuthModalStore.setTitle('برای ادامه حساب کاربری لازمه!');
-        AuthModalStore.toggleMenu();
+        userStore.logOut()
+        AuthModalStore.setTitle('برای ادامه حساب کاربری لازمه!')
+        AuthModalStore.toggleMenu()
 
         return false
     }
@@ -172,28 +172,25 @@ async function onNext() {
             method: 'POST',
             headers: {
                 'Content-type': 'application/json',
-                'Authorization'  : "Bearer "+userStore.accessToken
+                Authorization: 'Bearer ' + userStore.accessToken
             }
         },
         {
             onSuccess: async (data) => {
-                if(data.tempReservationId==null)
-                return false;
-            
+                if (data.tempReservationId == null) return false
+
                 try {
-                    await seatMapService.notifyLockTickets();
+                    await seatMapService.notifyLockTickets()
                 } catch (e) {
                     return false
                 }
 
-                await seatMapService.LeaveGroup();
+                await seatMapService.LeaveGroup()
 
-                props.toNext();
+                props.toNext()
             }
         }
-    );
-
-
+    )
 }
 
 async function onPreviuos() {
@@ -276,7 +273,7 @@ const Tickets = computed(() => {
 const currentFloor = computed(() => GetSpecificEventServiceCall.data.value?.events[0].floors.filter((x) => x.title === tab.value)[0]?.displayOrder)
 watchEffect(async () => {
     if (GetSpecificEventServiceCall.data.value?.events[0] !== undefined)
-        for (let floor of (GetSpecificEventServiceCall.data.value?.events[0]?.floors ?? [])) {
+        for (let floor of GetSpecificEventServiceCall.data.value?.events[0]?.floors ?? []) {
             let res = await GetSeatMapService(floor.seatMap_url)
 
             let dom = new DOMParser()
@@ -289,7 +286,7 @@ watchEffect(async () => {
             })
 
             CriticalIds.forEach((id) => {
-                let newId = v4().replaceAll("-","_")
+                let newId = v4().replaceAll('-', '_')
                 tempDoc.body.innerHTML = tempDoc.body.innerHTML.replaceAll('id="' + id + '"', 'id="' + newId + '"')
                 tempDoc.body.innerHTML = tempDoc.body.innerHTML.replaceAll('#' + id, '#' + newId)
             })
@@ -303,12 +300,10 @@ watchEffect(async () => {
             console.log(seatMapService.Locked_Tickets)
             //قفل کردن صندلی ها انتخاب شده و درحال پرداخت
             seatMapService.Locked_Tickets.forEach((item) => {
-                let elem = tempDoc?.querySelector(`[tid='${item}']`);
-                if(!elem)
-                    return;
+                let elem = tempDoc?.querySelector(`[tid='${item}']`)
+                if (!elem) return
 
-                   if(!elem.classList.contains(TicketsTypes['reserved-tickets']))
-                        elem?.classList.add(TicketsTypes['waiting-tickets'])
+                if (!elem.classList.contains(TicketsTypes['reserved-tickets'])) elem?.classList.add(TicketsTypes['waiting-tickets'])
             })
 
             tempDoc?.querySelectorAll(`*[id^="f"]:not([tid])`).forEach((item) => {
@@ -317,13 +312,10 @@ watchEffect(async () => {
 
             //نوشتن صندلی ها انتخابی توسط کاربر
             TicketStore.Tickets.forEach((item) => {
+                let elem = tempDoc?.querySelector(`[tid='${item.id}']`)
+                if (!elem) return
 
-                let elem = tempDoc?.querySelector(`[tid='${item.id}']`);
-                if(!elem)
-                    return;
-
-                   if(!elem.classList.contains(TicketsTypes['reserved-tickets']))
-                        elem?.classList.add(TicketsTypes['selected-tickets']);
+                if (!elem.classList.contains(TicketsTypes['reserved-tickets'])) elem?.classList.add(TicketsTypes['selected-tickets'])
             })
 
             let exception = Object.keys(TicketsTypes)
@@ -337,25 +329,23 @@ watchEffect(async () => {
 
             SeatMaps.value = [...SeatMaps.value, tempDoc.body.innerHTML]
         }
-});
+})
 
-watch([()=>seatMapService.Reserved_Tickets], () => {
-    console.log(seatMapService.Reserved_Tickets);
+watch([() => seatMapService.Reserved_Tickets], () => {
+    console.log(seatMapService.Reserved_Tickets)
     let userTicketsToLock = []
     let classesToRemove = Object.keys(TicketsTypes).map((x) => TicketsTypes[x])
     let tickets = TicketStore.Tickets.map((x) => x.id)
     seatMapService.Reserved_Tickets.forEach((item) => {
-        let chair =  document.querySelector(`[tid='${item}']`);
-        if(!chair)
-            return;
+        let chair = document.querySelector(`[tid='${item}']`)
+        if (!chair) return
 
         if (tickets.indexOf(item) !== -1) {
             TicketStore.removeTicket(item)
             userTicketsToLock.push(item)
         }
-        
-        if(chair.classList.contains(TicketsTypes['reserved-tickets']))
-        return;
+
+        if (chair.classList.contains(TicketsTypes['reserved-tickets'])) return
 
         chair?.classList.remove(...classesToRemove)
         chair?.classList.add(TicketsTypes['reserved-tickets'])
@@ -388,25 +378,23 @@ watch([()=>seatMapService.Reserved_Tickets], () => {
             showClass: { popup: 'direction-rtl vazir-font' }
         })
     }
-});
+})
 
-watch([()=>seatMapService.Locked_Tickets], () => {
+watch([() => seatMapService.Locked_Tickets], () => {
     console.log(seatMapService.Locked_Tickets)
     let userTicketsToLock = []
     let classesToRemove = Object.keys(TicketsTypes).map((x) => TicketsTypes[x])
     let tickets = TicketStore.Tickets.map((x) => x.id)
     seatMapService.Locked_Tickets.forEach((item) => {
-        let chair =  document.querySelector(`[tid='${item}']`);
-        if(!chair)
-            return;
+        let chair = document.querySelector(`[tid='${item}']`)
+        if (!chair) return
 
         if (tickets.indexOf(item) !== -1) {
             TicketStore.removeTicket(item)
             userTicketsToLock.push(item)
         }
-        
-        if(chair.classList.contains(TicketsTypes['reserved-tickets']))
-        return;
+
+        if (chair.classList.contains(TicketsTypes['reserved-tickets'])) return
 
         chair?.classList.remove(...classesToRemove)
         chair?.classList.add(TicketsTypes['waiting-tickets'])
@@ -439,9 +427,9 @@ watch([()=>seatMapService.Locked_Tickets], () => {
             showClass: { popup: 'direction-rtl vazir-font' }
         })
     }
-});
+})
 
-watch([()=>seatMapService.UnLocked_Tickets], () => {
+watch([() => seatMapService.UnLocked_Tickets], () => {
     console.log(seatMapService.UnLocked_Tickets)
     seatMapService.UnLocked_Tickets.forEach((item) => {
         let chair = document.querySelector(`[tid='${item}']`)
@@ -449,12 +437,11 @@ watch([()=>seatMapService.UnLocked_Tickets], () => {
             chair.classList.remove(TicketsTypes['waiting-tickets'])
         }
 
-        if(chair.classList.contains(TicketsTypes['reserved-tickets']))
-            return;
+        if (chair.classList.contains(TicketsTypes['reserved-tickets'])) return
 
         chair?.classList.add(TicketsTypes['free-tickets'])
     })
-});
+})
 
 function panZoomInit(map, index) {
     if (!map || !document.querySelector('#seatMap' + index)) return
@@ -481,11 +468,11 @@ function panZoomInit(map, index) {
     map.closest('#mapElm' + index).addEventListener('wheel', pzoom.zoomWithWheel)
     map.setAttribute('setup', 'true')
     map.querySelectorAll(`*[id^="f"][tid]`).forEach((item) => {
-        let ticket = Tickets.value[currentFloor.value].find((x) => x.id === item.getAttribute('tid'))
-
         tippy(item, {
             allowHTML: true,
             onTrigger(instance, event) {
+                let ticket = Tickets.value[currentFloor.value].find((x) => x.id === item.getAttribute('tid'))
+
                 let [floor, row, column] = item.id.split('_')
                 instance.setContent(` <div class="direction-rtl vazir-font text-right">
                 <p>طبقه : ${floor}</p>
@@ -498,7 +485,7 @@ function panZoomInit(map, index) {
         })
     })
 
-    map.querySelectorAll(`*[id^="f"]:not([tid])`).forEach((item) => {
+    map.querySelectorAll(`*[id^="f"][id*="_r"][id*="_c"]:not([tid])`).forEach((item) => {
         let [floor, row, column] = item.id.split('_')
 
         tippy(item, {
