@@ -2,7 +2,7 @@
 import Modal from '@/views/components/Globals/modal/modal.vue'
 import { computed } from 'vue'
 
-const props = defineProps({
+ const props = defineProps({
     show: Boolean,
     onCloseFn: Function,
     type: String,
@@ -10,7 +10,7 @@ const props = defineProps({
 })
 
 const title = computed(() => {
-    switch (type.toLowerCase()) {
+    switch (props.type.toLowerCase()) {
         case 'error':
             return 'خطا!'
         case 'info':
@@ -25,7 +25,7 @@ const title = computed(() => {
 })
 
 const titleIcon = computed(() => {
-    switch (type.toLowerCase()) {
+    switch (props.type.toLowerCase()) {
         case 'error':
             return 'خطا!'
         case 'info':

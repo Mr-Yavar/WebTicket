@@ -73,7 +73,7 @@
             </div>
         </vee-form>
 
-        <vee-form :validation-schema="schema2" @submit="updatePassword" autocomplete="off" v-slot="{ values }">
+        <vee-form :validation-schema="schema2" @submit="updatePassword" autocomplete="off" >
             <!-- Password -->
             <div class="mb-3 grid grid-cols-3">
                 <label class="inline-block text-xs md:text-sm leading-9 text-center text-gray-800 dark:text-gray-100">رمز فعلی </label>
@@ -124,14 +124,13 @@ import { computed } from 'vue'
 
 import { ErrorMessage } from 'vee-validate'
 import { useMutation } from '@tanstack/vue-query'
-import { registerService } from '@/services/AuthenticationService.js'
+
 import { ref } from 'vue'
 import Swal from 'sweetalert2'
-import { useAuthModalStore } from '@/stores/componentStore/authModal.js'
+
 import { sweetAlertAuthConfigure } from '@/config/alertConfigure.js'
 import Splitter from '@/views/components/Splitter/Splitter.vue'
-import { current } from '@material-tailwind/html/theme/base/colors'
-import { method } from 'lodash'
+
 
 const userStore = useUserStore()
 const queryKey = computed(() => [{ url: '/api/Account/GetProfile' }])
@@ -178,7 +177,7 @@ const GetNewIdentity = useQuery({
     enabled: false
 })
 
-const authModal = useAuthModalStore()
+
 
 const schema1 = {
     firstName: 'required|min:3|max:100|persian_text',
@@ -222,7 +221,7 @@ async function updateProfile(values) {
             onMutate: () => {
                 form_in_progress.value = true
             },
-            onSuccess: async (e) => {
+            onSuccess: async () => {
                
                 form_in_progress.value = false
 
@@ -274,7 +273,7 @@ async function updatePassword(values) {
             onMutate: () => {
                 form_password_in_progress.value = true
             },
-            onSuccess: async (e) => {
+            onSuccess: async () => {
                 
                 form_password_in_progress.value = false
                 await Swal.fire({

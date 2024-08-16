@@ -1,8 +1,22 @@
 <template>
+   
+    <div class="grid grid-cols-4">
+        <div class="my-2 mx-1 flex flex-row">
+            <vue-to-print :content="getComponentToPrint" document-title="تیکتها" :copy-styles="true" :body-class="'vazir-font direction-rtl w-full'">
+                <template #trigger>
+                    <button class="items-center px-2 py-1 w-fit border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">چاپ</button>
+                </template>
+            </vue-to-print>
+        </div>
+    
+    </div>
+
     <div v-if="GetUserReservation.isLoading.value">
         <PrSpinner class="animate-spin block w-full mx-auto text-3xl mt-8" />
     </div>
     <template v-else>
+
+
         <PerfectScrollbar>
             <div ref="componentRef">
                 <template v-for="ticket in data" :key="ticket.id">
@@ -25,20 +39,11 @@ import { sendRequest } from '@/services/service'
 import useUserStore from '@/stores/user'
 import TicketForPrint from '@/views/components/Pages/Event/TicketForPrint.vue'
 import { useQuery } from '@tanstack/vue-query'
-// Import Swiper Vue.js components
-import { Swiper, SwiperSlide } from 'swiper/vue'
 
-// Import Swiper styles
-import 'swiper/css'
-
-import 'swiper/css/scrollbar'
-import 'swiper/css/navigation'
-import 'swiper/css/pagination'
-// import required modules
-import { Scrollbar, Navigation, Pagination, Thumbs } from 'swiper/modules'
 import { useRoute, useRouter } from 'vue-router'
 import { computed } from 'vue'
 import { Guid } from '@/config/helper'
+import { ref } from 'vue'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -47,7 +52,10 @@ function GoToHome() {
         name: 'home'
     })
 };
-
+const componentRef = ref();
+const getComponentToPrint = () => {
+    return componentRef.value
+};
 const route = useRoute();
 const reservationId = computed(()=>Guid({}).fromCompressedToFull(route.params.reservationId));
 const GetUserReservation = useQuery({

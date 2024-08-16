@@ -19,6 +19,8 @@
     </div>
 </template>
 <script>
+
+
 export default {
     name: 'Splitter',
     props: {
@@ -38,6 +40,8 @@ export default {
             type: String
         }
     }
-}
+};
+
+
 </script>
 <style></style>

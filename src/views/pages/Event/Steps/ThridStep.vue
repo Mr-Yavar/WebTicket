@@ -46,7 +46,7 @@
         <template #nextBtn>
             <button v-if="!GetUserTempoReservation.isError.value && GetUserTempoReservation.data.value?.amount != -1 && GetUserTempoReservation.data.value?.tickets.length !== 0" class="select-none rounded-lg bg-green-500 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-green-500/20 transition-all hover:shadow-lg hover:shadow-green-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 w-[40px]disabled:shadow-none" @click.prevent="onNext">
                 <span v-show="!isPending">پرداخت</span>
-                <span v-show="isPending && !isError"><PrSpinner class="animate-spin block w-full mx-auto text-lg w-[40px]" /></span>
+                <span v-show="isPending && !isError"><PrSpinner class="animate-spin block  mx-auto text-lg w-[40px]" /></span>
             </button>
             <span v-else></span>
         </template>
@@ -81,7 +81,7 @@ const seatMapService = useSeatMapStore()
 const usedDiscount = ref('')
 const discountHasError = ref(false)
 const userStore = useUserStore()
-const { mutate, isPending, isSuccess } = useMutation({
+const { mutate, isPending } = useMutation({
     mutationKey: ['Reservation'],
     mutationFn: CRPlacesService
 })
@@ -259,7 +259,7 @@ async function onPreviuos() {
             }
         },
         {
-            onSuccess: async (data) => {
+            onSuccess: async () => {
                 try {
                     await seatMapService.notifyUnLockTickets()
                 } catch (e) {

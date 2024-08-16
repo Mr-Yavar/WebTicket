@@ -4,7 +4,7 @@ import { FlFilledZoomFit } from '@kalimahapps/vue-icons/fl'
 import { Field, useFieldArray, useForm } from 'vee-validate'
 import Splitter from '@/views/components/Splitter/Splitter.vue'
 import { useMutation, useQuery } from '@tanstack/vue-query'
-import { CRPlacesService, GetHallService } from '@/services/PlacesService.js'
+import { CRPlacesService } from '@/services/PlacesService.js'
 import { CiCircleChevLeft } from '@kalimahapps/vue-icons/ci'
 import Swal from 'sweetalert2'
 import { useRoute, useRouter } from 'vue-router'
@@ -25,15 +25,18 @@ const route = useRoute()
 // تنظمیات فرم
 const { resetForm, defineField, handleSubmit, values, setFieldValue } = useForm({})
 const [concertTitle] = defineField('concert.title')
+// eslint-disable-next-line no-unused-vars
 const [concertDesc] = defineField('concert.description')
 const cocertCardImage = defineField('concert.image')
+// eslint-disable-next-line no-unused-vars
 const concertStartDate = defineField('concert.startdate')
+// eslint-disable-next-line no-unused-vars
 const cocertEndDate = defineField('concert.enddate')
 const cocertPosterImage = defineField('concert.poster')
 const [concertCategory] = defineField('concert.category')
 const [concertPlace] = defineField('concert.place')
 const [concertPromoter] = defineField('concert.promoter')
-const { push, remove, fields, replace } = useFieldArray('events')
+const { push, remove, fields } = useFieldArray('events')
 const eventFields = {
     EventId: undefined,
     hallId: null,
@@ -129,7 +132,7 @@ const onSubmit = handleSubmit(async (data) => {
                 method: 'POST'
             },
             {
-                onSuccess: async (data) => {
+                onSuccess: async () => {
                     await Swal.fire({
                         text: 'با موفقیت ایجاد شد!',
                         icon: 'success',
@@ -151,7 +154,7 @@ const onSubmit = handleSubmit(async (data) => {
                 method: 'PATCH'
             },
             {
-                onSuccess: async (data) => {
+                onSuccess: async () => {
                     await Swal.fire({
                         text: 'با موفقیت بروز شد!',
                         icon: 'success',
@@ -406,7 +409,7 @@ function setEndSaleEvent(e) {
     if (!endDate || e.valueOf() > endDate.valueOf()) setFieldValue('concert.enddate', e.toDate())
 }
 
-function setExecEvent(e, eventId) {}
+function setExecEvent() {}
 
 watch([getConceretServiceCall.data], async () => {
     //JSON.parse(JSON.stringify(getConceretServiceCall.data.value),toCamelCase));
@@ -657,7 +660,7 @@ function addNewEvent() {
                                     </div>
                                     <div class="flex items-center justify-around col-span-1 px-4 mt-1 select-none">
                                         <label class="block text-xs font-medium text-gray-700 text-nowrap">پاک کن:</label>
-                                        <Field v-slot="{ field, value }" type="checkbox" :name="`events[${id}].cleaner`" :value="true" :unchecked-value="false">
+                                        <Field v-slot="{ field }" type="checkbox" :name="`events[${id}].cleaner`" :value="true" :unchecked-value="false">
                                             <span
                                                 :class="{ 'strikethrough-v2': !field.checked }"
                                                 @click.prevent="
@@ -676,7 +679,7 @@ function addNewEvent() {
                                     </div>
                                     <div class="flex items-center justify-around col-span-1 px-4 mt-1 select-none">
                                         <label class="block text-xs font-medium text-gray-700 text-nowrap">قفل اشاره گر:</label>
-                                        <Field v-slot="{ field, value }" type="checkbox" :name="`events[${id}].lock`" :value="true" :unchecked-value="false">
+                                        <Field v-slot="{ field }" type="checkbox" :name="`events[${id}].lock`" :value="true" :unchecked-value="false">
                                             <span v-if="field.checked" @click.prevent="setFieldValue(`events[${id}].lock`, false)" class="text-xl cursor-pointer">🔒</span>
                                             <span v-else @click.prevent="setFieldValue(`events[${id}].lock`, true)" class="text-xl cursor-pointer">🔓</span>
                                             <input type="checkbox" v-bind="field" :value="true" class="hidden w-4 h-4 mt-1 accent accent-blue-gray-800" />
@@ -684,10 +687,10 @@ function addNewEvent() {
                                     </div>
                                     <div class="grid gap-1 my-2 sm:grid-cols-2 md:grid-cols-4 col-span-full xl:grid-cols-8">
                                         <button
-                                            v-for="(price, key) in Object.keys(priceClassColor[id] ?? {})"
+                                            v-for="(price) in Object.keys(priceClassColor[id] ?? {})"
                                             :key="'price' + price"
                                             class="align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-1 px-2 rounded-md border border-gray-900 text-gray-900 focus:ring focus:ring-gray-300 active:opacity-[0.85] flex items-center gap-3 justify-between"
-                                            :class="{ 'ring ring-gray-500 ring-1': price == values.events[id].price }"
+                                            :class="{ ' ring-gray-500 ring-1': price == values.events[id].price }"
                                             @click.prevent="
                                                 () => {
                                                     setFieldValue(`events.${id}.cleaner`, false)
@@ -746,7 +749,7 @@ function addNewEvent() {
                         <div class="my-2 col-span-full">
                             <div class="flex items-center">
                                 <hr class="flex-grow border-t border-gray-300" />
-                                <span class="px-3 text-gray-500 flex w-fit grid grid-cols-3 w-[300px] gap-1">
+                                <span class="px-3 text-gray-500 w-fit grid grid-cols-3 gap-1">
                                     <div class="col-span-2">
                                         <vue-Select-Umd v-model="tempHallId" :options="halls ?? []" :reduce="(h) => h.value" label="label" class="mt-1 py-1 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md style-chooser">
                                             <template #selected-option="{ label, parent }">

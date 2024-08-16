@@ -58,7 +58,7 @@ import { Guid } from '@/config/helper'
 import { sendRequest } from '@/services/service'
 import useTicketStore from '@/stores/Ticket.js'
 import { useMutation, useQuery } from '@tanstack/vue-query'
-import { computed, ref, watch, watchEffect } from 'vue'
+import { computed,  watch, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import ControlSteps from './Steps/controlSteps.vue'
 import useUserStore from '@/stores/user'
@@ -71,7 +71,7 @@ import SwalWarningIcon from '@/views/components/Globals/SwalIcons/SwalWarningIco
 import SwalErrorIcon from '@/views/components/Globals/SwalIcons/SwalErrorIcon.vue'
 import SwalSuccessIcon from '@/views/components/Globals/SwalIcons/SwalSuccessIcon.vue'
 
-const props = defineProps({
+ defineProps({
     stepControls: Object,
     toNext: Function,
     toPrevious: Function
@@ -88,20 +88,20 @@ const { mutate ,isPending} = useMutation({
     mutationFn: CRPlacesService
 });
 
-const GetSpecificConcertServiceCallKey = computed(() => ['/api/Concerts/GetConcertInfo/', route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id)]);
-const GetSpecificConcertServiceCall = useQuery({
-    queryKey: GetSpecificConcertServiceCallKey,
-    queryFn: async ({ queryKey }) => {
-        return sendRequest({
-            url: queryKey.join(''),
-            method: 'Get'
-        })
-    },
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    refetchInterval: false,
-    enabled: true
-});
+// const GetSpecificConcertServiceCallKey = computed(() => ['/api/Concerts/GetConcertInfo/', route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id)]);
+// const GetSpecificConcertServiceCall = useQuery({
+//     queryKey: GetSpecificConcertServiceCallKey,
+//     queryFn: async ({ queryKey }) => {
+//         return sendRequest({
+//             url: queryKey.join(''),
+//             method: 'Get'
+//         })
+//     },
+//     refetchOnMount: false,
+//     refetchOnWindowFocus: false,
+//     refetchInterval: false,
+//     enabled: true
+// });
 
 const GetUserTempoReservation = useQuery({
     queryKey: ['/api/Concerts/GetReservation'],
@@ -130,12 +130,12 @@ watch([GetUserTempoReservation.data], () => {
     })
 })
 
-const amount = computed(() => (GetUserTempoReservation.data.value?.amount > 0 ? GetUserTempoReservation.data.value?.amount : 0))
+//const amount = computed(() => (GetUserTempoReservation.data.value?.amount > 0 ? GetUserTempoReservation.data.value?.amount : 0));
 const expirationTimeOut = computed(() => (new Date(GetUserTempoReservation.data.value?.expirationDate) - new Date() > 0 ? new Date(GetUserTempoReservation.data.value?.expirationDate) - new Date() : 0))
 
-const concert = computed(() => GetSpecificConcertServiceCall.data.value)
-const ChosenEvent = computed(() => Guid({}).fromCompressedToFull(route.params.eventId))
-const ChosenConcert = computed(() => Guid({}).fromCompressedToFull(route.params.id))
+//const concert = computed(() => GetSpecificConcertServiceCall.data.value)
+//const ChosenEvent = computed(() => Guid({}).fromCompressedToFull(route.params.eventId))
+//const ChosenConcert = computed(() => Guid({}).fromCompressedToFull(route.params.id))
 const transactionId = computed(() => Guid({}).fromCompressedToFull(route.params.txId))
 
 const resultOfVerify = reactive({ result : {} });
@@ -249,30 +249,7 @@ async function onPreviuos() {
     })
 
     return true
-    await mutate(
-        {
-            url: '/api/Concerts/RemoveFromResevation?api-version=1.0',
-            body: JSON.stringify(GetUserTempoReservation.data.value.tempReservationId),
-            method: 'POST',
-            headers: {
-                'Content-type': 'application/json',
-                Authorization: 'Bearer ' + userStore.accessToken
-            }
-        },
-        {
-            onSuccess: async (data) => {
-                try {
-                    await seatMapService.notifyUnLockTickets()
-                } catch (e) {
-                    return false
-                }
-
-                await seatMapService.JoinGroup(ChosenEvent.value)
-
-                props.toPrevious()
-            }
-        }
-    )
+ 
 }
 </script>
 <style scoped></style>

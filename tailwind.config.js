@@ -5,6 +5,16 @@ export default withMT({
     darkMode: 'selector',
     content: ['./index.html', './src/**/*.{vue,html,css}'],
     plugins: [],
+    rules: {
+        'at-rule-no-unknown': [
+            true,
+            {
+                ignoreAtRules: ['tailwind', 'apply', 'variants', 'responsive', 'screen']
+            }
+        ],
+        'declaration-block-trailing-semicolon': null,
+        'no-descending-specificity': null
+    },
     theme: {
         container: {
             center: true

@@ -7,7 +7,7 @@ import { ref } from 'vue'
 import { computed } from 'vue'
 
 import EditConcertModal from '@/views/components/Layouts/AdminLayout/Modal/EditConcertModal.vue'
-import Swal from 'sweetalert2'
+
 const pageIndex = ref(0);
 const pageSize = ref(10);
 const queryKey = computed(() => [{ url: '/api/Manager/GetAllConcerts', pageSize: pageSize.value, currentPage: pageIndex.value + 1 }]);
@@ -65,12 +65,7 @@ const selectedConcert = ref('');
             <DataTable_V1
             class="!rounded-md overflow-hidden md:text-sm text-xs"
                 :columns="[
-                    {
-                        title: '#',
-                        key: 'concertid',
-                        tdClass : 'md:table-cell hidden',
-                        thClass : 'md:table-cell hidden',
-                    },
+                 
                     {
                         title: 'عنوان',
                         key: 'title',
@@ -120,7 +115,7 @@ const selectedConcert = ref('');
                 :trClass="'odd:bg-white even:bg-gray-100'"
                 :scrollBarHeight="'calc(100dvh - 300px)'"
             >
-                <template #[`tbodyconcertid`]="{ data }">{{ '-' }}</template>
+              
                 <template #[`tbodytitle`]="{ data }">{{ data.title }}</template>
                 <template #[`tbodypromoter.title`]="{ data }">{{ data.promoter.title }}</template>
                 <template #[`tbodyplace.name`]="{ data }">{{ data.place.name }}</template>

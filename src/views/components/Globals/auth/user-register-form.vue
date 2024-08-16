@@ -85,7 +85,6 @@
 import { ErrorMessage } from 'vee-validate'
 import { useMutation } from '@tanstack/vue-query'
 import { registerService } from '@/services/AuthenticationService.js'
-import sweatalert2 from 'sweetalert2'
 import { ref } from 'vue'
 import Swal from 'sweetalert2'
 import { useAuthModalStore } from '@/stores/componentStore/authModal.js'

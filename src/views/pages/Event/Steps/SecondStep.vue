@@ -21,7 +21,7 @@
             <div class="col-span-full">
                 <div class="p-2 rounded-2xl shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset]">
                     <div class="tabs grid flex-end align-center tabs-boxed mb-2 !bg-gray-100 dark:bg-gray-600 !text-black dark:!text-white" role="tablist">
-                        <template v-for="(floor, index) in Floors" :key="`tab` + floor">
+                        <template v-for="(floor) in Floors" :key="`tab` + floor">
                             <a :class="{ 'tab-active': tab === floor }" class="tab" role="tab" @click.prevent="changeTab(floor)">{{ floor }}</a>
                         </template>
                     </div>
@@ -61,7 +61,7 @@
         <div class="grid md:grid-cols-2 grid-cols-1 mt-2 gap-2 p-4 rounded-2xl shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset]">
             <div class="col-span-full dark:text-gray-200 text-black font-bold">بلیت های انتخابی شما:</div>
             <div v-if="TicketStore.Tickets.length === 0" class="col-span-full text-center dark:text-gray-200 text-black text-md font-bold">هیچ بلیتی انتخاب نشده است!</div>
-            <SelectedTicket :concertTitle="concert?.title" v-for="(item, key) in TicketStore.Tickets ?? []" :key="item.id" :handleDelete="() => handleClickOnDeleteSeat(item.id)" :has-delete="true" :index="item.id" :seatInfo="item" />
+            <SelectedTicket :concertTitle="concert?.title" v-for="(item) in TicketStore.Tickets ?? []" :key="item.id" :handleDelete="() => handleClickOnDeleteSeat(item.id)" :has-delete="true" :index="item.id" :seatInfo="item" />
         </div>
     </div>
 
@@ -71,14 +71,15 @@
 <script setup>
 import 'vue-zoomable/dist/style.css'
 import { FlFilledZoomFit } from '@kalimahapps/vue-icons/fl'
+import { PxZoomIn,PxZoomOut } from '@kalimahapps/vue-icons/px'
+
 import { computed, ref, useCssModule, watch, watchEffect } from 'vue'
 import SelectedTicket from '@/views/components/Pages/Event/SelectedTicket.vue'
 import useTicketStore from '@/stores/Ticket.js'
 import Panzoom from '@panzoom/panzoom'
 import tippy from 'tippy.js'
 import { Guid } from '@/config/helper'
-import { useRafFn } from '@vueuse/core'
-import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
+import {useRoute } from 'vue-router'
 import ControlSteps from './controlSteps.vue'
 import useUserStore from '@/stores/user'
 import { useMutation, useQuery } from '@tanstack/vue-query'
@@ -274,7 +275,7 @@ const Tickets = computed(() => {
 const currentFloor = computed(() => GetSpecificEventServiceCall.data.value?.events[0].floors.filter((x) => x.title === tab.value)[0]?.displayOrder)
 watchEffect(async () => {
     if (GetSpecificEventServiceCall.data.value?.events[0] !== undefined)
-        for (let floor of GetSpecificEventServiceCall.data.value?.events[0]?.floors) {
+        for (let floor of (GetSpecificEventServiceCall.data.value?.events[0]?.floors ?? [])) {
             let res = await GetSeatMapService(floor.seatMap_url)
 
             let dom = new DOMParser()

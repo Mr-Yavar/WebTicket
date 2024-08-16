@@ -1,8 +1,8 @@
 <script setup>
-import Select from '@/views/components/Select/Select.vue'
+
 import SearchBox from '@/views/components/Select/SearchBox.vue'
 import Splitter from '@/views/components/Splitter/Splitter.vue'
-import CardItem from '@/views/components/Pages/Home/CardItem.vue'
+
 import Carousel from '@/views/components/Slider/Carousel.vue'
 import Vselect from 'vue-select'
 import Cities from '@/assets/data/city.json'
@@ -10,7 +10,7 @@ import { useQuery } from '@tanstack/vue-query'
 import { sendRequest } from '@/services/service'
 import { computed } from 'vue'
 import { ref } from 'vue'
-import SkeletonCardItem from '@/views/components/Pages/Home/SkeletonCardItem.vue'
+
 
 const getCategoryServiceCall = useQuery({
     queryKey: ['/api/BaseInfo/GetCategories'],

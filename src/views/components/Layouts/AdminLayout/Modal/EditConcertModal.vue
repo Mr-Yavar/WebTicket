@@ -49,8 +49,10 @@ const props = defineProps({
     onCloseFn: Function,
     concertId: String
 })
-const { resetForm, defineField, handleSubmit, values, setFieldValue } = useForm({})
+const { resetForm, defineField, handleSubmit } = useForm({})
+// eslint-disable-next-line no-unused-vars
 const concertStartDate = defineField('concert.startdate')
+// eslint-disable-next-line no-unused-vars
 const cocertEndDate = defineField('concert.enddate')
 const isEnable = computed(() => !!props.concertId)
 const queryKey = computed(() => ['/api/Manager/GetConcertInfo/', props.concertId])
@@ -126,7 +128,7 @@ const onSubmit = handleSubmit(async (data) => {
             method: 'PATCH'
         },
         {
-            onSuccess: async (data) => {
+            onSuccess: async () => {
                 await Swal.fire({
                     text: 'با موفقیت بروز شد!',
                     icon: 'success',

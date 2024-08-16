@@ -26,7 +26,9 @@ const layout = computed(() => {
     return 'div'
 })
 
+// eslint-disable-next-line no-unused-vars
 const seatmap = useSeatMapStore()
+// eslint-disable-next-line no-unused-vars
 const TicketStore = useTicketStore()
 const UserStore = useUserStore()
 

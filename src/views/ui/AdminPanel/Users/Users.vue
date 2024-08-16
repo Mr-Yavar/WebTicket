@@ -20,12 +20,7 @@
             <DataTable_V1
                 class="!rounded-md overflow-hidden md:text-sm text-xs"
                 :columns="[
-                    {
-                        title: '#',
-                        key: 'id',
-                        tdClass: 'md:table-cell hidden',
-                        thClass: 'md:table-cell hidden'
-                    },
+                  
                     {
                         title: 'نام و نام خانوادگی',
                         key: 'title',
@@ -57,7 +52,7 @@
                 :trClass="'odd:bg-white even:bg-gray-100'"
                 :scrollBarHeight="'calc(100dvh - 350px)'"
             >
-                <template #[`tbodyid`]="{ data }">{{ '-' }}</template>
+                
                 <template #[`tbodytitle`]="{ data }">{{ data.firstName + ' ' + data.lastName }}</template>
                 <template #[`tbodyuserName`]="{ data }">{{ data.userName }}</template>
                 <template #[`tbodyphoneNumber`]="{ data }">{{ data.phoneNumber }}</template>
@@ -165,7 +160,6 @@ const totalCount = computed(() => GetUsers.data.value?.totalCount ?? 0)
 
 const totalPage = computed(() => Math.ceil(totalCount.value / pageSize.value))
 
-const dateFormat = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }
 
 function action(step) {
     if (step > 0 && pageIndex.value + step >= totalPage.value) return

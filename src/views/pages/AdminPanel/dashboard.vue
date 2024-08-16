@@ -1,6 +1,7 @@
 <script setup>
 import { FaMoneyBillTrendUp } from '@kalimahapps/vue-icons/fa'
 import DataTable_V1 from '@/views/components/Globals/DataTables/DataTable_V1.vue'
+import { ByChevronLeft } from '@kalimahapps/vue-icons/by';
 import { computed, ref } from 'vue'
 import { sendRequest } from '@/services/service'
 import { useQuery } from '@tanstack/vue-query'
@@ -131,7 +132,7 @@ function action(step) {
                                     <time :datetime="transaction.datetime">{{ transaction.date }}</time>
                                 </span>
                             </span>
-                            <ChevronLeftIcon class="flex-shrink-0 h-5 w-5 text-gray-400" aria-hidden="true" />
+                            <ByChevronLeft class="flex-shrink-0 h-5 w-5 text-gray-400" aria-hidden="true" />
                         </span>
                     </a>
                 </li>
@@ -153,12 +154,7 @@ function action(step) {
                         <DataTable_V1
                             class="!rounded-md overflow-hidden"
                             :columns="[
-                                {
-                                    title: '#',
-                                    key: 'concertid',
-                                    thClass : 'md:table-cell hidden',
-                                    tdClass : 'md:table-cell hidden',
-                                },
+                              
                                 {
                                     title: 'عنوان',
                                     key: 'title',
@@ -212,7 +208,7 @@ function action(step) {
                             :trClass="'odd:bg-white even:bg-gray-100'"
                             :scrollBarHeight="'calc(100dvh - 500px)'"
                         >
-                            <template #[`tbodyconcertid`]="{ data }">{{ '-' }}</template>
+                          
                             <template #[`tbodytitle`]="{ data }">{{ data.title }}</template>
                             <template #[`tbodypromoter.title`]="{ data }">{{ data.promoter.title }}</template>
                             <template #[`tbodyplace.name`]="{ data }">{{ data.place.name }}</template>

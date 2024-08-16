@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 import UserRegisterForm from '@/views/components/Globals/auth/user-register-form.vue'
 import Modal from '@/views/components/Globals/modal/modal.vue'
 import { useAuthModalStore } from '@/stores/componentStore/authModal.js'

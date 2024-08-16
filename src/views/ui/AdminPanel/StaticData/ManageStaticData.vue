@@ -47,7 +47,7 @@
                     <template v-for="(filed, id) in fields" :key="'event' + id">
                         <div class="grid grid-cols-5 gap-2 odd:bg-gray-50 even:bg-gray-100 py-2">
                             <div class="md:col-span-1 col-span-2">
-                                <Field :name="`dynparams[${id}].valueType`" v-slot="{ filed, componentField }">
+                                <Field :name="`dynparams[${id}].valueType`" v-slot="{ componentField }">
                                     <vueSelectUmd
                                         :appendToBody="true"
                                         :clearable="false"
@@ -79,7 +79,7 @@
                                 </Field>
                             </div>
                             <div class="md:col-span-4 col-span-3 flex">
-                                <Field :name="`dynparams[${id}].value`" v-slot="{ field, componentField }">
+                                <Field :name="`dynparams[${id}].value`" v-slot="{ field }">
                                     <template v-if="values.dynparams?.[id]?.valueType == 0">
                                         <input
                                             class="mt-1 py-2 bg-white border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-900 rounded-md"
@@ -150,7 +150,7 @@ import { sendRequest } from '@/services/service';
 import { Field, useFieldArray, useForm } from 'vee-validate';
 import { FILE_PROVIDER2 } from '@/config/appConfig';
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar';
-import { useRouter } from 'vue-router';
+
 import { CRPlacesService } from '@/services/PlacesService';
 import Swal from 'sweetalert2';
 
@@ -202,9 +202,10 @@ const GetAllChildern = useQuery({
     enabled: GetAllChildernEnable
 });
 
-const router = useRouter();
+
 const { resetForm, defineField, handleSubmit, values, setFieldValue } = useForm({})
-const { push, remove, fields, replace } = useFieldArray('dynparams')
+const { push, remove, fields } = useFieldArray('dynparams')
+// eslint-disable-next-line no-unused-vars
 const _ = defineField('garbage')
 
 const ItemFields = {
@@ -265,6 +266,7 @@ const onSubmit = handleSubmit(async (data) => {
                 offset++;
             }
         }else{
+            // eslint-disable-next-line no-unused-vars
             const {file,...rest} = item;
             innerValues.push(rest);
         }
@@ -297,7 +299,7 @@ const onSubmit = handleSubmit(async (data) => {
                 method: 'POST'
             },
             {
-                onSuccess: async (data) => {
+                onSuccess: async () => {
                     await Swal.fire({
                         text: 'تغییرات با موفقیت اعمال شد',
                         icon: 'success',

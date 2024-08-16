@@ -2,7 +2,7 @@
 import { ClAddPlus } from '@kalimahapps/vue-icons/cl'
 import PromoterCard from '@/views/components/Layouts/AdminLayout/Cards/PromoterCard.vue'
 import { PrSpinner } from '@kalimahapps/vue-icons/pr'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useMutation } from '@tanstack/vue-query'
 const router = useRouter()
 import { useQuery } from '@tanstack/vue-query'
@@ -10,7 +10,7 @@ import { useQuery } from '@tanstack/vue-query'
 import Splitter from '@/views/components/Splitter/Splitter.vue'
 import Swal from 'sweetalert2'
 import { sendRequest } from '@/services/service'
-import { watch } from 'vue'
+
 
 const GetAllPromoterServiceCall = useQuery({
     queryKey: ['/api/Promoters/GetAllPromoters'],

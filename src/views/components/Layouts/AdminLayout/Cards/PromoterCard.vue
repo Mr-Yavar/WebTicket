@@ -3,7 +3,7 @@ import { BsLightningCharge } from '@kalimahapps/vue-icons/bs'
 import { RePencilLine } from '@kalimahapps/vue-icons/re'
 import { BsLightningChargeFill } from '@kalimahapps/vue-icons/bs'
 import { useRouter } from 'vue-router'
-import { FILE_PROVIDER, FILE_PROVIDER2 } from '@/config/appConfig'
+import {  FILE_PROVIDER2 } from '@/config/appConfig'
 
 defineProps({
     promoter: Object,

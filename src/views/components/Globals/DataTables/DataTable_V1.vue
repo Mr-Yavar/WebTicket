@@ -32,7 +32,7 @@
 import { PerfectScrollbar  } from 'vue3-perfect-scrollbar';
 
 
-const props = defineProps({
+defineProps({
     columns: Object,
     data: Array,
     tableClass: String,

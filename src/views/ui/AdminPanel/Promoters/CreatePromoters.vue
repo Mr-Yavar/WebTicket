@@ -85,7 +85,7 @@ const onSubmit = handleSubmit(async (data) => {
                 method: 'POST'
             },
             {
-                onSuccess: async (data) => {
+                onSuccess: async () => {
                     await Swal.fire({
                         text: 'با موفقیت ایجاد شد!',
                         icon: 'success',
@@ -107,7 +107,7 @@ const onSubmit = handleSubmit(async (data) => {
                 method: 'PUT'
             },
             {
-                onSuccess: async (data) => {
+                onSuccess: async () => {
                     await Swal.fire({
                         text: 'با موفقیت بروز شد!',
                         icon: 'success',

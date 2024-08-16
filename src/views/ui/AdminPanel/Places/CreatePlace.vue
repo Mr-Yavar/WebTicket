@@ -1,12 +1,12 @@
 <script setup>
 import { useForm } from 'vee-validate'
 import Splitter from '@/views/components/Splitter/Splitter.vue'
-import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/vue-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { CRPlacesService, GetPlaceService } from '@/services/PlacesService.js'
 import { CiCircleChevLeft } from '@kalimahapps/vue-icons/ci'
 import Swal from 'sweetalert2'
 import { useRoute, useRouter } from 'vue-router'
-import { reactive, ref, watch, watchEffect } from 'vue'
+import { reactive,  watch, watchEffect } from 'vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -17,7 +17,7 @@ import nmp_mapboxgl from '@neshan-maps-platform/mapbox-gl'
 import { MAP_API, MAP_SERVICE_API } from '@/config/appConfig'
 import { computed } from 'vue'
 import { nextTick } from 'vue'
-import PlaceCard from '@/views/components/Layouts/AdminLayout/Cards/PlaceCard.vue'
+
 const placeId = !route.params.id ? null : route.params.id;
 const getPlaceServiceCall = useQuery({
     queryKey: ['api/place/GetPlaceService', route.params.id],
@@ -149,7 +149,7 @@ const onSubmit = handleSubmit(async (data) => {
                 method: 'POST'
             },
             {
-                onSuccess: async (data) => {
+                onSuccess: async () => {
                     await Swal.fire({
                         text: 'با موفقیت ایجاد شد!',
                         icon: 'success',
@@ -171,7 +171,7 @@ const onSubmit = handleSubmit(async (data) => {
                 method: 'PUT'
             },
             {
-                onSuccess: async (data) => {
+                onSuccess: async () => {
                     await Swal.fire({
                         text: 'با موفقیت بروز شد!',
                         icon: 'success',

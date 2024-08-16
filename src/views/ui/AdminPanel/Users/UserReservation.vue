@@ -106,7 +106,7 @@ import { computed } from 'vue'
 import { ref } from 'vue'
 import useUserStore from '@/stores/user'
 import Splitter from '@/views/components/Splitter/Splitter.vue'
-import { Guid } from '@/config/helper'
+
 import { useRoute } from 'vue-router'
 const pageIndex = ref(0)
 const pageSize = ref(10)

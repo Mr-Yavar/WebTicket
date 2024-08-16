@@ -56,12 +56,7 @@ function action(step) {
             <DataTable_V1
             class="!rounded-md overflow-hidden md:text-sm text-xs"
                 :columns="[
-                    {
-                        title: '#',
-                        key: 'id',
-                        tdClass : 'md:table-cell hidden',
-                        thClass : 'md:table-cell hidden',
-                    },
+                
                     {
                         title: 'عنوان',
                         key: 'title',
@@ -111,7 +106,7 @@ function action(step) {
                 :trClass="'odd:bg-white even:bg-gray-100'"
                 :scrollBarHeight="'calc(100dvh - 300px)'"
             >
-                <template #[`tbodyid`]="{ data }">{{ '-' }}</template>
+             
                 <template #[`tbodytitle`]="{ data }">{{ data.title }}</template>
                 <template #[`tbodycode`]="{ data }">{{ data.code }}</template>
                 <template #[`tbodyActive`]="{ data }">{{ data.isActive ? '✅' : '❌' }}</template>

@@ -1,12 +1,12 @@
 <script setup>
-import { Field, useForm } from 'vee-validate'
+import {  useForm } from 'vee-validate'
 import Splitter from '@/views/components/Splitter/Splitter.vue'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
-import { CRPlacesService, GetPlaceService } from '@/services/PlacesService.js'
+import { useMutation, useQuery } from '@tanstack/vue-query'
+import { CRPlacesService } from '@/services/PlacesService.js'
 import { CiCircleChevLeft } from '@kalimahapps/vue-icons/ci'
 import Swal from 'sweetalert2'
 import { useRoute, useRouter } from 'vue-router'
-import { reactive, ref, watch, watchEffect } from 'vue'
+import {  ref, watch, watchEffect } from 'vue'
 import Cities from '@/assets/data/city.json'
 const router = useRouter()
 const route = useRoute()
@@ -28,21 +28,13 @@ const getDiscountServiceCall = useQuery({
         refetchOnMount:true,
     enabled: !!discountId
 })
-const { resetForm, defineField, handleSubmit, setFieldValue, values } = useForm({
+const { resetForm, defineField, handleSubmit } = useForm({
     initialValues: {
         discount: {}
     },
 })
 
-const dp = {
-    numberingSystem: 'latn',
-    month: '2-digit',
-    day: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false
-}
+
 
 const [dTitle] = defineField('discount.title');
 const [dPercentage] = defineField('discount.percentage');
@@ -102,7 +94,7 @@ const onSubmit = handleSubmit(async (data) => {
                 }
             },
             {
-                onSuccess: async (data) => {
+                onSuccess: async () => {
                     await Swal.fire({
                         text: 'با موفقیت ایجاد شد!',
                         icon: 'success',
@@ -127,7 +119,7 @@ const onSubmit = handleSubmit(async (data) => {
                 }
             },
             {
-                onSuccess: async (data) => {
+                onSuccess: async () => {
                     await Swal.fire({
                         text: 'با موفقیت بروز شد!',
                         icon: 'success',

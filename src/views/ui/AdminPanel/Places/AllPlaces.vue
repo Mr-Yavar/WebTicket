@@ -12,6 +12,7 @@ import Splitter from '@/views/components/Splitter/Splitter.vue'
 import Swal from 'sweetalert2'
 import Cities from '@/assets/data/city.json';
 
+// eslint-disable-next-line no-unused-vars
 const GetAllCities = useQuery({
     queryKey: ['AllCities'],
     queryFn: ()=>Cities,

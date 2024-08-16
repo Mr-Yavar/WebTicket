@@ -212,10 +212,6 @@ export default {
 
         return { concert, router, route,seatMap, handleStartMap, toggleTermsModal, termsAgreed, TicketStore, eventsDate ,MapTypes,Guid,fileUrl,mapKey,showTermsModal,}
         // same as beforeRouteUpdate option but with no access to `this`
-    },
-    beforeRouteEnter: async (to, from, next) => {
-        console.log(to, from, next);
-        next();
     }
 }
 

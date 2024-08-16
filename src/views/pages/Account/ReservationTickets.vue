@@ -37,17 +37,7 @@ import useUserStore from '@/stores/user'
 import TicketForPrint from '@/views/components/Pages/Event/TicketForPrint.vue'
 import { useQuery } from '@tanstack/vue-query'
 import { CiCircleChevLeft } from '@kalimahapps/vue-icons/ci'
-// Import Swiper Vue.js components
-import { Swiper, SwiperSlide } from 'swiper/vue'
 
-// Import Swiper styles
-import 'swiper/css'
-
-import 'swiper/css/scrollbar'
-import 'swiper/css/navigation'
-import 'swiper/css/pagination'
-// import required modules
-import { Scrollbar, Navigation, Pagination, Thumbs } from 'swiper/modules'
 import { useRoute, useRouter } from 'vue-router'
 import { computed } from 'vue'
 import { Guid } from '@/config/helper'
