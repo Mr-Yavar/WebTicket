@@ -171,7 +171,7 @@ const userStore = useUserStore()
 const showMenu = ref(false)
 
 function toggleMenu() {
-    this.showMenu = !this.showMenu
+    showMenu.value = !showMenu.value
 }
 
 function change(val) {
