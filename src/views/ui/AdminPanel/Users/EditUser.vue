@@ -133,11 +133,7 @@ const schema1 = {
 
 const formValues = computed(() => GetUserProfile.data.value)
 
-const possibleErrors = {
-    DuplicateUserName: '!کاربری با این نام کاربری وجود دارد',
-    DuplicatePhoneNumber: '!کاربری با این شماره موبایل وجود دارد',
-    PasswordMismatch: '!رمز عبور را اشتباه وارد کرده‌اید'
-}
+
 
 const registerServiceCall = useMutation({
     mutationKey: 'registerService',
@@ -163,7 +159,7 @@ async function updateProfile(values) {
             onMutate: () => {
                 form_in_progress.value = true
             },
-            onSuccess: async (e) => {
+            onSuccess: async () => {
                 form_in_progress.value = false
 
                 
@@ -173,7 +169,7 @@ async function updateProfile(values) {
                     html: '!عملیات با موفقیت انجام شد'
                 })
             },
-            onError: (e) => {
+            onError: () => {
                 //possibleErrors
 
            
