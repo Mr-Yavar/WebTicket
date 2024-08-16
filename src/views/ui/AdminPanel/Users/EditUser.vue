@@ -61,11 +61,11 @@
                     
                     <div class="flex justify-center" >
                         <label for="user" class="inline-block text-xs md:text-sm  text-center text-gray-800 dark:text-gray-100 mx-2">کاربر</label>
-                        <vee-field type="radio" id="user"  name="role" class="" value="User" />
+                        <vee-field type="radio" id="user"  name="role" class="" value="User" :disabled="userStore.userId===userId"/>
                     </div>
                     <div class="flex justify-center">
                         <label for="Admin" class="inline-block text-xs md:text-sm  text-center text-gray-800 dark:text-gray-100 mx-2">مدیر</label>
-                        <vee-field type="radio" id="Admin"  name="role" class="" value="Admin"/>
+                        <vee-field type="radio" id="Admin"  name="role" class="" value="Admin" :disabled="userStore.userId===userId"/>
                     </div>
                     
                 </div>
@@ -119,7 +119,9 @@ const GetUserProfile = useQuery({
         }),
     refetchOnMount: true,
     enabled: true
-})
+});
+
+const userId = route.params.id;
 
 const schema1 = {
     firstName: 'required|min:3|max:100|persian_text',

@@ -11,6 +11,9 @@ const useUserStore = defineStore('user', () => {
     const refreshToken = ref('')
     const user = ref(!localStorage.getItem('user') ? {} : { user: JSON.parse(localStorage.getItem('user')), Identity: accessToken.value ? jwtDecode(accessToken.value) : {} })
     const roles = ref((user.value?.Identity["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]) ? [(user.value?.Identity["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"])] : []);
+
+    const userId = ref(user.value?.Identity["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"] ?? null);
+
     const ClientId = ref(localStorage.getItem('ClientId') ?? uuidv5(Math.random().toString(), uuidv4()))
     localStorage.setItem('ClientId', ClientId.value)
     async function logOut() {
@@ -48,6 +51,6 @@ const useUserStore = defineStore('user', () => {
         
     }
 
-    return { isAuthenticated, user, accessToken, refreshToken, expireTime, ClientId, GetAuthenticated, logOut, FullName,roles }
+    return { isAuthenticated, user, accessToken, refreshToken, expireTime, ClientId, GetAuthenticated, logOut, FullName,roles,userId }
 })
 export default useUserStore

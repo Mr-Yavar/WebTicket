@@ -220,6 +220,15 @@ const router = createRouter({
                     }
                 },
                 {
+                    name: 'AdminpProfile',
+                    path: 'profile',
+                    component: () => import('@/views/ui/AdminPanel/Account/Profile.vue'),
+                    meta: {
+                        label: 'حساب کاربری',
+                        auth:true
+                    }
+                },
+                {
                     name: 'ManagePlaces',
                     path: 'managePlaces',
                     component: () => import('@/views/pages/AdminPanel/Places.vue'),
@@ -464,7 +473,7 @@ router.beforeEach(async (to,from,next) => {
     
     const authRequired = !!to.meta.auth;
     const auth = useUserStore();
-    console.log(to,authRequired);
+
     if (authRequired && !auth.isAuthenticated) {
         auth.returnUrl = to.fullPath;
         next('/');
