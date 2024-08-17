@@ -8,7 +8,7 @@ import Vselect from 'vue-select'
 import Cities from '@/assets/data/city.json'
 import { useQuery } from '@tanstack/vue-query'
 import { sendRequest } from '@/services/service'
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { ref } from 'vue'
 
 
@@ -23,9 +23,34 @@ const getCategoryServiceCall = useQuery({
 })
 const categories = computed(() => getCategoryServiceCall.data.value?.filter((x) => x.parentId != null)?.map((x) => ({ label: x.title, value: x.id, parent: getCategoryServiceCall.data.value.find((y) => y.id === x.parentId)?.title })))
 
-const selectedCities = ref([])
-const selectedCategory = ref([])
-const searchText = ref('')
+const selectedCities = ref([]);
+const selectedCategory = ref([]);
+const searchText = ref('');
+
+const props = defineProps({
+    changeHandler : Object
+});
+
+watch(selectedCities,()=>{
+
+})
+
+watch(selectedCategory,()=>{
+
+})
+
+watch(searchText,()=>{
+   
+    
+})
+
+function submit(){
+    console.log(111);
+    props.changeHandler.onCities(selectedCities.value);
+    props.changeHandler.onCategories(selectedCategory.value);
+    props.changeHandler.onSearchText(searchText.value);
+}
+
 </script>
 
 <template>
@@ -34,7 +59,7 @@ const searchText = ref('')
     <div class="AppGap">
         <div class="AppContainer">
             <Splitter title="برنامه ها" type="middle" border-class="border-gray-500 border-dashed" titleClass="font-bold text-xl" />
-
+            
             <div class="block">
                 <div class="lg:flex lg:justify-center items-center">
                     <div class="grid grid-cols-2 lg:w-[50%] w-full">
@@ -102,13 +127,18 @@ const searchText = ref('')
                         </div>
                     </div>
                     <div class="inline-step h-20 lg:inline-block hidden"></div>
-                    <div class="lg:w-[50%] w-full">
-                        <SearchBox v-model="searchText" />
+                    <div class="lg:w-[50%] w-full grid grid-cols-6 gap-3">
+                        <div class="col-span-5 ">
+                        <SearchBox v-model="searchText" :submiter="submit" />
+                    </div>
+                    <div class="">
+                        <button type="button" @click.prevent="submit" class="btn btn-ms shadow-sm hover:!shadow-lg block mx-auto lg:my-0 my-3  py-1.5 bg-gray-500 border-gray-400 text-gray-200 "><v-icon name="fa-search"  aria-hidden="true"></v-icon></button>
+                    </div>
                     </div>
                 </div>
             </div>
-
-            <slot name="Events" :selectedCategories="selectedCategory" :selectedCities="selectedCities" :searchText="searchText"> </slot>
+       
+            <slot name="Events"> </slot>
         </div>
     </div>
 </template>
