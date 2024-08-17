@@ -96,7 +96,8 @@ const data = computed(()=>{
             },
             event : {
                 executionDate:GetUserReservation.data.value.eventInfo.executionDate
-            }
+            },
+            reservationId:GetUserReservation.data.value?.reservationId
         };
 
     })

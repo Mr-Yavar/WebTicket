@@ -4,7 +4,8 @@
         <div class="hidden md:flex flex-row justify-between shadow-md border rounded-md ">
             <div class="flex flex-col items-center justify-between lg:w-1/6 w-1/4  bg-white ltr:border-r-2 rtl:border-l-2 border-gray-500 border-dashed ltr:rounded-l-md rtl:rounded-r-md">
                 <div class="flex-col">
-                    <vue-qrcode :value="ticket.reservationId" :options="{ width: 150,margin:2 }" class="qrcode"></vue-qrcode>
+                   
+                    <vue-qrcode :value="Guid({}).fromFullToCompressed(ticket.reservationId)" :options="{ width: 150,margin:2 }" class="qrcode"></vue-qrcode>
                     <p class="mb-2 text-xs italic font-light text-gray-500 text-center">اینجا را اسکن کنید!</p>
                     
                 </div>
@@ -116,6 +117,7 @@
 </template>
 
 <script setup>
+import { Guid } from '@/config/helper';
 import { computed } from 'vue';
 
 const props = defineProps({

@@ -1,22 +1,21 @@
 <template>
     <div>
-        <div class="text-md text-black dark:text-gray-100 md:!text-right text-center">کنســــرت <span class="font-extrabold text-xl">ماکان بند</span></div>
-        <div class="grid grid-cols-1 md:grid-cols-2 md:!text-right text-center gap-2">
-            <div class="text-black dark:text-gray-100 mt-2 px-3">
+        <div class="text-md text-black dark:text-gray-100  text-center">کنســــرت <span class="font-extrabold text-xl">{{ GetSpecificConcertServiceCall.data.value?.title }}</span></div>
+        <div class="grid grid-cols-1  text-center gap-2">
+            <div class="text-black dark:text-gray-100 mt-2 px-3 grid sm:grid-cols-2 grid-cols-1">
                 <p>
                     <v-icon class="dark:text-white text-black" name="px-calendar-tomorrow" scale="1" />
-                    <span class="font-bold text-md"> تاریخ : </span> <span>1402/02/03</span>
+                    <span class="font-bold text-md"> تاریخ : </span> <span>{{  new Date(GetSpecificEventServiceCall.data.value?.events[0].executionDate).toLocaleDateString("fa-ir") }}</span>
                 </p>
                 <p>
                     <v-icon class="dark:text-white text-black" name="px-clock" scale="1" />
-                    <span class="font-bold text-md">ساعت : </span> <span>18:30 - 20:30</span>
+                    <span class="font-bold text-md">ساعت : </span> <span>{{
+                       new Date(GetSpecificEventServiceCall.data.value?.events[0].executionDate).toLocaleTimeString("fa-ir",{hour:"2-digit",minute:"2-digit",hour12:false})
+                        + " - "+ new Date(new Date(GetSpecificEventServiceCall.data.value?.events[0].executionDate)*1 + 90 * 60*1000).toLocaleTimeString("fa-ir",{hour:"2-digit",minute:"2-digit",hour12:false})
+                    }}</span>
                 </p>
             </div>
-            <div class="text-black dark:text-gray-100 mt-2 px-3">
-                <v-icon class="dark:text-white text-black" name="px-gps" scale="1" />
-                <span class="font-bold text-md"> مکان برگزاری : </span>
-                <span>تهران ، .......</span>
-            </div>
+          
 
             <div class="col-span-full">
                 <div class="p-2 rounded-2xl shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset]">
@@ -102,23 +101,38 @@ const GetSpecificEventServiceCall = useQuery({
     enabled: SeatMaps.value.length === 0,
     refetchInterval: false,
     refetchIntervalInBackground: false,
-    refetchOnMount: false,
+    refetchOnMount: true,
     refetchOnReconnect: false,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    
 })
 import { useAuthModalStore } from '@/stores/componentStore/authModal.js'
 import { CRPlacesService } from '@/services/PlacesService'
 import { v4 } from 'uuid'
+import { sendRequest } from '@/services/service'
 const props = defineProps({
     stepControls: Object,
     concert: Object,
     toNext: Function,
     toPrevious: Function
-})
+});
 const { mutate } = useMutation({
     mutationKey: ['Reservation'],
     mutationFn: CRPlacesService
-})
+});
+
+const GetSpecificConcertServiceCallKey = computed(() => ['/api/Concerts/GetConcertInfo/', route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id)])
+const GetSpecificConcertServiceCall = useQuery({
+    queryKey: GetSpecificConcertServiceCallKey,
+    queryFn: async ({ queryKey }) => {
+        return sendRequest({
+            url: queryKey.join(''),
+            method: 'Get'
+        })
+    },
+
+    enabled: true
+});
 
 const AuthModalStore = useAuthModalStore()
 const userStore = useUserStore()
@@ -131,19 +145,19 @@ async function onNext() {
         return false
     }
 
-    if (TicketStore.selectedShowing.length === 0) {
-        Swal.fire({
-            title: 'خطا جانم!',
-            text: 'اینجا بدون انتخاب سانس چیکار میکنی؟',
-            icon: 'info',
-            showConfirmButton: false,
-            showCloseButton: true,
-            timer: 2000,
-            timerProgressBar: true,
-            showClass: { popup: 'direction-rtl vazir-font' }
-        })
-        return false
-    }
+    // if (TicketStore.selectedShowing.length === 0) {
+    //     Swal.fire({
+    //         title: 'خطا جانم!',
+    //         text: 'اینجا بدون انتخاب سانس چیکار میکنی؟',
+    //         icon: 'info',
+    //         showConfirmButton: false,
+    //         showCloseButton: true,
+    //         timer: 2000,
+    //         timerProgressBar: true,
+    //         showClass: { popup: 'direction-rtl vazir-font' }
+    //     })
+    //     return false
+    // }
 
     if (TicketStore.Tickets.length === 0) {
         Swal.fire({
@@ -473,7 +487,7 @@ function panZoomInit(map, index) {
             onTrigger(instance, event) {
                 let ticket = Tickets.value[currentFloor.value].find((x) => x.id === item.getAttribute('tid'))
 
-                let [floor, row, column] = item.id.split('_')
+                let [floor, row, column] = item.id.replaceAll("f","").replaceAll("r","").replaceAll("c","").split('_')
                 instance.setContent(` <div class="direction-rtl vazir-font text-right">
                 <p>طبقه : ${floor}</p>
                 <p>ردیف : ${row}</p>
@@ -562,13 +576,13 @@ function tellMeStatus(ticketType) {
 
 <style module="TicketsTypes">
 .free-tickets {
-    fill: #4eef4f !important;
-    background-color: #4eef4f !important;
+    fill: #178d17 !important;
+    background-color: #178d17 !important;
 }
 
 .selected-tickets {
-    fill: #63dbfc !important;
-    background-color: #63dbfc !important;
+    fill: #33b7db !important;
+    background-color: #33b7db !important;
 }
 
 .reserved-tickets {

@@ -24,18 +24,18 @@
                 <span class="px-3 text-red-700" title="حذف تخفیف" @click.prevent="usedDiscount = ''">X</span>
             </p>
         </div>
-        <div v-else class="col-span-1 flex rtl:!text-right text-left dark:text-gray-200 text-black text-md font-bold">
-            <span class="pl-1 lg:text-md sm:text-xs align-middle self-center">کد تخفیف : </span>
+        <div v-else class="col-span-1 flex rtl:!text-right text-left dark:text-gray-200 text-black text-base font-bold">
+            <span class="pl-1 lg:text-base text-xs align-middle self-center">کد تخفیف : </span>
             <span>
                 <div class="flex !justify-between">
                     <div class="relative w-fit">
                         <div class="absolute grid w-5 h-5 place-items-center text-blue-gray-500 top-2/4 left-3 -translate-y-2/4">
                             <v-icon aria-hidden="true" name="md-discount-twotone" :fill="discountHasError ? 'red' : ''" :class="{ 'animate-bounce !temporary-animation duration-100': discountHasError }"></v-icon>
                         </div>
-                        <input class="h-10 rounded-[7px] rtl:fa-font !border !border-gray-300 border-t-transparent bg-transparent bg-white px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 shadow-lg shadow-gray-900/5 outline outline-0 ring-4 ring-transparent transition-all placeholder:text-gray-500 placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:!border-gray-900 focus:border-t-transparent focus:!border-t-gray-900 focus:outline-0 focus:ring-gray-900/10 disabled:border-0 disabled:bg-blue-gray-50" placeholder="کد تخفیف ..." type="text" v-model="discount" />
+                        <input class="h-10 rounded-[7px] rtl:fa-font !border !border-gray-300 border-t-transparent bg-transparent bg-white px-3 py-2.5 font-sans sm:text-sm font-normal text-blue-gray-700 shadow-lg shadow-gray-900/5 outline outline-0 ring-4 ring-transparent transition-all placeholder:text-gray-500 placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:!border-gray-900 focus:border-t-transparent focus:!border-t-gray-900 focus:outline-0 focus:ring-gray-900/10 disabled:border-0 disabled:bg-blue-gray-50 sm:w-full w-32 text-xs" placeholder="کد تخفیف ..." type="text" v-model="discount" />
                     </div>
                     <div class="w-fit px-2 self-center">
-                        <button class="select-none rounded-lg bg-gray-900 py-2.5 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" type="button" @click.prevent="useDiscount">اعمال کد</button>
+                        <button class="select-none rounded-lg bg-gray-900 py-2.5 md:px-6 px-1 text-center align-middle font-sans !text-xs font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none " type="button" @click.prevent="useDiscount">اعمال کد</button>
                     </div>
                 </div>
             </span>
