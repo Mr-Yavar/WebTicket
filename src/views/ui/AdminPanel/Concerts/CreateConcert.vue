@@ -67,7 +67,7 @@ const getConceretServiceCall = useQuery({
     enabled: !!concertId
 })
 
-const { mutate } = useMutation({
+const { mutate,isPending,isError} = useMutation({
     mutationKey: ['CU/Places'],
     mutationFn: CRPlacesService,
     onError: (err) => {
@@ -787,8 +787,18 @@ function addNewEvent() {
                 </div>
 
                 <div class="col-span-2 col-start-4">
-                    <button v-if="!concertId" class="good-btn" type="submit">ایجاد</button>
-                    <button v-else class="items-center block px-4 py-2 mx-auto text-white bg-orange-600 border border-transparent rounded-md shadow-sm w-fit hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500" type="submit">ویرایش</button>
+                    <button v-if="!concertId" class="good-btn" type="submit" :disabled="isPending"
+                :class="{'!bg-green-200' : isPending}"
+                    >
+                        <spsn v-if="!isPending">ایجاد</spsn>
+                        <span v-else class="text-center"><v-icon animation="spin" fill="green" class="mx-auto" name="pr-spinner" scale="1.3" /></span>
+
+                </button>
+                    <button v-else class="items-center block px-4 py-2 mx-auto text-white bg-orange-600 border border-transparent rounded-md shadow-sm w-fit hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500" type="submit" :disabled="isPending" :class="{'!bg-orange-200' : isPending}">
+                        <spsn v-if="!isPending">ویرایش</spsn>
+                        <span v-else class="text-center"><v-icon animation="spin" fill="orange" class="mx-auto" name="pr-spinner" scale="1.3" /></span>
+
+                    </button>
                 </div>
             </div>
         </form>

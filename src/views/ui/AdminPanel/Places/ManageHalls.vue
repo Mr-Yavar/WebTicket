@@ -14,6 +14,7 @@ const queryClient = useQueryClient()
 const getHallServiceCall = useQuery({
     queryKey: ['/api/Place/GetHallsByPlaceId'],
     queryFn: () => GetHallsService(placeId),
+    refetchOnWindowFocus:true,
     refetchOnMount:true,
     enabled: true
 })

@@ -3,6 +3,7 @@ import { BsLightningCharge } from '@kalimahapps/vue-icons/bs'
 import { RePencilLine } from '@kalimahapps/vue-icons/re'
 import { BsLightningChargeFill } from '@kalimahapps/vue-icons/bs'
 import { useRouter } from 'vue-router'
+import { FILE_PROVIDER2 } from '@/config/appConfig';
 
 defineProps({
     hall: Object,
@@ -14,9 +15,11 @@ const router = useRouter()
 </script>
 
 <template>
+    
     <div class="mx-auto w-64 mb-2 flex flex-col text-center bg-white rounded-lg shadow divide-y divide-gray-200">
         <div class="flex-1 flex flex-col p-3">
-            <img class="w-32 h-32 flex-shrink-0 mx-auto rounded-full" src="/public/image-03.jpg" alt="" />
+            
+            <img class="w-32 h-32 flex-shrink-0 mx-auto rounded-full" :src="FILE_PROVIDER2+hall.imgUrl" alt="" />
             <h3 class="mt-6 text-gray-900 text-sm font-medium">{{ hall.title }}</h3>
             <dl class="mt-1 flex-grow flex flex-col justify-between">
                 <dt class="sr-only">شهر</dt>
