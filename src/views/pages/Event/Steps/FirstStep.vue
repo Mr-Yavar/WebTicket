@@ -123,7 +123,7 @@ import Ticket from '@/views/components/Pages/Event/Ticket.vue'
 
 import { MapComponent, MapTypes } from '@neshan-maps-platform/mapbox-gl-vue'
 import '@neshan-maps-platform/mapbox-gl-vue/dist/style.css'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watchEffect } from 'vue'
 import nmp_mapboxgl from '@neshan-maps-platform/mapbox-gl'
 import useTicketStore from '@/stores/Ticket.js'
 import useSeatMapStore from '@/stores/seatMap.js'
@@ -133,6 +133,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { Guid } from '@/config/helper'
 import { FILE_PROVIDER2, MAP_API } from '@/config/appConfig';
 import ConcertTermsModal from '@/views/components/Globals/modal/ConcertTermsModal.vue'
+import { reactive } from 'vue'
 
 export default {
     components: { ConcertTermsModal, Ticket, MapComponent },
@@ -148,7 +149,7 @@ export default {
             queryFn: GetSpecificConcertService,
 
             enabled: true
-        })
+        });
 
         const concert = computed(() => GetSpecificConcertServiceCall.data.value?.concerts[0]);
 
@@ -183,6 +184,12 @@ export default {
             console.log(showTermsModal.value);
             showTermsModal.value = !showTermsModal.value
         }
+        const neshanMap = reactive({map:null});
+        const marker = new nmp_mapboxgl.Marker({
+                color: 'black',
+                title: 'محل برگزاری',
+                draggable: false
+            }).setLngLat([51.375, 35.7449]);
 
         function handleStartMap(map) {
             map.fitBounds(map.getBounds(), {
@@ -195,14 +202,19 @@ export default {
                 around: [51.375, 35.7449]
             })
 
-            const marker = new nmp_mapboxgl.Marker({
-                color: 'black',
-                title: 'محل برگزاری',
-                draggable: false
-            }).setLngLat([51.375, 35.7449])
-
-            marker.addTo(map)
+            neshanMap.map = map;
+//marker.setLngLat([concert.value.place.lng ,concert.value.place.lat]);
+           // marker.addTo(map)
         }
+        
+        watchEffect(()=>{
+            if(!neshanMap.map)
+            return;
+        
+            marker.setLngLat([concert.value.lng ,concert.value.lat]);
+        marker.addTo(neshanMap.map);
+        neshanMap.map.flyTo({ center: [ concert.value.lng ,concert.value.lat], zoom: 14 }); 
+        });
 
         onMounted(() => {
             seatMap.LeaveGroup()
