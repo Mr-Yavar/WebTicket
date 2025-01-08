@@ -4,12 +4,12 @@
     </div>
 
     <div class="grid md:grid-cols-2 grid-cols-1 mt-2 gap-2 p-4 rounded-2xl shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset]">
-        <div class="col-span-full dark:text-gray-200 text-black font-bold">بلیت های انتخابی شما:</div>
-        <div v-if="TicketStore.Tickets.length === 0" class="col-span-full text-center dark:text-gray-200 text-black text-md font-bold">هیچ بلیتی انتخاب نشده است!</div>
+        <div class="font-bold text-black col-span-full dark:text-gray-200">بلیت های انتخابی شما:</div>
+        <div v-if="TicketStore.Tickets.length === 0" class="font-bold text-center text-black col-span-full dark:text-gray-200 text-md">هیچ بلیتی انتخاب نشده است!</div>
         <SelectedTicket :concertTitle="concert?.title" v-for="(item, index) in GetUserTempoReservation.data.value?.tickets" :has-delete="false" :index="index + 1" :seatInfo="item" :key="item.id" />
     </div>
     <div class="grid md:grid-cols-2 grid-cols-1 mt-4 gap-2 p-4 rounded-2xl shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset]">
-        <div class="col-span-full dark:text-gray-200 text-black font-bold">صورتحساب:</div>
+        <div class="font-bold text-black col-span-full dark:text-gray-200">صورتحساب:</div>
         <div class="col-span-1 rtl:!text-right text-left dark:text-gray-200 text-black">
             <p class="leading-10">
                 <span class="!text-sm font-bold">مبلغ قابل پرداخت : </span>
@@ -25,7 +25,7 @@
             </p>
         </div>
         <div v-else class="col-span-1 flex rtl:!text-right text-left dark:text-gray-200 text-black text-base font-bold">
-            <span class="pl-1 lg:text-base text-xs align-middle self-center">کد تخفیف : </span>
+            <span class="self-center pl-1 text-xs align-middle lg:text-base">کد تخفیف : </span>
             <span>
                 <div class="flex !justify-between">
                     <div class="relative w-fit">
@@ -34,7 +34,7 @@
                         </div>
                         <input class="h-10 rounded-[7px] rtl:fa-font !border !border-gray-300 border-t-transparent bg-transparent bg-white px-3 py-2.5 font-sans sm:text-sm font-normal text-blue-gray-700 shadow-lg shadow-gray-900/5 outline outline-0 ring-4 ring-transparent transition-all placeholder:text-gray-500 placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:!border-gray-900 focus:border-t-transparent focus:!border-t-gray-900 focus:outline-0 focus:ring-gray-900/10 disabled:border-0 disabled:bg-blue-gray-50 sm:w-full w-32 text-xs" placeholder="کد تخفیف ..." type="text" v-model="discount" />
                     </div>
-                    <div class="w-fit px-2 self-center">
+                    <div class="self-center px-2 w-fit">
                         <button class="select-none rounded-lg bg-gray-900 py-2.5 md:px-6 px-1 text-center align-middle font-sans !text-xs font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none " type="button" @click.prevent="useDiscount">اعمال کد</button>
                     </div>
                 </div>
@@ -67,6 +67,8 @@ import { CRPlacesService } from '@/services/PlacesService'
 import useSeatMapStore from '@/stores/seatMap'
 import VueCountdown from '@chenfengyuan/vue-countdown'
 import Swal from 'sweetalert2'
+import { ConcertsQueryKeys, get_apiConcertsGetConcertInfo, get_apiConcertsGetReservation } from '@/api/ConcertsService'
+import { BillingQueryKeys, get_apiBillingGetDiscount } from '@/api/BillingService'
 
 const props = defineProps({
     stepControls: Object,
@@ -86,30 +88,19 @@ const { mutate, isPending } = useMutation({
     mutationFn: CRPlacesService
 })
 
-const GetSpecificConcertServiceCallKey = computed(() => ['/api/Concerts/GetConcertInfo/', route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id)])
+const GetSpecificConcertServiceCallKey = computed(() => [ConcertsQueryKeys.get_apiConcertsGetConcertInfo(route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id))])
 const GetSpecificConcertServiceCall = useQuery({
     queryKey: GetSpecificConcertServiceCallKey,
-    queryFn: async ({ queryKey }) => {
-        return sendRequest({
-            url: queryKey.join(''),
-            method: 'Get'
-        })
-    },
+    queryFn: () => get_apiConcertsGetConcertInfo(route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id)),
 
     enabled: true
 })
 
+
+
 const GetUserTempoReservation = useQuery({
-    queryKey: ['/api/Concerts/GetReservation'],
-    queryFn: async ({ queryKey }) => {
-        return sendRequest({
-            url: queryKey.join(''),
-            method: 'Get',
-            headers: {
-                Authorization: 'Bearer ' + userStore.accessToken
-            }
-        })
-    },
+    queryKey: [ConcertsQueryKeys.get_apiConcertsGetReservation],
+    queryFn: get_apiConcertsGetReservation,
     refetchInterval: false,
     enabled: true
 })
@@ -117,19 +108,13 @@ const GetUserTempoReservation = useQuery({
 const amount = computed(() => (GetUserTempoReservation.data.value?.amount > 0 ? GetUserTempoReservation.data.value?.amount : 0))
 const expirationTimeOut = computed(() => (new Date(GetUserTempoReservation.data.value?.expirationDate) - new Date() > 0 ? new Date(GetUserTempoReservation.data.value?.expirationDate) - new Date() : 0))
 
-const discount = ref('')
-const discountKey = computed(() => ['/api/Billing/GetDiscount',  GetUserTempoReservation.data.value?.tempReservationId,discount])
+const discount = ref('');
+
+
+const discountKey = computed(() => [BillingQueryKeys.get_apiBillingGetDiscount( GetUserTempoReservation.data.value?.tempReservationId,discount)])
 const GetDiscount = useQuery({
     queryKey: discountKey,
-    queryFn: async ({ queryKey }) => {
-        return sendRequest({
-            url: queryKey.join('/'),
-            method: 'Get',
-            headers: {
-                Authorization: 'Bearer ' + userStore.accessToken
-            }
-        })
-    },
+    queryFn: ()=>get_apiBillingGetDiscount( GetUserTempoReservation.data.value?.tempReservationId,discount),
     enabled: false
 })
 const ChosenEvent = computed(() => Guid({}).fromCompressedToFull(route.params.eventId))
@@ -188,7 +173,7 @@ async function onNext() {
         title: '',
         html: `<div class="grid grid-cols-4 gap-2 text-xl h-fit pay-body" style="">
     <div class="col-span-full">برای ادامه، یکی از درگاه های پرداخت را انتخاب کنید</div>
-     <div class="col-span-full flex justify-between ">
+     <div class="flex justify-between col-span-full ">
         <div class="hover:animate-pulse"><img onClick="((e)=>{  e.target.closest('.pay-body').parentElement.parentElement.querySelector('input').value=0;
             e.target.closest('.pay-body').parentElement.parentElement.querySelector('.swal2-confirm').click();
             

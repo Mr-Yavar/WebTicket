@@ -2,7 +2,6 @@
     <component :is="layout">
         <router-view />
     </component>
-
 </template>
 
 <script setup>
@@ -34,21 +33,21 @@ const TicketStore = useTicketStore()
 const UserStore = useUserStore()
 
 onMounted(() => {
-    new TicketsRepository();
+    new TicketsRepository()
     window.fetch = new Proxy(window.fetch, {
-      apply: function (target, that, args) {
-        // args holds argument of fetch function
-        // Do whatever you want with fetch request
-        let temp = target.apply(that, args);
-        temp.then((res) => {
-          // After completion of request
-          if (res.status === 401) {
-            UserStore.logOut();
-          }
-        });
-        return temp;
-      },
-    });
+        apply: function (target, that, args) {
+            // args holds argument of fetch function
+            // Do whatever you want with fetch request
+            let temp = target.apply(that, args)
+            temp.then((res) => {
+                // After completion of request
+                if (res.status === 401) {
+                    UserStore.logOut()
+                }
+            })
+            return temp
+        }
+    })
 })
 </script>
 

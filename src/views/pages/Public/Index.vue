@@ -18,8 +18,9 @@ import { useQuery } from '@tanstack/vue-query'
 
 import { computed } from 'vue'
 import SkeletonCardItem from '@/views/pages/Public/components/SkeletonCardItem.vue'
-import { sendRequest } from '@/services/service'
+
 import { ref } from 'vue'
+import { ConcertsQueryKeys, get_apiConcertsGetAllConcerts } from '@/api/ConcertsService'
 
 const cities = ref([])
 const categories = ref([])
@@ -34,20 +35,13 @@ function onCategories(value) {
 }
 
 function onSearchText(value) {
-    console.log(value)
     searchText.value = value
 }
 
-const queryKey = computed(() => ['/api/Concerts/GetAllConcerts', { CityId: cities.value.join(','), categories: categories.value.join(','), searchText }])
+const queryKey = computed(() => [ConcertsQueryKeys.get_apiConcertsGetAllConcerts(cities.value.join(','), categories.value.join(','), searchText)])
 const GetAllConcertsServiceCall = useQuery({
     queryKey: queryKey,
-    queryFn: ({ queryKey, signal }) => {
-        let params = queryKey[1]
-        return sendRequest({
-            url: queryKey[0] + '?' + [params.CityId !== '' ? `CityIds=${params.CityId}` : null, params.categories !== '' ? `CategoryIds=${params.categories}` : null, params.searchText !== '' ? `searchTxt=${params.searchText}` : null].filter((x) => !!x).join('&'),
-            signal
-        })
-    },
+    queryFn: () => get_apiConcertsGetAllConcerts(cities.value.join(','), categories.value.join(','), searchText),
 
     enabled: true
 })

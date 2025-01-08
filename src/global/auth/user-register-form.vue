@@ -1,33 +1,33 @@
 <template>
     <vee-form :validation-schema="schema" @submit="register" autocomplete="off">
         <!-- Name -->
-        <div class="mb-3 grid grid-cols-3">
+        <div class="grid grid-cols-3 mb-3">
             <label class="inline-block text-sm leading-9 text-center text-gray-800 dark:text-gray-100">نام </label>
             <div class="col-span-2">
                 <vee-field type="text" name="firstName" class="block w-full py-0.5 px-3 text-gray-800 !bg-white dark:!bg-gray-600 dark:text-white border border-gray-400 dark:border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded input-sm" placeholder="نام" />
-                <ErrorMessage class="text-red-600 text-sm" name="firstName" />
+                <ErrorMessage class="text-sm text-red-600" name="firstName" />
             </div>
         </div>
         <!-- Family name -->
-        <div class="mb-3 grid grid-cols-3">
+        <div class="grid grid-cols-3 mb-3">
             <label class="inline-block text-sm leading-9 text-center text-gray-800 dark:text-gray-100">نام خانوادگی </label>
             <div class="col-span-2">
                 <vee-field type="text" name="lastName" class="block w-full py-0.5 px-3 text-gray-800 !bg-white dark:!bg-gray-600 dark:text-white border border-gray-400 transition duration-500 focus:outline-none focus:border-black rounded input-sm" placeholder="نام خانوادگی" />
-                <ErrorMessage class="text-red-600 text-sm" name="lastName" />
+                <ErrorMessage class="text-sm text-red-600" name="lastName" />
             </div>
         </div>
         <!-- Family name -->
-        <div class="mb-3 grid grid-cols-3">
-            <label class="inline-block leading-9 text-sm text-center text-gray-800 dark:text-gray-100">نام کاربری</label>
+        <div class="grid grid-cols-3 mb-3">
+            <label class="inline-block text-sm leading-9 text-center text-gray-800 dark:text-gray-100">نام کاربری</label>
 
             <div class="col-span-2">
                 <vee-field type="text" name="userName" class="block w-full py-0.5 px-3 text-gray-800 !bg-white dark:!bg-gray-600 dark:text-white border border-gray-400 transition duration-500 focus:outline-none focus:border-black rounded input-sm" placeholder="نام کاربری" />
-                <ErrorMessage class="text-red-600 text-sm" name="userName" />
+                <ErrorMessage class="text-sm text-red-600" name="userName" />
             </div>
         </div>
         <!-- Family name -->
-        <!--    <div class="mb-3 grid grid-cols-3">-->
-        <!--      <label class="inline-block text-sm leading-9 text-center  text-gray-800 dark:text-gray-100">جنسیت</label>-->
+        <!--    <div class="grid grid-cols-3 mb-3">-->
+        <!--      <label class="inline-block text-sm leading-9 text-center text-gray-800 dark:text-gray-100">جنسیت</label>-->
         <!--      <div class="col-span-2">-->
         <!--        <vee-field-->
         <!--            as="select"-->
@@ -39,35 +39,35 @@
         <!--          <option value="men">مرد</option>-->
         <!--          <option value="women">زن</option>-->
         <!--        </vee-field>-->
-        <!--        <ErrorMessage class="text-red-600 text-sm" name="gender"/>-->
+        <!--        <ErrorMessage class="text-sm text-red-600" name="gender"/>-->
         <!--      </div>-->
         <!--    </div>-->
 
         <!-- Phone number -->
-        <div class="mb-3 grid grid-cols-3">
+        <div class="grid grid-cols-3 mb-3">
             <label class="inline-block text-sm leading-9 text-center text-gray-800 dark:text-gray-100">شماره همراه </label>
             <div class="col-span-2">
                 <vee-field type="text" name="phoneNumber" class="block w-full py-0.5 px-3 text-gray-800 !bg-white dark:!bg-gray-600 dark:text-white border border-gray-400 transition duration-500 focus:outline-none focus:border-black rounded input-sm" placeholder="شماره همراه" />
-                <ErrorMessage class="text-red-600 text-sm" name="phoneNumber" />
+                <ErrorMessage class="text-sm text-red-600" name="phoneNumber" />
             </div>
         </div>
         <!-- Password -->
-        <div class="mb-3 grid grid-cols-3">
+        <div class="grid grid-cols-3 mb-3">
             <label class="inline-block text-sm leading-9 text-center text-gray-800 dark:text-gray-100">رمز عبور </label>
             <div class="col-span-2">
                 <vee-field type="password" name="password" class="block w-full py-0.5 px-3 text-gray-800 !bg-white dark:!bg-gray-600 dark:text-white border border-gray-400 transition duration-500 focus:outline-none focus:border-black rounded input-sm" placeholder="رمز عبور" />
-                <ErrorMessage class="text-red-600 text-sm" name="password" />
+                <ErrorMessage class="text-sm text-red-600" name="password" />
             </div>
         </div>
         <!-- confirm_password -->
-        <div class="mb-3 grid grid-cols-3">
+        <div class="grid grid-cols-3 mb-3">
             <label class="inline-block text-sm leading-9 text-center text-gray-800 dark:text-gray-100">تکرار </label>
             <div class="col-span-2">
                 <vee-field type="password" name="confirm_password" class="block w-full py-0.5 px-3 text-gray-800 !bg-white dark:!bg-gray-600 dark:text-white border border-gray-400 transition duration-500 focus:outline-none focus:border-black rounded input-sm" placeholder="تکرار رمز عبور" />
-                <ErrorMessage class="text-red-600 text-sm" name="confirm_password" />
+                <ErrorMessage class="text-sm text-red-600" name="confirm_password" />
             </div>
         </div>
-        <div class="mb-3 grid grid-cols-3">
+        <div class="grid grid-cols-3 mb-3">
             <!--      <div class="col-span-1 py-2 me-1">-->
             <!--        <button type="button" class="rtl:fa-font block w-full select-none rounded-lg border border-gray-900 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-gray-900 transition-all hover:opacity-75 focus:ring focus:ring-gray-300 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"> <v-icon name="io-arrow-forward-outline" scale="0.75" /> برگشت</button>-->
             <!--      </div>-->
@@ -89,6 +89,7 @@ import { ref } from 'vue'
 import Swal from 'sweetalert2'
 import { useAuthModalStore } from '@/stores/componentStore/authModal.js'
 import { sweetAlertAuthConfigure } from '@/config/alertConfigure.js'
+import { AuthenticationQueryKeys, post_apiauthenticationregister } from '@/api/AuthenticationService'
 
 const authModal = useAuthModalStore()
 
@@ -107,13 +108,13 @@ const possibleErrors = {
     DuplicatePhoneNumber: '!کاربری با این شماره موبایل وجود دارد'
 }
 const registerServiceCall = useMutation({
-    mutationKey: 'registerService',
-    mutationFn: registerService,
+    mutationKey: AuthenticationQueryKeys.post_apiauthenticationregister,
+    mutationFn: post_apiauthenticationregister,
     onMutate: () => {
         form_in_progress.value = true
     },
     onSuccess: async (e) => {
-        console.log(e)
+       
         form_in_progress.value = false
         await Swal.fire({
             title: 'موفقیت آمیز',

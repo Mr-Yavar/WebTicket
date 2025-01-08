@@ -1,21 +1,19 @@
 <template>
     <div>
-        <div class="text-md text-black dark:text-gray-100  text-center">کنســــرت <span class="font-extrabold text-xl">{{ GetSpecificConcertServiceCall.data.value?.title }}</span></div>
-        <div class="grid grid-cols-1  text-center gap-2">
-            <div class="text-black dark:text-gray-100 mt-2 px-3 grid sm:grid-cols-2 grid-cols-1">
+        <div class="text-center text-black text-md dark:text-gray-100">
+            کنســــرت <span class="text-xl font-extrabold">{{ GetSpecificConcertServiceCall.data.value?.title }}</span>
+        </div>
+        <div class="grid grid-cols-1 gap-2 text-center">
+            <div class="grid grid-cols-1 px-3 mt-2 text-black dark:text-gray-100 sm:grid-cols-2">
                 <p>
-                    <v-icon class="dark:text-white text-black" name="px-calendar-tomorrow" scale="1" />
-                    <span class="font-bold text-md"> تاریخ : </span> <span>{{  new Date(GetSpecificEventServiceCall.data.value?.events[0].executionDate).toLocaleDateString("fa-ir") }}</span>
+                    <v-icon class="text-black dark:text-white" name="px-calendar-tomorrow" scale="1" />
+                    <span class="font-bold text-md"> تاریخ : </span> <span>{{ new Date(GetSpecificEventServiceCall.data.value?.events[0].executionDate).toLocaleDateString('fa-ir') }}</span>
                 </p>
                 <p>
-                    <v-icon class="dark:text-white text-black" name="px-clock" scale="1" />
-                    <span class="font-bold text-md">ساعت : </span> <span>{{
-                       new Date(GetSpecificEventServiceCall.data.value?.events[0].executionDate).toLocaleTimeString("fa-ir",{hour:"2-digit",minute:"2-digit",hour12:false})
-                        + " - "+ new Date(new Date(GetSpecificEventServiceCall.data.value?.events[0].executionDate)*1 + 90 * 60*1000).toLocaleTimeString("fa-ir",{hour:"2-digit",minute:"2-digit",hour12:false})
-                    }}</span>
+                    <v-icon class="text-black dark:text-white" name="px-clock" scale="1" />
+                    <span class="font-bold text-md">ساعت : </span> <span>{{ new Date(GetSpecificEventServiceCall.data.value?.events[0].executionDate).toLocaleTimeString('fa-ir', { hour: '2-digit', minute: '2-digit', hour12: false }) + ' - ' + new Date(new Date(GetSpecificEventServiceCall.data.value?.events[0].executionDate) * 1 + 90 * 60 * 1000).toLocaleTimeString('fa-ir', { hour: '2-digit', minute: '2-digit', hour12: false }) }}</span>
                 </p>
             </div>
-          
 
             <div class="col-span-full">
                 <div class="p-2 rounded-2xl shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset]">
@@ -25,23 +23,23 @@
                         </template>
                     </div>
                     <div class="body">
-                        <div v-for="(map, index) in SeatMaps" :id="'mapElm' + index" :key="`tabcontent` + Floors[index]" :class="{ hidden: tab !== Floors[index] }" class="p-1 border-dark-600 border-2">
+                        <div v-for="(map, index) in SeatMaps" :id="'mapElm' + index" :key="`tabcontent` + Floors[index]" :class="{ hidden: tab !== Floors[index] }" class="p-1 border-2 border-dark-600">
                             <div :id="'seatMap' + index" @click="handleClickOnSeat" :ref="(el) => panZoomInit(el, index)" class="w-full mx-auto mapContainer" v-html="map"></div>
                             <div class="flex justify-center">
                                 <div>
-                                    <button class="btn btn-sm bg-green-300 btnZoomIn text-base"><PxZoomIn /></button>
+                                    <button class="text-base bg-green-300 btn btn-sm btnZoomIn"><PxZoomIn /></button>
                                 </div>
                                 <div>
-                                    <button class="btn btn-sm bg-green-300 btnZoomReset text-base"><FlFilledZoomFit /></button>
+                                    <button class="text-base bg-green-300 btn btn-sm btnZoomReset"><FlFilledZoomFit /></button>
                                 </div>
                                 <div>
-                                    <button class="btn btn-sm bg-green-300 btnZoomOut text-base"><PxZoomOut /></button>
+                                    <button class="text-base bg-green-300 btn btn-sm btnZoomOut"><PxZoomOut /></button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-6 w-full text-center text-gray-900 dark:text-gray-100">
+                    <div class="grid w-full grid-cols-6 text-center text-gray-900 dark:text-gray-100">
                         <div class="">راهنما:</div>
                         <div class="mx-2"><span :class="TicketsTypes['free-tickets']" class="w-[10px] h-[10px] inline-block border border-black mx-1"></span>آزاد</div>
                         <div class="mx-2"><span :class="TicketsTypes['selected-tickets']" class="w-[10px] h-[10px] inline-block border border-black mx-1"></span>انتخاب شما</div>
@@ -58,8 +56,8 @@
         </div>
 
         <div class="grid md:grid-cols-2 grid-cols-1 mt-2 gap-2 p-4 rounded-2xl shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset]">
-            <div class="col-span-full dark:text-gray-200 text-black font-bold">بلیت های انتخابی شما:</div>
-            <div v-if="TicketStore.Tickets.length === 0" class="col-span-full text-center dark:text-gray-200 text-black text-md font-bold">هیچ بلیتی انتخاب نشده است!</div>
+            <div class="font-bold text-black col-span-full dark:text-gray-200">بلیت های انتخابی شما:</div>
+            <div v-if="TicketStore.Tickets.length === 0" class="font-bold text-center text-black col-span-full dark:text-gray-200 text-md">هیچ بلیتی انتخاب نشده است!</div>
             <SelectedTicket :concertTitle="concert?.title" v-for="item in TicketStore.Tickets ?? []" :key="item.id" :handleDelete="() => handleClickOnDeleteSeat(item.id)" :has-delete="true" :index="item.id" :seatInfo="item" />
         </div>
     </div>
@@ -70,7 +68,6 @@
 <script setup>
 import 'vue-zoomable/dist/style.css'
 import { FlFilledZoomFit } from '@kalimahapps/vue-icons/fl'
-import { PxZoomIn, PxZoomOut } from '@kalimahapps/vue-icons/px'
 
 import { computed, ref, useCssModule, watch, watchEffect } from 'vue'
 import SelectedTicket from '@/views/components/Pages/Event/SelectedTicket.vue'
@@ -83,7 +80,7 @@ import ControlSteps from './controlSteps.vue'
 import useUserStore from '@/stores/user'
 import { useMutation, useQuery } from '@tanstack/vue-query'
 
-import { GetSeatMapService, GetSpecificEventService } from '@/services/ConcertsService.js'
+import { GetSeatMapService } from '@/services/ConcertsService.js'
 import useSeatMapStore from '@/stores/seatMap.js'
 import Swal from 'sweetalert2'
 import { onMounted } from 'vue'
@@ -95,44 +92,40 @@ const SeatMaps = ref([])
 const TicketsTypes = useCssModule('TicketsTypes')
 const ChosenEvent = computed(() => Guid({}).fromCompressedToFull(route.params.eventId))
 const seatMapService = useSeatMapStore()
+import { useAuthModalStore } from '@/stores/componentStore/authModal.js'
+import { CRPlacesService } from '@/services/PlacesService'
+import { v4 } from 'uuid'
+import { ConcertsQueryKeys, get_apiConcertsGetConcertInfo, get_apiConcertsGetSpecificEvent } from '@/api/ConcertsService'
+
 const GetSpecificEventServiceCall = useQuery({
-    queryKey: ['/api/Concerts/GetSpecificEvent', ChosenEvent.value],
-    queryFn: GetSpecificEventService,
+    queryKey: [ConcertsQueryKeys.get_apiConcertsGetSpecificEvent( ChosenEvent.value)],
+    queryFn: ()=>get_apiConcertsGetSpecificEvent( ChosenEvent.value),
     enabled: SeatMaps.value.length === 0,
     refetchInterval: false,
     refetchIntervalInBackground: false,
     refetchOnMount: true,
     refetchOnReconnect: false,
-    refetchOnWindowFocus: false,
-    
-})
-import { useAuthModalStore } from '@/stores/componentStore/authModal.js'
-import { CRPlacesService } from '@/services/PlacesService'
-import { v4 } from 'uuid'
-import { sendRequest } from '@/services/service'
+    refetchOnWindowFocus: false
+});
+
 const props = defineProps({
     stepControls: Object,
     concert: Object,
     toNext: Function,
     toPrevious: Function
-});
+})
 const { mutate } = useMutation({
     mutationKey: ['Reservation'],
     mutationFn: CRPlacesService
-});
+})
 
-const GetSpecificConcertServiceCallKey = computed(() => ['/api/Concerts/GetConcertInfo/', route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id)])
+const GetSpecificConcertServiceCallKey = computed(() => [ConcertsQueryKeys.get_apiConcertsGetConcertInfo(route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id))])
 const GetSpecificConcertServiceCall = useQuery({
     queryKey: GetSpecificConcertServiceCallKey,
-    queryFn: async ({ queryKey }) => {
-        return sendRequest({
-            url: queryKey.join(''),
-            method: 'Get'
-        })
-    },
+    queryFn: () => get_apiConcertsGetConcertInfo(route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id)),
 
     enabled: true
-});
+})
 
 const AuthModalStore = useAuthModalStore()
 const userStore = useUserStore()
@@ -250,7 +243,7 @@ function handleClickOnSeat($event) {
 
         if (!$event.target.classList.contains(TicketsTypes['reserved-tickets']) && !$event.target.classList.contains(TicketsTypes['waiting-tickets']) && !$event.target.classList.contains(TicketsTypes['not-tickets'])) {
             if (!$event.target.classList.contains(TicketsTypes['selected-tickets'])) {
-                let [floor, row, column] = $event.target.id.replaceAll("f","").replaceAll("r","").replaceAll("c","").split('_')
+                let [floor, row, column] = $event.target.id.replaceAll('f', '').replaceAll('r', '').replaceAll('c', '').split('_')
                 $event.target.classList.remove(TicketsTypes['free-tickets'])
                 $event.target.classList.add(TicketsTypes['selected-tickets'])
                 TicketStore.addToTicket({
@@ -258,7 +251,7 @@ function handleClickOnSeat($event) {
                     floor,
                     row,
                     column,
-                    floorTitle : Floors.value[floor]
+                    floorTitle: Floors.value[floor]
                 })
             } else {
                 handleClickOnDeleteSeat($event.target.getAttribute('tid'))
@@ -436,8 +429,8 @@ watch([() => seatMapService.Locked_Tickets], () => {
                         <span> ستون :</span><span> ${column}</span>
                       
                          
-                     `;
-                    
+                     `
+
                     txt += '   </p>'
                     return txt
                 }
@@ -499,8 +492,8 @@ function panZoomInit(map, index) {
             onTrigger(instance, event) {
                 let ticket = Tickets.value[currentFloor.value].find((x) => x.id === item.getAttribute('tid'))
 
-                let [floor, row, column] = item.id.replaceAll("f","").replaceAll("r","").replaceAll("c","").split('_')
-                instance.setContent(` <div class="direction-rtl vazir-font text-right">
+                let [floor, row, column] = item.id.replaceAll('f', '').replaceAll('r', '').replaceAll('c', '').split('_')
+                instance.setContent(` <div class="text-right direction-rtl vazir-font">
                 <p>طبقه : ${Floors.value[floor]}</p>
                 <p>ردیف : ${row}</p>
                 <p>ستون :${column}</p>
@@ -512,11 +505,11 @@ function panZoomInit(map, index) {
     })
 
     map.querySelectorAll(`*[id^="f"][id*="_r"][id*="_c"]:not([tid])`).forEach((item) => {
-        let [floor, row, column] = item.id.replaceAll("f","").replaceAll("r","").replaceAll("c","").split('_')
+        let [floor, row, column] = item.id.replaceAll('f', '').replaceAll('r', '').replaceAll('c', '').split('_')
 
         tippy(item, {
             content: `
-                <div class="direction-rtl vazir-font text-right">
+                <div class="text-right direction-rtl vazir-font">
                 <p>طبقه : ${Floors.value[floor]}</p>
                 <p>ردیف : ${row}</p>
                 <p>ستون :${column}</p>
@@ -547,8 +540,8 @@ watch([TicketStore.Tickets], () => {
 })
 
 onMounted(() => {
-    TicketStore.setSelectedShowing(ChosenEvent.value);
-    seatMapService.notifyUnLockTickets();
+    TicketStore.setSelectedShowing(ChosenEvent.value)
+    seatMapService.notifyUnLockTickets()
 
     //TicketStore.removeAllTickets()
 

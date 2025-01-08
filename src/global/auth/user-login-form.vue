@@ -1,7 +1,7 @@
 <template>
     <vee-form :validation-schema="schema" autocomplete="off" @submit="login">
-        <div class="mb-3 grid grid-cols-3">
-            <label class="inline-block leading-9 text-sm text-center text-gray-800 dark:text-gray-100">نام کاربری</label>
+        <div class="grid grid-cols-3 mb-3">
+            <label class="inline-block text-sm leading-9 text-center text-gray-800 dark:text-gray-100">نام کاربری</label>
 
             <div class="col-span-2">
                 <vee-field class="block w-full py-0.5 px-3 text-gray-800 bg-white dark:bg-gray-600 dark:text-white border border-gray-400 transition duration-500 focus:outline-none focus:border-black rounded input-sm" name="userName" placeholder="نام کاربری" type="text" />
@@ -10,7 +10,7 @@
         </div>
 
         <!-- Password -->
-        <div class="mb-3 grid grid-cols-3">
+        <div class="grid grid-cols-3 mb-3">
             <label class="inline-block text-sm leading-9 text-center text-gray-800 dark:text-gray-100">رمز عبور </label>
             <div class="col-span-2">
                 <vee-field class="block w-full py-0.5 px-3 text-gray-800 bg-white dark:bg-gray-600 dark:text-white border border-gray-400 transition duration-500 focus:outline-none focus:border-black rounded input-sm" name="password" placeholder="رمز عبور" type="password" />
@@ -18,7 +18,7 @@
             </div>
         </div>
 
-        <div class="mb-3 grid grid-cols-3">
+        <div class="grid grid-cols-3 mb-3">
             <!--      <div class="col-span-1 py-2 me-1">-->
             <!--        <button type="button" class="rtl:fa-font block w-full select-none rounded-lg border border-gray-900 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-gray-900 transition-all hover:opacity-75 focus:ring focus:ring-gray-300 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"> <v-icon name="io-arrow-forward-outline" scale="0.75" /> برگشت</button>-->
             <!--      </div>-->
@@ -43,6 +43,7 @@ import { ref } from 'vue'
 import { useAuthModalStore } from '@/stores/componentStore/authModal.js'
 import useUserStore from '@/stores/user.js'
 import { sweetAlertAuthConfigure } from '@/config/alertConfigure.js'
+import { AuthenticationQueryKeys, post_apiauthenticationlogin } from '@/api/AuthenticationService'
 
 const authModal = useAuthModalStore();
 const userStore = useUserStore();
@@ -56,8 +57,8 @@ const possibleErrors = {
 }
 
 const loginServiceCall = useMutation({
-    mutationKey: 'loginService',
-    mutationFn: loginService,
+    mutationKey: AuthenticationQueryKeys.post_apiauthenticationlogin,
+    mutationFn: post_apiauthenticationlogin,
     onMutate: () => {
         form_in_progress.value = true
     },

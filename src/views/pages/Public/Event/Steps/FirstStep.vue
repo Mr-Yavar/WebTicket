@@ -77,7 +77,7 @@
                         <label class="mt-px font-light text-gray-700 cursor-pointer select-none" for="link">
                             <p class="flex font-sans antialiased font-medium leading-relaxed text-blue-gray-900 md:!text-base !text-sm">
                                 با
-                                <a @click.prevent="()=>toggleTermsModal()" href="#" class="block font-sans antialiased font-medium leading-relaxed text-blue-500 transition-colors hover:text-blue-700"> &nbsp;شرایط و قوانین کنسرت &nbsp; </a>
+                                <a @click.prevent="() => toggleTermsModal()" href="#" class="block font-sans antialiased font-medium leading-relaxed text-blue-500 transition-colors hover:text-blue-700"> &nbsp;شرایط و قوانین کنسرت &nbsp; </a>
                                 موافقم.
                             </p>
                         </label>
@@ -117,8 +117,7 @@
     </div>
 </template>
 
-<script >
-
+<script>
 import Ticket from '@/views/components/Pages/Event/Ticket.vue'
 
 import { MapComponent, MapTypes } from '@neshan-maps-platform/mapbox-gl-vue'
@@ -131,27 +130,28 @@ import { GetSpecificConcertService } from '@/services/ConcertsService'
 import { useQuery } from '@tanstack/vue-query'
 import { useRoute, useRouter } from 'vue-router'
 import { Guid } from '@/config/helper'
-import { FILE_PROVIDER2, MAP_API } from '@/config/appConfig';
+import { FILE_PROVIDER2, MAP_API } from '@/config/appConfig'
 import ConcertTermsModal from '@/global/modal/ConcertTermsModal.vue'
 import { reactive } from 'vue'
+import { ConcertsQueryKeys, get_apiConcertsGetSpecificConcert } from '@/api/ConcertsService'
 
 export default {
     components: { ConcertTermsModal, Ticket, MapComponent },
-    props:{stepControls: Object,toNext : Function,toPrevious:Function},
+    props: { stepControls: Object, toNext: Function, toPrevious: Function },
     setup: () => {
-       
-        const mapKey = ref(MAP_API);
-        const fileUrl = ref(FILE_PROVIDER2);
+        const mapKey = ref(MAP_API)
+        const fileUrl = ref(FILE_PROVIDER2)
         const route = useRoute()
-        const GetSpecificConcertServiceCallKey = computed(()=>['api/Concerts/GetSpecificConcert', route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id)]);
+
+        const GetSpecificConcertServiceCallKey = computed(() => [ConcertsQueryKeys.get_apiConcertsGetSpecificConcert(route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id))])
         const GetSpecificConcertServiceCall = useQuery({
             queryKey: GetSpecificConcertServiceCallKey,
-            queryFn: GetSpecificConcertService,
+            queryFn: () => get_apiConcertsGetSpecificConcert(route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id)),
 
             enabled: true
-        });
+        })
 
-        const concert = computed(() => GetSpecificConcertServiceCall.data.value?.concerts[0]);
+        const concert = computed(() => GetSpecificConcertServiceCall.data.value?.concerts[0])
 
         const seatMap = useSeatMapStore()
 
@@ -181,15 +181,15 @@ export default {
         const showTermsModal = ref(false)
 
         function toggleTermsModal() {
-            console.log(showTermsModal.value);
+            console.log(showTermsModal.value)
             showTermsModal.value = !showTermsModal.value
         }
-        const neshanMap = reactive({map:null});
+        const neshanMap = reactive({ map: null })
         const marker = new nmp_mapboxgl.Marker({
-                color: 'black',
-                title: 'محل برگزاری',
-                draggable: false
-            }).setLngLat([51.375, 35.7449]);
+            color: 'black',
+            title: 'محل برگزاری',
+            draggable: false
+        }).setLngLat([51.375, 35.7449])
 
         function handleStartMap(map) {
             map.fitBounds(map.getBounds(), {
@@ -202,19 +202,18 @@ export default {
                 around: [51.375, 35.7449]
             })
 
-            neshanMap.map = map;
-//marker.setLngLat([concert.value.place.lng ,concert.value.place.lat]);
-           // marker.addTo(map)
+            neshanMap.map = map
+            //marker.setLngLat([concert.value.place.lng ,concert.value.place.lat]);
+            // marker.addTo(map)
         }
-        
-        watchEffect(()=>{
-            if(!neshanMap.map)
-            return;
-        
-            marker.setLngLat([concert.value.lng ,concert.value.lat]);
-        marker.addTo(neshanMap.map);
-        neshanMap.map.flyTo({ center: [ concert.value.lng ,concert.value.lat], zoom: 14 }); 
-        });
+
+        watchEffect(() => {
+            if (!neshanMap.map) return
+
+            marker.setLngLat([concert.value.lng, concert.value.lat])
+            marker.addTo(neshanMap.map)
+            neshanMap.map.flyTo({ center: [concert.value.lng, concert.value.lat], zoom: 14 })
+        })
 
         onMounted(() => {
             seatMap.LeaveGroup()
@@ -222,11 +221,9 @@ export default {
 
         const router = useRouter()
 
-        return { concert, router, route,seatMap, handleStartMap, toggleTermsModal, termsAgreed, TicketStore, eventsDate ,MapTypes,Guid,fileUrl,mapKey,showTermsModal,}
+        return { concert, router, route, seatMap, handleStartMap, toggleTermsModal, termsAgreed, TicketStore, eventsDate, MapTypes, Guid, fileUrl, mapKey, showTermsModal }
         // same as beforeRouteUpdate option but with no access to `this`
     }
 }
-
-
 </script>
 <style scoped></style>
