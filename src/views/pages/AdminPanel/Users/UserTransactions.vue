@@ -1,0 +1,153 @@
+<template>
+    <div class="sticky top-0">
+        <div class="bg-white">
+            <Splitter title="تراکنش‌های کاربر" border-class=" border-black relative " type="middle" title-class="text-black" />
+        </div>
+        <div class="my-2 mx-1 flex flex-row-reverse ">
+            <button @click="$router.push({ name: 'manageallusers' })" class="items-center px-4 py-2 w-fit border border-transparent rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"><CiCircleChevLeft class="scale-125 font-bold" /></button>
+
+
+        </div>
+    </div>
+
+    <div class="w-full h-fit overflow-hidden m-0">
+        <div class="mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col mt-2">
+                <div class="align-middle min-w-full overflow-x-auto shadow overflow-hidden sm:rounded-lg">
+                    <DataTable_V1
+                        class="!rounded-md overflow-hidden"
+                        :columns="[
+                            {
+                                title: 'مبلغ صورتحساب',
+                                key: 'amount',
+                                colSpan: 1
+                            },
+                            {
+                                title: 'پرداختی',
+                                key: 'billamount'
+                            },
+                            {
+                                title: 'سرویس پرداخت',
+                                key: 'serviceType'
+                            },
+                            {
+                                title: 'زمان پرداخت',
+                                key: 'createdDate'
+                            },
+
+                            {
+                                title: 'وضعیت',
+                                key: 'status',
+                                tdClass: ''
+                            }
+                        ]"
+                        :data="GetUserTranscations.data.value?.data ?? []"
+                        :tableClass="'min-w-full divide-y divide-gray-500 table-fixed'"
+                        :theadClass="''"
+                        :thead-t-r-class="''"
+                        :tbodyClass="'!bg-white divide-y divide-gray-200'"
+                        :thClass="'px-6 py-4 bg-gray-300 text-sm font-medium text-gray-900 uppercase text-center'"
+                        :tdClass="'max-w-0  px-6 py-4 text-center whitespace-nowrap text-sm text-gray-900'"
+                        :trClass="'odd:bg-white even:bg-gray-100'"
+                        :scrollBarHeight="'calc(100dvh - 350px)'"
+                    >
+                        <template #[`tbodyamount`]="{ data }">{{ data.amount }}</template>
+                        <template #[`tbodybillamount`]="{ data }">{{ data.billAmount }}</template>
+                        <template #[`tbodycreatedDate`]="{ data }">{{ new Date(data.createdDate).toLocaleString('fa-ir', dateFormat).split(',').reverse().join(' ') }}</template>
+                        <template #[`tbodyserviceType`]="{ data }">{{ payServicesTitle[data.serviceType] }}</template>
+                        <template #[`tbodystatus`]="{ data }">
+                            <div class="text-center !text-blue-900">
+                                <span class="py-0 px-1 cursor-help rounded-full w-32 text-xs" :class="{
+                                    'border-2 border-green-700 text-green-800 shadow-green-200 shadow-sm' : data.status === 'Verified',
+                                    'border-2 border-orange-700 text-orange-800 shadow-orange-200 shadow-sm' : data.status === 'InProgress',
+                                    'border-2 border-red-700 text-red-800 shadow-red-200 shadow-sm' : data.status === 'Refuted',
+
+                                }">
+                                    {{ PayStatusTitle[data.status] }}
+                                </span>
+                            </div>
+                        </template>
+
+                        <template #[`pagination`]>
+                            <nav class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6" aria-label="Pagination">
+                                <div class="hidden sm:block">
+                                    <p class="text-sm text-gray-700">
+                                        نمایش
+                                        {{ ' ' }}
+                                        <span class="font-medium">{{ pageIndex * pageSize + 1 }}</span>
+                                        {{ ' ' }}
+                                        تا
+                                        {{ ' ' }}
+                                        <span class="font-medium">{{ (pageIndex + 1) * pageSize }}</span>
+                                        {{ ' ' }}
+                                        از
+                                        {{ ' ' }}
+                                        <span class="font-medium">{{ totalCount }}</span>
+                                        {{ ' ' }}
+                                        نتیجه
+                                    </p>
+                                </div>
+                                <div class="flex-1 flex justify-end sm:justify-end">
+                                    <select class="form-input inline-block w-fit mx-2.5 py-1" v-tippy="{ content: 'تعداد آیتم ها در هر صفحه' }" v-model="pageSize">
+                                        <option value="10">10</option>
+                                        <option value="15">15</option>
+                                        <option value="20">20</option>
+                                    </select>
+                                    <a @click="action(-1)" href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"> قبلی </a>
+                                    <a @click="action(1)" href="#" class="mr-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"> بعدی </a>
+                                </div>
+                            </nav>
+                        </template>
+                    </DataTable_V1>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script setup>
+import { payServicesTitle, PayStatusTitle } from '@/config/PayServices'
+import { sendRequest } from '@/services/service'
+import useUserStore from '@/stores/user'
+import DataTable_V1 from '@/global/DataTables/DataTable_V1.vue'
+import Splitter from '@/global/Splitter/Splitter.vue'
+import { useQuery } from '@tanstack/vue-query'
+import { computed, ref } from 'vue'
+import { useRoute } from 'vue-router'
+import { CiCircleChevLeft } from '@kalimahapps/vue-icons/ci'
+const pageIndex = ref(0)
+const pageSize = ref(10)
+const userStore = useUserStore();
+const route = useRoute();
+
+const queryKey = computed(() => [{ url: '/api/Admin/GetUserPayments',userId :route.params.id , pageSize: pageSize.value, currentPage: pageIndex.value + 1 }])
+const GetUserTranscations = useQuery({
+    queryKey: queryKey,
+    queryFn: ({ queryKey }) =>
+        sendRequest({
+            url: queryKey[0].url + '/' + queryKey[0].userId + '/' + queryKey[0].pageSize + '/' + queryKey[0].currentPage,
+            method: 'GET',
+            headers: {
+                Authorization: 'Bearer ' + userStore.accessToken
+            }
+        }),
+    refetchOnMount: true,
+    enabled: true
+})
+
+const totalCount = computed(() => GetUserTranscations.data.value?.totalCount ?? 0)
+
+const totalPage = computed(() => Math.ceil(totalCount.value / pageSize.value))
+
+const dateFormat = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }
+
+function action(step) {
+    if (step > 0 && pageIndex.value + step >= totalPage.value) return
+
+    if (step < 0 && pageIndex.value + step < 0) return
+
+    pageIndex.value += step
+}
+</script>
+
+<style></style>

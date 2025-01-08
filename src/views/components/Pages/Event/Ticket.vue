@@ -1,11 +1,11 @@
 <template>
     <div>
         <div class="cardWrap md:!text-base !text-sm">
-            <div class="card cardLeft relative">
+            <div class="relative card cardLeft">
                 <span class="absolute top-[-2%] left-[-4%] py-0.5 px-1 mx-1 rounded-full bg-red-900 text-white text-xs" v-show="event.isEnded">خاتمه یافت</span>
                 <div class="absolute top-2.5 text-center text-white block w-full md:!text-lg !text-base"><span class="font-extrabold">کنسرت {{ concertTitle }} </span></div>
-                <div class="h-full flex flex-col justify-end items-center">
-                    <span class="text-center block text-black"
+                <div class="flex flex-col items-center justify-end h-full">
+                    <span class="block text-center text-black"
                         ><span class="font-bold">ساعت : </span
                         >{{
                             executionDate.toLocaleTimeString('fa-ir', {
@@ -15,8 +15,8 @@
                             })
                         }}</span
                     >
-                    <div class="md:p-1 p-0"></div>
-                    <span class="text-center block" v-if="!event.isEnded &&  startSaleDate.valueOf() < (new Date()).valueOf()">
+                    <div class="p-0 md:p-1"></div>
+                    <span class="block text-center" v-if="!event.isEnded &&  startSaleDate.valueOf() < (new Date()).valueOf()">
                         <div class="relative inline-flex">
                             <button @click="handleClick" class="select-none rounded-lg bg-blue-gray-700 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" type="button">خرید بلیت</button>
 
@@ -24,13 +24,13 @@
                             <span class="absolute w-[12px] h-[12px] rounded-full py-1 px-1 text-xl font-medium content-[''] leading-2 grid place-items-center top-[-5%] left-[-2%] bg-green-300 text-white animate-ping"></span>
                         </div>
                     </span>
-                    <span class="text-center block" v-else-if="event.isEnded">
+                    <span class="block text-center" v-else-if="event.isEnded">
                         <div class="relative inline-flex">
                             <button class="select-none rounded-lg bg-gray-50 dark:bg-gray-700 text-red-400 border-[2px] border-red-400 py-2 px-6 text-center align-middle font-sans text-sm font-bold shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" type="button">خاتمه یافته</button>
                         </div>
                     </span>
 
-                    <span class="text-center block" v-else>
+                    <span class="block text-center" v-else>
                         <vue-countdown :time="expirationTimeOut" v-slot="{ days,hours,minutes, seconds }">
                                     {{ seconds.toString().padStart(2, '0') }}″    {{ minutes.toString().padStart(2, '0') }}′  {{ days }}d    {{ hours }}h     
                              </vue-countdown>
@@ -38,14 +38,14 @@
                     </span>
                 </div>
             </div>
-            <div class="card cardRight relative">
-                <div class="absolute top-3 text-center text-white block w-full">
+            <div class="relative card cardRight">
+                <div class="absolute block w-full text-center text-white top-3">
                     {{ executionDate.toLocaleDateString('fa-ir', { weekday: 'long' }) }}
                 </div>
-                <div class="h-full flex flex-col justify-end text-black">
-                    <span class="text-center block">{{ executionDate.toLocaleDateString('fa-ir', { day: '2-digit' }) }}</span>
-                    <span class="text-center block">{{ executionDate.toLocaleDateString('fa-ir', { month: 'long' }) }}</span>
-                    <span class="text-center block">{{ executionDate.toLocaleDateString('fa-ir', { year: 'numeric' }) }}</span>
+                <div class="flex flex-col justify-end h-full text-black">
+                    <span class="block text-center">{{ executionDate.toLocaleDateString('fa-ir', { day: '2-digit' }) }}</span>
+                    <span class="block text-center">{{ executionDate.toLocaleDateString('fa-ir', { month: 'long' }) }}</span>
+                    <span class="block text-center">{{ executionDate.toLocaleDateString('fa-ir', { year: 'numeric' }) }}</span>
                 </div>
             </div>
         </div>

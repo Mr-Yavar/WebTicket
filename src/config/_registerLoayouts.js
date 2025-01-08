@@ -2,7 +2,7 @@ import { upperFirst, camelCase } from 'lodash'
 
 export default {
     install(app) {
-        const layouts = import.meta.glob('@/views/layouts/*.vue', { eager: true })
+        const layouts = import.meta.glob('@/Layouts/*/*.vue', { eager: true })
 
         Object.entries(layouts).forEach(([path, module]) => {
             const componentName = upperFirst(

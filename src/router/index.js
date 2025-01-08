@@ -9,7 +9,7 @@ const router = createRouter({
         {
             path: '/',
             name: 'home',
-            component: () => import('@/views/pages/Home/Index.vue'),
+            component: () => import('@/views/pages/Public/Index.vue'),
             meta: {
                 layout: 'Default'
             }
@@ -17,7 +17,7 @@ const router = createRouter({
         {
             path: '/about-us',
             name: 'about',
-            component: () => import('@/views/pages/Home/AboutUs.vue'),
+            component: () => import('@/views/pages/Public/AboutUs/Index.vue'),
             meta: {
                 layout: 'Default'
             }
@@ -25,7 +25,7 @@ const router = createRouter({
         {
             path: '/profile',
             name: 'profile',
-            component: () => import('@/views/pages/Account/Profile.vue'),
+            component: () => import('@/views/pages/Public/Account/Profile.vue'),
             meta: {
                 layout: 'Default',
                 auth:true
@@ -34,7 +34,7 @@ const router = createRouter({
         {
             path: '/myreservations',
             name: 'MyReservations',
-            component: () => import('@/views/pages/Account/UserReservation.vue'),
+            component: () => import('@/views/pages/Public/Account/UserReservation.vue'),
             meta: {
                 layout: 'Default',
                 auth:true
@@ -43,7 +43,7 @@ const router = createRouter({
                 {
                     path : "/:reservationId",
                     name:"MyReservationTicket",
-                    component: () => import('@/views/pages/Account/ReservationTickets.vue'),
+                    component: () => import('@/views/pages/Public/Account/ReservationTickets.vue'),
                     meta:{
                         auth:true
                     }
@@ -54,7 +54,7 @@ const router = createRouter({
         {
             path: '/mypayments',
             name: 'MyPayments',
-            component: () => import('@/views/pages/Account/UserTransactions.vue'),
+            component: () => import('@/views/pages/Public/Account/UserTransactions.vue'),
             meta: {
                 layout: 'Default',
                 auth:true
@@ -63,7 +63,7 @@ const router = createRouter({
         {
             path: '/check',
             name: 'check',
-            component: () => import('@/views/pages/Home/CheckTicket.vue'),
+            component: () => import('@/views/pages/Public/CheckTicket/Index.vue'),
             meta: {
                 layout: 'Default'
             }
@@ -71,7 +71,7 @@ const router = createRouter({
         {
             path: '/event/:id',
             name: 'event',
-            component: () => import('@/views/pages/Event/Index.vue'),
+            component: () => import('@/views/pages/Public/Event/Index.vue'),
             redirect: { name: 'event0' },
             beforeEnter: (to, form, next) => {
                 console.log(to)
@@ -86,7 +86,7 @@ const router = createRouter({
                 {
                     path: '0',
                     name: 'event0',
-                    component: () => import('@/views/pages/Event/Steps/FirstStep.vue'),
+                    component: () => import('@/views/pages/Public/Event/Steps/FirstStep.vue'),
                     beforeEnter: (to, form, next) => {
                         try {
                             Guid({}).fromCompressedToFull(to.params.id)
@@ -100,7 +100,7 @@ const router = createRouter({
                     path: '1/:eventId',
                     name: 'event1',
 
-                    component: () => import('@/views/pages/Event/Steps/SecondStep.vue'),
+                    component: () => import('@/views/pages/Public/Event/Steps/SecondStep.vue'),
                     beforeEnter: (to, form, next) => {
                         try {
                             Guid({}).fromCompressedToFull(to.params.id)
@@ -115,7 +115,7 @@ const router = createRouter({
                 {
                     path: '2/:eventId',
                     name: 'event2',
-                    component: () => import('@/views/pages/Event/Steps/ThridStep.vue'),
+                    component: () => import('@/views/pages/Public/Event/Steps/ThridStep.vue'),
                     beforeEnter: (to, form, next) => {
                         try {
                             Guid({}).fromCompressedToFull(to.params.id)
@@ -132,7 +132,7 @@ const router = createRouter({
                 {
                     path: '3/:reservationId',
                     name: 'event3',
-                    component: () => import('@/views/pages/Event/Steps/FourthStep.vue'),
+                    component: () => import('@/views/pages/Public/Event/Steps/FourthStep.vue'),
                     beforeEnter: (to, form, next) => {
                         try {
                             Guid({}).fromCompressedToFull(to.params.id)
@@ -155,7 +155,7 @@ const router = createRouter({
         {
             path: '/buy/:id/:eventId/:payService/:txId',
             name: 'buyStep',
-            component: () => import('@/views/pages/Event/BuyStep.vue'),
+            component: () => import('@/views/pages/Public/Event/BuyStep.vue'),
             beforeEnter: (to, form, next) => {
                 console.log(to)
                 try {
@@ -188,7 +188,7 @@ const router = createRouter({
         {
             path: '/:render',
             name: 'rerender',
-            component: () => import('@/views/components/Tricks/rerender.vue')
+            component: () => import('@/global/Tricks/rerender.vue')
         },
         //   {
         //     path: '/about',
@@ -214,7 +214,7 @@ const router = createRouter({
                 {
                     name: 'AdminDashboard',
                     path: 'dashboard',
-                    component: () => import('@/views/pages/AdminPanel/dashboard.vue'),
+                    component: () => import('@/views/pages/AdminPanel/Dashboard/dashboard.vue'),
                     meta: {
                         label: 'صفحه اصلی',
                         auth:true
@@ -223,7 +223,7 @@ const router = createRouter({
                 {
                     name: 'AdminpProfile',
                     path: 'profile',
-                    component: () => import('@/views/ui/AdminPanel/Account/Profile.vue'),
+                    component: () => import('@/views/pages/AdminPanel/Account/Profile.vue'),
                     meta: {
                         label: 'حساب کاربری',
                         auth:true
@@ -232,13 +232,13 @@ const router = createRouter({
                 {
                     name: 'ManagePlaces',
                     path: 'managePlaces',
-                    component: () => import('@/views/pages/AdminPanel/Places.vue'),
+                    component: () => import('@/views/pages/AdminPanel/Places/Places.vue'),
                     redirect: { name: 'AllPlaces' },
                     children: [
                         {
                             name: 'AllPlaces',
                             path: '',
-                            component: () => import('@/views/ui/AdminPanel/Places/AllPlaces.vue'),
+                            component: () => import('@/views/pages/AdminPanel/Places/AllPlaces.vue'),
                             meta: {
                                 label: 'مکانهای برکزاری',
                                 auth:true
@@ -247,7 +247,7 @@ const router = createRouter({
                                 {
                                     path: 'create',
                                     name: 'createPlace',
-                                    component: () => import('@/views/ui/AdminPanel/Places/CreatePlace.vue'),
+                                    component: () => import('@/views/pages/AdminPanel/Places/CreatePlace.vue'),
                                     meta: {
                                         label: 'ایجاد ماکن برگزاری',
                                         auth:true
@@ -256,7 +256,7 @@ const router = createRouter({
                                 {
                                     path: 'edit/:id',
                                     name: 'editPlace',
-                                    component: () => import('@/views/ui/AdminPanel/Places/CreatePlace.vue'),
+                                    component: () => import('@/views/pages/AdminPanel/Places/CreatePlace.vue'),
                                     meta: {
                                         label: 'ویرایش مکان برگزاری',
                                         auth:true
@@ -266,7 +266,7 @@ const router = createRouter({
                                 {
                                     path: 'manage/:id',
                                     name: 'managePlace',
-                                    component: () => import('@/views/ui/AdminPanel/Places/ManageHalls.vue'),
+                                    component: () => import('@/views/pages/AdminPanel/Places/ManageHalls.vue'),
                                     meta: {
                                         label: 'مدیریت مکان برگزاری',
                                         auth:true
@@ -275,7 +275,7 @@ const router = createRouter({
                                         {
                                             path: 'create',
                                             name: 'createHall',
-                                            component: () => import('@/views/ui/AdminPanel/Places/CreateHall.vue'),
+                                            component: () => import('@/views/pages/AdminPanel/Places/CreateHall.vue'),
                                             meta: {
                                                 label: 'مدیریت مکان برگزاری',
                                                 auth:true
@@ -284,7 +284,7 @@ const router = createRouter({
                                         {
                                             path: 'edit/:hallId',
                                             name: 'editHall',
-                                            component: () => import('@/views/ui/AdminPanel/Places/CreateHall.vue'),
+                                            component: () => import('@/views/pages/AdminPanel/Places/CreateHall.vue'),
                                             meta: {
                                                 label: 'مدیریت مکان برگزاری',
                                                 auth:true
@@ -299,7 +299,7 @@ const router = createRouter({
                 {
                     name: 'ManageConcerts',
                     path: 'concerts',
-                    component: () => import('@/views/pages/AdminPanel/Concerts.vue'),
+                    component: () => import('@/views/pages/AdminPanel/Concerts/Concerts.vue'),
                     redirect: { name: 'AllConcerts' },
                     meta: {
                         label: 'کنسرتها',
@@ -309,7 +309,7 @@ const router = createRouter({
                         {
                             path: '',
                             name: 'AllConcerts',
-                            component: () => import('@/views/ui/AdminPanel/Concerts/AllConcerts.vue'),
+                            component: () => import('@/views/pages/AdminPanel/Concerts/AllConcerts.vue'),
                             meta: {
                                 label: 'کنسرت ها',
                                 auth:true
@@ -318,7 +318,7 @@ const router = createRouter({
                         {
                             path: 'createConcert',
                             name: 'createConcert',
-                            component: () => import('@/views/ui/AdminPanel/Concerts/CreateConcert.vue'),
+                            component: () => import('@/views/pages/AdminPanel/Concerts/CreateConcert.vue'),
                             meta: {
                                 label: 'ایجاد یک کنسرت',
                                 auth:true
@@ -327,7 +327,7 @@ const router = createRouter({
                         {
                             path: 'EditConcert/:concertId',
                             name: 'EditConcert',
-                            component: () => import('@/views/ui/AdminPanel/Concerts/CreateConcert.vue'),
+                            component: () => import('@/views/pages/AdminPanel/Concerts/CreateConcert.vue'),
                             meta: {
                                 label: 'ویرایش یک کنسرت',
                                 auth:true
@@ -338,13 +338,13 @@ const router = createRouter({
                 {
                     name: 'ManagePromoters',
                     path: 'managePromoters',
-                    component: () => import('@/views/pages/AdminPanel/Promoters.vue'),
+                    component: () => import('@/views/pages/AdminPanel/Promoters/Promoters.vue'),
                     redirect: { name: 'AllPromoters' },
                     children: [
                         {
                             name: 'AllPromoters',
                             path: '',
-                            component: () => import('@/views/ui/AdminPanel/Promoters/AllPromoters.vue'),
+                            component: () => import('@/views/pages/AdminPanel/Promoters/AllPromoters.vue'),
                             meta: {
                                 label: 'برگزار کنندگان',
                                 auth:true
@@ -353,7 +353,7 @@ const router = createRouter({
                                 {
                                     path: 'create',
                                     name: 'createPromoter',
-                                    component: () => import('@/views/ui/AdminPanel/Promoters/CreatePromoters.vue'),
+                                    component: () => import('@/views/pages/AdminPanel/Promoters/CreatePromoters.vue'),
                                     meta: {
                                         label: 'ایجاد برگزارکننده',
                                         auth:true
@@ -362,7 +362,7 @@ const router = createRouter({
                                 {
                                     path: 'edit/:id',
                                     name: 'editPromoter',
-                                    component: () => import('@/views/ui/AdminPanel/Promoters/CreatePromoters.vue'),
+                                    component: () => import('@/views/pages/AdminPanel/Promoters/CreatePromoters.vue'),
                                     meta: {
                                         label: 'ویرایش برگزارکننده',
                                         auth:true
@@ -375,13 +375,13 @@ const router = createRouter({
                 {
                     name: 'StaticData',
                     path: 'staticdata',
-                    component: () => import('@/views/pages/AdminPanel/StaticData.vue'),
+                    component: () => import('@/views/pages/AdminPanel/StaticData/StaticData.vue'),
                     redirect: { name: 'ManageStaticData' },
                     children: [
                         {
                             name: 'ManageStaticData',
                             path: 'managestaticdata',
-                            component: () => import('@/views/ui/AdminPanel/StaticData/ManageStaticData.vue'),
+                            component: () => import('@/views/pages/AdminPanel/StaticData/ManageStaticData.vue'),
                             meta:{
                                 auth:true
                             }
@@ -391,13 +391,13 @@ const router = createRouter({
                 {
                     name: 'discount',
                     path: 'discount',
-                    component: () => import('@/views/pages/AdminPanel/StaticData.vue'),
+                    component: () => import('@/views/pages/AdminPanel/StaticData/StaticData.vue'),
                     redirect: { name: 'Managediscount' },
                     children: [
                         {
                             name: 'Managediscount',
                             path: 'managediscount',
-                            component: () => import('@/views/ui/AdminPanel/Discount/AllDiscount.vue'),
+                            component: () => import('@/views/pages/AdminPanel/Discount/AllDiscount.vue'),
                             meta:{
                                 auth:true
                             }
@@ -405,7 +405,7 @@ const router = createRouter({
                         {
                             name: 'createDiscount',
                             path: 'createDiscount',
-                            component: () => import('@/views/ui/AdminPanel/Discount/CreateDiscount.vue'),
+                            component: () => import('@/views/pages/AdminPanel/Discount/CreateDiscount.vue'),
                             
                             meta:{
                                 auth:true
@@ -414,7 +414,7 @@ const router = createRouter({
                         {
                             name: 'editDiscount',
                             path: 'editDiscount/:id',
-                            component: () => import('@/views/ui/AdminPanel/Discount/CreateDiscount.vue'),
+                            component: () => import('@/views/pages/AdminPanel/Discount/CreateDiscount.vue'),
                             meta:{
                                 auth:true
                             }
@@ -424,13 +424,13 @@ const router = createRouter({
                 {
                     name: 'ManageUsers',
                     path: 'manageusers',
-                    component: () => import('@/views/pages/AdminPanel/StaticData.vue'),
+                    component: () => import('@/views/pages/AdminPanel/StaticData/StaticData.vue'),
                     redirect: { name: 'manageallusers' },
                     children: [
                         {
                             name: 'manageallusers',
                             path: 'manageallusers',
-                            component: () => import('@/views/ui/AdminPanel/Users/Users.vue'),
+                            component: () => import('@/views/pages/AdminPanel/Users/Users.vue'),
                             meta:{
                                 auth:true
                             },
@@ -438,7 +438,7 @@ const router = createRouter({
                                 {
                                     name: 'editUser',
                                     path: 'edit/:id',
-                                    component: () => import('@/views/ui/AdminPanel/Users/EditUser.vue'),
+                                    component: () => import('@/views/pages/AdminPanel/Users/EditUser.vue'),
                                     meta:{
                                         auth:true
                                     }
@@ -446,7 +446,7 @@ const router = createRouter({
                                 {
                                     name: 'UserPayments',
                                     path: 'userpayments/:id',
-                                    component: () => import('@/views/ui/AdminPanel/Users/UserTransactions.vue'),
+                                    component: () => import('@/views/pages/AdminPanel/Users/UserTransactions.vue'),
                                     meta:{
                                         auth:true
                                     }
@@ -454,7 +454,7 @@ const router = createRouter({
                                 {
                                     name: 'UserReservations',
                                     path: 'UserReservations/:id',
-                                    component: () => import('@/views/ui/AdminPanel/Users/UserReservation.vue'),
+                                    component: () => import('@/views/pages/AdminPanel/Users/UserReservation.vue'),
                                     meta:{
                                         auth:true
                                     }

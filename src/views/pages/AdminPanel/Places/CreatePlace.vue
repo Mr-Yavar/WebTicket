@@ -1,0 +1,295 @@
+<script setup>
+import { useForm } from 'vee-validate'
+import Splitter from '@/global/Splitter/Splitter.vue'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
+import { CRPlacesService, GetPlaceService } from '@/services/PlacesService.js'
+import { CiCircleChevLeft } from '@kalimahapps/vue-icons/ci'
+import Swal from 'sweetalert2'
+import { useRoute, useRouter } from 'vue-router'
+import { reactive, watch, watchEffect } from 'vue'
+import Vselect from 'vue-select'
+import { MapComponent, MapTypes } from '@neshan-maps-platform/mapbox-gl-vue'
+import '@neshan-maps-platform/mapbox-gl-vue/dist/style.css'
+import nmp_mapboxgl from '@neshan-maps-platform/mapbox-gl'
+import { MAP_API, MAP_SERVICE_API } from '@/config/appConfig'
+import { computed } from 'vue'
+import { nextTick } from 'vue'
+
+const router = useRouter()
+const route = useRoute()
+const placeId = !route.params.id ? null : route.params.id
+
+const queryClient = useQueryClient()
+
+const neshanMap = reactive({ map: null })
+
+const marker = new nmp_mapboxgl.Marker({
+    color: 'black',
+    title: 'محل برگزاری',
+    draggable: false,
+    clickTolerance: 0
+})
+
+const { resetForm, defineField, handleSubmit, setFieldValue } = useForm({
+    initialValues: {
+        place: getPlaceServiceCall.data?.value
+    }
+})
+const [placeTile] = defineField('place.title')
+const [placeDesc] = defineField('place.description')
+const [placeCity] = defineField('place.city')
+const [placeAddress] = defineField('place.address')
+const [placeLat] = defineField('place.lat')
+const placeImage = defineField('place.image')
+const [placeLng] = defineField('place.lng')
+
+const getPlaceServiceCall = useQuery({
+    queryKey: ['api/place/GetPlaceService', route.params.id],
+    queryFn: () => GetPlaceService(route.params.id),
+    enabled: !!route.params.id
+})
+
+watch([getPlaceServiceCall.data], async () => {
+    if (placeId) {
+        await nextTick()
+        resetForm({ values: { place: { ...getPlaceServiceCall.data?.value } } })
+
+        placeLat.value = getPlaceServiceCall.data?.value.lat
+        placeLng.value = getPlaceServiceCall.data?.value.lng
+        placeCity.value = getPlaceServiceCall.data?.value.cityId
+        marker.setLngLat([placeLng.value, placeLat.value])
+        marker.addTo(neshanMap.map)
+        neshanMap.map.flyTo({ center: [placeLng.value, placeLat.value], zoom: 14 })
+    } else resetForm({ values: {} })
+})
+
+const Point = computed(() => (!placeLat.value || !placeLng.value ? null : [placeLng.value, placeLat.value]))
+watch(Point, () => {
+    if (Point.value) neshanMap.map.flyTo({ center: [placeLng.value, placeLat.value], zoom: 14 })
+})
+
+function handleStartMap(map) {
+    map.fitBounds(map.getBounds(), {
+        padding: { top: 50, bottom: 50, left: 50, right: 50 },
+        center: [51.375, 35.7449],
+        maxZoom: 20,
+        zoom: 15,
+        minZoom: 7,
+        animate: true,
+        around: [51.375, 35.7449]
+    })
+    neshanMap.map = map
+
+    map.on('click', (e) => {
+        console.log(e)
+        marker.setLngLat(Object.values(e.lngLat))
+        placeLat.value = e.lngLat.lat
+        placeLng.value = e.lngLat.lng
+        marker.addTo(map)
+    })
+}
+
+const searchLocation = async () => {
+    if (placeAddress.value) {
+        const response = await fetch(`https://api.neshan.org/v4/geocoding?address=${placeAddress.value}`, {
+            headers: {
+                'Api-Key': MAP_SERVICE_API // Replace with your Neshan API key
+            }
+        })
+        const data = await response.json()
+        if (data) {
+            const { x, y } = data.location // Get the first result
+            neshanMap.map.flyTo({ center: [x, y], zoom: 14 }) // Fly to the location
+        }
+    }
+}
+
+const { mutate } = useMutation({
+    mutationKey: ['CU/Places'],
+    mutationFn: CRPlacesService
+})
+
+const onSubmit = handleSubmit(async (data) => {
+    const form = new FormData()
+    console.log(data)
+
+    form.append(
+        'Place',
+        JSON.stringify({
+            Id: placeId ?? undefined,
+            Title: data.place.title,
+            Address: data.place.address,
+            Description: data.place.description,
+            CityId: data.place.city,
+            lat: Number(data.place.lat),
+            lng: Number(data.place.lng)
+        })
+    )
+
+    if (data.place.image && data.place.image.length === 1) {
+        form.append('Files.File', data.place.image[0])
+    } else {
+        form.append('Files.File', undefined)
+    }
+    form.append('Files.key', 'place')
+
+    if (!placeId) {
+        mutate(
+            {
+                url: '/api/Place/CreatePlace?api-version=1.0',
+                body: form,
+                method: 'POST'
+            },
+            {
+                onSuccess: async () => {
+                    await Swal.fire({
+                        text: 'با موفقیت ایجاد شد!',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        showCloseButton: true,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        showClass: { popup: 'direction-rtl vazir-font' }
+                    })
+                    router.push({ name: 'AllPlaces' })
+                }
+            }
+        )
+    } else {
+        mutate(
+            {
+                url: '/api/Place/UpdatePlace?api-version=1.0',
+                body: form,
+                method: 'PUT'
+            },
+            {
+                onSuccess: async () => {
+                    await Swal.fire({
+                        text: 'با موفقیت بروز شد!',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        showCloseButton: true,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        showClass: { popup: 'direction-rtl vazir-font' }
+                    })
+                    router.push({ name: 'AllPlaces' })
+                }
+            }
+        )
+    }
+})
+
+const t = computed(() => queryClient.getQueryData(['AllCities']))
+watchEffect(async () => {
+    if (t.value) {
+        await nextTick()
+
+        setFieldValue('place.city', getPlaceServiceCall.data?.value.cityId)
+    }
+})
+</script>
+
+<template>
+    <div>
+        <div class="sticky top-0">
+            <div class="bg-white">
+                <Splitter title="ایجاد یک مکان برگزاری" border-class="border-black " type="middle" title-class="text-black" />
+            </div>
+            <div class="flex flex-row-reverse mx-1 my-2">
+                <button @click="router.push({ name: 'AllPlaces' })" class="items-center px-4 py-2 text-white bg-red-600 border border-transparent rounded-md shadow-sm w-fit hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"><CiCircleChevLeft class="font-bold scale-125" /></button>
+            </div>
+        </div>
+
+        <form @submit.prevent="onSubmit">
+            <div class="grid grid-cols-6 gap-2">
+                <div class="col-span-2 col-start-2">
+                    <label for="place-name" class="block text-sm font-medium text-gray-700">نام</label>
+                    <input type="text" v-model="placeTile" id="place-name" placeholder="برج میلاد" class="mt-1 py-2 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                </div>
+                <div class="col-span-2 col-start-4">
+                    <label for="place-name" class="block text-sm font-medium text-gray-700">شهر</label>
+                    <Vselect
+                        v-model="placeCity"
+                        :options="queryClient.getQueryData(['AllCities'])"
+                        :reduce="
+                            (city) => {
+                                return city.value
+                            }
+                        "
+                        :value="placeCity"
+                        @input="(e) => console.log(e)"
+                        :key="'select' + queryClient.getQueryData(['AllCities'])?.length"
+                        label="label"
+                        class="mt-1 py-1 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md style-chooser"
+                    >
+                        <template #selected-option="{ label }">
+                            <div style="display: flex; align-items: baseline; padding: 0">
+                                <strong class="text-sm"> {{ label }} </strong>
+                            </div>
+                        </template>
+
+                        <template #option="{ label }">
+                            <div class="text-right">
+                                <h3 style="margin: 0">{{ label }}</h3>
+                            </div>
+                        </template>
+                    </Vselect>
+                </div>
+                <div class="col-span-4 col-start-2">
+                    <label for="place-name" class="block text-sm font-medium text-gray-700">نشانی</label>
+                    <input type="text" v-model="placeAddress" @blur="searchLocation" id="place-name" placeholder="تهران،بلوار ... " class="mt-1 py-2 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                </div>
+                <div class="col-span-4 col-start-2">
+                    <div class="h-[400px]">
+                        <MapComponent
+                            class="rounded-lg"
+                            :map-setter="
+                                (map) => {
+                                    handleStartMap(map)
+                                }
+                            "
+                            :options="{
+                                mapKey: MAP_API,
+                                mapType: MapTypes.neshanRaster,
+                                isTouchPlatform: true,
+
+                                poi: true
+                            }"
+                        />
+                    </div>
+                </div>
+                <!-- <div class="hidden col-span-2 col-start-2">
+                    <label class="block text-sm font-medium text-gray-700">lat</label>
+                    <input v-model="placeLat" class="appearance-none mt-1 py-2 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" type="number" />
+                </div>
+                <div class="hidden col-span-2 col-start-4">
+                    <label class="block text-sm font-medium text-gray-700 ">lng</label>
+                    <input v-model="placeLng" class="appearance-none mt-1 py-2 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" type="number" />
+                </div> -->
+                <div class="col-span-2 col-start-2">
+                    <label class="block text-sm font-medium text-gray-700" for="place-name">تصویر مکان برگزاری</label>
+                    <input
+                        class="mt-1 py-2 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                        type="file"
+                        @change="
+                            ($event) => {
+                                placeImage[0].value = $event.target.files
+                            }
+                        "
+                    />
+                </div>
+                <div class="col-span-4 col-start-2">
+                    <label for="place-name" class="block text-sm font-medium text-gray-700">توضیح</label>
+                    <textarea type="text" v-model="placeDesc" id="place-name" placeholder="درمورد مکان برگزاری و سالن های آن" class="mt-1 py-2 border-[1px] px-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"></textarea>
+                </div>
+                <div class="col-span-2 col-start-3">
+                    <button v-if="!placeId" type="submit" class="items-center block px-4 py-2 mx-auto text-white bg-green-600 border border-transparent rounded-md shadow-sm w-fit hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">ایجاد</button>
+                    <button v-else type="submit" class="items-center block px-4 py-2 mx-auto text-white bg-orange-600 border border-transparent rounded-md shadow-sm w-fit hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">ویرایش</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</template>
+
+<style scoped></style>
