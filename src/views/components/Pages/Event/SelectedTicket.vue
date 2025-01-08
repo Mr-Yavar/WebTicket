@@ -1,10 +1,11 @@
 <template>
+   
     <div>
         <div class="cardWrap md:!text-base sm:!text-sm !text-xs">
             <div class="card cardLeft relative">
                 <div class="absolute top-0.5 text-center text-white block w-full md:!text-lg !text-base"><span class="font-extrabold">کنسرت {{concertTitle}}</span></div>
-                <div class="h-full w-full grid grid-cols-2 items-end gap-0">
-                    <div class="text-center block text-black"><span class="font-bold">طبقه :</span> {{ FRC[0] }}</div>
+                <div class="h-full w-full grid grid-cols-2 items-end gap-0 lg:!text-base !text-sm">
+                    <div class="text-center block text-black"><span class="font-bold">طبقه :</span> {{ seatInfo?.floorTitle ?? FRC[0] }}</div>
 
                     <div class="text-center block text-black"><span class="font-bold">ردیف :</span>{{ FRC[1] }}</div>
 

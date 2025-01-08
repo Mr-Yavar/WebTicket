@@ -75,7 +75,7 @@
         </div>
         <div class="md:hidden flex flex-col bg-white border rounded-md shadow-md w-fit mx-auto">
             <div class="py-0 px-4 flex-col flex text-center">
-                <vue-qrcode value="Hello, World!" :options="{ width: 150, }" class="qrcode"></vue-qrcode>
+                <vue-qrcode :value="Guid({}).fromFullToCompressed(ticket.reservationId)" :options="{ width: 150, }" class="qrcode"></vue-qrcode>
                 <p class="font-bold text-lg lg:text-3xl hidden">اینجا را اسکن کنید!</p>
             </div>
             <hr class="border-dashed border-2 border-gray-400" />
@@ -143,7 +143,7 @@ function dateToFormat(date){
 
     return `${weekday} ${day}م ${month} ${year} ${saat} ${time} `
 }
-const name =  computed(()=>`طبقه ${props.ticket.floor} -ردیف ${props.ticket.row} -صندلی ${props.ticket.column}`);
+const name =  computed(()=>`طبقه ${props.ticket?.floorTitle ?? props.ticket.floor} -ردیف ${props.ticket.row} -صندلی ${props.ticket.column}`);
 const address =  computed(()=>props.ticket.place.address);
 
 

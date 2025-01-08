@@ -250,14 +250,15 @@ function handleClickOnSeat($event) {
 
         if (!$event.target.classList.contains(TicketsTypes['reserved-tickets']) && !$event.target.classList.contains(TicketsTypes['waiting-tickets']) && !$event.target.classList.contains(TicketsTypes['not-tickets'])) {
             if (!$event.target.classList.contains(TicketsTypes['selected-tickets'])) {
-                let [floor, row, column] = $event.target.id.split('_')
+                let [floor, row, column] = $event.target.id.replaceAll("f","").replaceAll("r","").replaceAll("c","").split('_')
                 $event.target.classList.remove(TicketsTypes['free-tickets'])
                 $event.target.classList.add(TicketsTypes['selected-tickets'])
                 TicketStore.addToTicket({
                     ...Ticket,
                     floor,
                     row,
-                    column
+                    column,
+                    floorTitle : Floors.value[floor]
                 })
             } else {
                 handleClickOnDeleteSeat($event.target.getAttribute('tid'))
@@ -376,7 +377,11 @@ watch([() => seatMapService.Reserved_Tickets], () => {
                 if (!!temp && temp.length === 1) {
                     let [floor, row, column] = temp[0].name.replace('f', '').replace('r', '').replace('c', '').split('_')
 
-                    let txt = `<br/><p dir="rtl">${column}  ستون : ${row} ردیف : ${Floors.value[floors[i]]}  طبقه : `
+                    let txt = `<br/><p class="">
+                      <span>طبقه :</span>  <span>${Floors.value[floors[i]]}</span>
+                          <span>ردیف :</span> <span>  ${row}</span>
+                        <span> ستون :</span><span> ${column}</span>
+                     `
                     txt += '   </p>'
                     return txt
                 }
@@ -425,7 +430,14 @@ watch([() => seatMapService.Locked_Tickets], () => {
                 if (!!temp && temp.length === 1) {
                     let [floor, row, column] = temp[0].name.replace('f', '').replace('r', '').replace('c', '').split('_')
 
-                    let txt = `<br/><p dir="rtl">${column}  ستون : ${row} ردیف : ${Floors.value[floors[i]]}  طبقه : `
+                    let txt = `<br/><p class="">
+                        <span>طبقه :</span>  <span>${Floors.value[floors[i]]}</span> 
+                          <span>ردیف :</span> <span>  ${row}</span>
+                        <span> ستون :</span><span> ${column}</span>
+                      
+                         
+                     `;
+                    
                     txt += '   </p>'
                     return txt
                 }
@@ -489,7 +501,7 @@ function panZoomInit(map, index) {
 
                 let [floor, row, column] = item.id.replaceAll("f","").replaceAll("r","").replaceAll("c","").split('_')
                 instance.setContent(` <div class="direction-rtl vazir-font text-right">
-                <p>طبقه : ${floor}</p>
+                <p>طبقه : ${Floors.value[floor]}</p>
                 <p>ردیف : ${row}</p>
                 <p>ستون :${column}</p>
                      <p>قیمت :${ticket.price} تومان</p>
@@ -500,12 +512,12 @@ function panZoomInit(map, index) {
     })
 
     map.querySelectorAll(`*[id^="f"][id*="_r"][id*="_c"]:not([tid])`).forEach((item) => {
-        let [floor, row, column] = item.id.split('_')
+        let [floor, row, column] = item.id.replaceAll("f","").replaceAll("r","").replaceAll("c","").split('_')
 
         tippy(item, {
             content: `
                 <div class="direction-rtl vazir-font text-right">
-                <p>طبقه : ${floor}</p>
+                <p>طبقه : ${Floors.value[floor]}</p>
                 <p>ردیف : ${row}</p>
                 <p>ستون :${column}</p>
                 <p>قیمت : <span class="inline-block w-[20px] text-center">-</span> تومان</p>
@@ -535,22 +547,23 @@ watch([TicketStore.Tickets], () => {
 })
 
 onMounted(() => {
-    seatMapService.notifyUnLockTickets()
+    TicketStore.setSelectedShowing(ChosenEvent.value);
+    seatMapService.notifyUnLockTickets();
 
     //TicketStore.removeAllTickets()
 
-    if (TicketStore.selectedShowing.length === 0) {
-        Swal.fire({
-            title: 'خطا جانم!',
-            text: 'اینجا بدون انتخاب سانس چیکار میکنی؟',
-            icon: 'info',
-            showConfirmButton: false,
-            showCloseButton: true,
-            timer: 2000,
-            timerProgressBar: true,
-            showClass: { popup: 'direction-rtl vazir-font' }
-        })
-    }
+    // if (TicketStore.selectedShowing.length === 0) {
+    //     Swal.fire({
+    //         title: 'خطا جانم!',
+    //         text: 'اینجا بدون انتخاب سانس چیکار میکنی؟',
+    //         icon: 'info',
+    //         showConfirmButton: false,
+    //         showCloseButton: true,
+    //         timer: 2000,
+    //         timerProgressBar: true,
+    //         showClass: { popup: 'direction-rtl vazir-font' }
+    //     })
+    // }
 
     seatMapService.JoinGroup(ChosenEvent.value)
 
