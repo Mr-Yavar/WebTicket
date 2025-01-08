@@ -8,7 +8,7 @@ import useUserStore from '@/stores/user'
 
 const unauthorizedCodes = [401]
 const requestTimeout = 60000 // 60 seconds
-const userStore = useUserStore()
+
 
 const getAccessToken = () => {
     return localStorage.getItem('JWTToken')
@@ -61,11 +61,13 @@ const baseFetch = async (baseUrl, url, options = {}) => {
                     // Retry the original request with the new token
                     return baseFetch(url, options)
                 } catch (refreshError) {
+                    const userStore = useUserStore()
                     console.error('Token refresh failed:', refreshError)
                     // Handle refresh token failure, e.g., redirect to login
                     userStore.logOut()
                 }
             } else if (unauthorizedCodes.includes(response.status)) {
+                const userStore = useUserStore()
                 userStore.logOut()
             }
             throw new Error(`Request failed with status ${response.status}`)

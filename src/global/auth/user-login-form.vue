@@ -62,8 +62,8 @@ const loginServiceCall = useMutation({
     onMutate: () => {
         form_in_progress.value = true
     },
-    onSuccess: async (e) => {
-        const data = await JSON.parse(e)
+    onSuccess: async (data) => {
+
         await userStore.GetAuthenticated(data)
 
         form_in_progress.value = false
