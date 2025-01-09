@@ -35,7 +35,7 @@
                         <input class="h-10 rounded-[7px] rtl:fa-font !border !border-gray-300 border-t-transparent bg-transparent bg-white px-3 py-2.5 font-sans sm:text-sm font-normal text-blue-gray-700 shadow-lg shadow-gray-900/5 outline outline-0 ring-4 ring-transparent transition-all placeholder:text-gray-500 placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:!border-gray-900 focus:border-t-transparent focus:!border-t-gray-900 focus:outline-0 focus:ring-gray-900/10 disabled:border-0 disabled:bg-blue-gray-50 sm:w-full w-32 text-xs" placeholder="کد تخفیف ..." type="text" v-model="discount" />
                     </div>
                     <div class="self-center px-2 w-fit">
-                        <button class="select-none rounded-lg bg-gray-900 py-2.5 md:px-6 px-1 text-center align-middle font-sans !text-xs font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none " type="button" @click.prevent="useDiscount">اعمال کد</button>
+                        <button class="select-none rounded-lg bg-gray-900 py-2.5 md:px-6 px-1 text-center align-middle font-sans !text-xs font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" type="button" @click.prevent="useDiscount">اعمال کد</button>
                     </div>
                 </div>
             </span>
@@ -46,7 +46,7 @@
         <template #nextBtn>
             <button v-if="!GetUserTempoReservation.isError.value && GetUserTempoReservation.data.value?.amount != -1 && GetUserTempoReservation.data.value?.tickets.length !== 0" class="select-none rounded-lg bg-green-500 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-green-500/20 transition-all hover:shadow-lg hover:shadow-green-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 w-[40px]disabled:shadow-none" @click.prevent="onNext">
                 <span v-show="!isPending">پرداخت</span>
-                <span v-show="isPending && !isError"><PrSpinner class="animate-spin block  mx-auto text-lg w-[40px]" /></span>
+                <span v-show="isPending && !isError"><PrSpinner class="animate-spin block mx-auto text-lg w-[40px]" /></span>
             </button>
             <span v-else></span>
         </template>
@@ -55,20 +55,17 @@
 <script setup>
 import { PrSpinner } from '@kalimahapps/vue-icons/pr'
 import { Guid } from '@/config/helper'
-import { sendRequest } from '@/services/service'
 import useTicketStore from '@/stores/Ticket.js'
 import SelectedTicket from '@/views/components/Pages/Event/SelectedTicket.vue'
 import { useMutation, useQuery } from '@tanstack/vue-query'
 import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import ControlSteps from './controlSteps.vue'
-import useUserStore from '@/stores/user'
-import { CRPlacesService } from '@/services/PlacesService'
 import useSeatMapStore from '@/stores/seatMap'
 import VueCountdown from '@chenfengyuan/vue-countdown'
 import Swal from 'sweetalert2'
-import { ConcertsQueryKeys, get_apiConcertsGetConcertInfo, get_apiConcertsGetReservation } from '@/api/ConcertsService'
-import { BillingQueryKeys, get_apiBillingGetDiscount } from '@/api/BillingService'
+import { ConcertsQueryKeys, get_apiConcertsGetConcertInfo, get_apiConcertsGetReservation, post_apiConcertsRemoveFromResevation } from '@/api/ConcertsService'
+import { BillingQueryKeys, get_apiBillingGetDiscount, post_apiBillingPay } from '@/api/BillingService'
 
 const props = defineProps({
     stepControls: Object,
@@ -82,21 +79,26 @@ const TicketStore = useTicketStore()
 const seatMapService = useSeatMapStore()
 const usedDiscount = ref('')
 const discountHasError = ref(false)
-const userStore = useUserStore()
-const { mutate, isPending } = useMutation({
-    mutationKey: ['Reservation'],
-    mutationFn: CRPlacesService
+
+const BillingMutation = useMutation({
+    mutationKey: [BillingQueryKeys.post_apiBillingPay],
+    mutationFn: post_apiBillingPay
 })
 
-const GetSpecificConcertServiceCallKey = computed(() => [ConcertsQueryKeys.get_apiConcertsGetConcertInfo(route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id))])
-const GetSpecificConcertServiceCall = useQuery({
-    queryKey: GetSpecificConcertServiceCallKey,
+const ReservationRemoveMutation = useMutation({
+    mutationKey: [ConcertsQueryKeys.post_apiConcertsRemoveFromResevation],
+    mutationFn: post_apiConcertsRemoveFromResevation
+})
+
+const isPending = computed(() => BillingMutation.isPending || ReservationRemoveMutation.isPending)
+
+const GetConcertInfoServiceKey = computed(() => [ConcertsQueryKeys.get_apiConcertsGetConcertInfo(route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id))])
+const GetConcertInfoService = useQuery({
+    queryKey: GetConcertInfoServiceKey,
     queryFn: () => get_apiConcertsGetConcertInfo(route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id)),
 
     enabled: true
 })
-
-
 
 const GetUserTempoReservation = useQuery({
     queryKey: [ConcertsQueryKeys.get_apiConcertsGetReservation],
@@ -108,13 +110,12 @@ const GetUserTempoReservation = useQuery({
 const amount = computed(() => (GetUserTempoReservation.data.value?.amount > 0 ? GetUserTempoReservation.data.value?.amount : 0))
 const expirationTimeOut = computed(() => (new Date(GetUserTempoReservation.data.value?.expirationDate) - new Date() > 0 ? new Date(GetUserTempoReservation.data.value?.expirationDate) - new Date() : 0))
 
-const discount = ref('');
+const discount = ref('')
 
-
-const discountKey = computed(() => [BillingQueryKeys.get_apiBillingGetDiscount( GetUserTempoReservation.data.value?.tempReservationId,discount)])
+const discountKey = computed(() => [BillingQueryKeys.get_apiBillingGetDiscount(GetUserTempoReservation.data.value?.tempReservationId, discount)])
 const GetDiscount = useQuery({
     queryKey: discountKey,
-    queryFn: ()=>get_apiBillingGetDiscount( GetUserTempoReservation.data.value?.tempReservationId,discount),
+    queryFn: () => get_apiBillingGetDiscount(GetUserTempoReservation.data.value?.tempReservationId, discount),
     enabled: false
 })
 const ChosenEvent = computed(() => Guid({}).fromCompressedToFull(route.params.eventId))
@@ -141,7 +142,7 @@ async function useDiscount() {
     }
 }
 
-const concert = computed(() => GetSpecificConcertServiceCall.data.value)
+const concert = computed(() => GetConcertInfoService.data.value)
 
 const discountPrice = computed(() => {
     let res = amount.value
@@ -207,22 +208,12 @@ async function onNext() {
   `
     })
 
- 
-    
-    await mutate(
+    await BillingMutation.mutate(
         {
-            url: '/api/Billing/Pay?api-version=1.0',
-            body: JSON.stringify({
-                reservationId: GetUserTempoReservation.data.value.tempReservationId,
-                discountId: usedDiscount.value == null || usedDiscount.value === '' ? null : usedDiscount.value,
-                url: `/buy/${route.params.id}/${route.params.eventId}`,
-                payService: Number(payServiceType)
-            }),
-            method: 'POST',
-            headers: {
-                'Content-type': 'application/json',
-                Authorization: 'Bearer ' + userStore.accessToken
-            }
+            reservationId: GetUserTempoReservation.data.value.tempReservationId,
+            discountId: usedDiscount.value == null || usedDiscount.value === '' ? null : usedDiscount.value,
+            url: `/buy/${route.params.id}/${route.params.eventId}`,
+            payService: Number(payServiceType)
         },
         {
             onSuccess: async (data) => {
@@ -233,16 +224,8 @@ async function onNext() {
 }
 
 async function onPreviuos() {
-    await mutate(
-        {
-            url: '/api/Concerts/RemoveFromResevation?api-version=1.0',
-
-            method: 'POST',
-            headers: {
-                'Content-type': 'application/json',
-                Authorization: 'Bearer ' + userStore.accessToken
-            }
-        },
+    await ReservationRemoveMutation.mutate(
+        {},
         {
             onSuccess: async () => {
                 try {

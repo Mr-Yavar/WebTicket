@@ -12,15 +12,15 @@
 </template>
 
 <script setup>
-import EventPartial from './components/EventPartial.vue'
 import CardItem from '@/views/pages/Public/components/CardItem.vue'
 import { useQuery } from '@tanstack/vue-query'
+import EventPartial from './components/EventPartial.vue'
 
-import { computed } from 'vue'
 import SkeletonCardItem from '@/views/pages/Public/components/SkeletonCardItem.vue'
+import { computed } from 'vue'
 
-import { ref } from 'vue'
 import { ConcertsQueryKeys, get_apiConcertsGetAllConcerts } from '@/api/ConcertsService'
+import { ref } from 'vue'
 
 const cities = ref([])
 const categories = ref([])

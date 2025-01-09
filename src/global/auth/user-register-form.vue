@@ -84,7 +84,7 @@
 <script setup>
 import { ErrorMessage } from 'vee-validate'
 import { useMutation } from '@tanstack/vue-query'
-import { registerService } from '@/services/AuthenticationService.js'
+
 import { ref } from 'vue'
 import Swal from 'sweetalert2'
 import { useAuthModalStore } from '@/stores/componentStore/authModal.js'
@@ -114,7 +114,6 @@ const registerServiceCall = useMutation({
         form_in_progress.value = true
     },
     onSuccess: async (e) => {
-       
         form_in_progress.value = false
         await Swal.fire({
             title: 'موفقیت آمیز',

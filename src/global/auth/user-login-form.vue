@@ -37,7 +37,6 @@
 <script setup>
 import { ErrorMessage } from 'vee-validate'
 import { useMutation } from '@tanstack/vue-query'
-import { loginService } from '@/services/AuthenticationService.js'
 import Swal from 'sweetalert2'
 import { ref } from 'vue'
 import { useAuthModalStore } from '@/stores/componentStore/authModal.js'
@@ -45,8 +44,8 @@ import useUserStore from '@/stores/user.js'
 import { sweetAlertAuthConfigure } from '@/config/alertConfigure.js'
 import { AuthenticationQueryKeys, post_apiauthenticationlogin } from '@/api/AuthenticationService'
 
-const authModal = useAuthModalStore();
-const userStore = useUserStore();
+const authModal = useAuthModalStore()
+const userStore = useUserStore()
 const schema = {
     userName: 'required',
     password: 'required'
@@ -63,7 +62,6 @@ const loginServiceCall = useMutation({
         form_in_progress.value = true
     },
     onSuccess: async (data) => {
-
         await userStore.GetAuthenticated(data)
 
         form_in_progress.value = false
@@ -96,7 +94,7 @@ const loginServiceCall = useMutation({
             icon: 'error',
             html: message,
             ...sweetAlertAuthConfigure
-        });
+        })
     }
 })
 

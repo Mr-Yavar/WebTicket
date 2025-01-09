@@ -1,5 +1,4 @@
 <template>
-   
     <div class="w-full px-8 py-4">
         <div class="relative flex items-center justify-between w-full">
             <div class="absolute rtl:right-0 left-0 top-2/4 h-0.5 w-full -translate-y-2/4 dark:bg-gray-600 bg-gray-300"></div>
@@ -13,11 +12,7 @@
             <Splitter :title="stepTitles[step]" border-class="border-gray-500 border-dashed" class="my-3" titleClass="font-bold text-md text-gray-900 dark:text-white" type="middle" />
         </div>
         <router-view v-slot="{ Component }">
-            <component :is="Component" :to-next="toNext" :to-previous="toPrevious">
-           
-
-            </component>
-           
+            <component :is="Component" :to-next="toNext" :to-previous="toPrevious"> </component>
         </router-view>
         <!-- <transition>
             <keep-alive>
@@ -55,12 +50,9 @@
 <script setup>
 import { computed } from 'vue'
 
-
 import { useRoute, useRouter } from 'vue-router'
 
 import Splitter from '@/global/Splitter/Splitter.vue'
-
-
 
 // موقع رد شدن از اون مرحله اجرا بشه
 // const NextActions = {
@@ -216,34 +208,27 @@ import Splitter from '@/global/Splitter/Splitter.vue'
 
 const route = useRoute()
 
-const step = computed(()=>Number(route.name.replace("event","")));
+const step = computed(() => Number(route.name.replace('event', '')))
 
 const stepTitles = ['گام اول : انتخاب سانس', 'گام دوم : انتخاب صندلی', 'گام سوم : رزرو', 'گام چهارم : دریافت بلیت']
 const router = useRouter()
 
 async function toNext() {
-
-        await router.push({
-            name: 'event'+(step.value + 1),
-            params: {
-                ...route.params,
-             
-            }
-        });
-    
-   
+    await router.push({
+        name: 'event' + (step.value + 1),
+        params: {
+            ...route.params
+        }
+    })
 }
 
 async function toPrevious() {
-  
-        await router.push({
-            name:  'event'+(step.value -1),
-            params: {
-                ...route.params,
-         
-            }
-        });
-       
+    await router.push({
+        name: 'event' + (step.value - 1),
+        params: {
+            ...route.params
+        }
+    })
 }
 </script>
 

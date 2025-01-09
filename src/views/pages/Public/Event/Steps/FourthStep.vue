@@ -1,5 +1,4 @@
 <template>
-   
     <div class="grid grid-cols-4">
         <div class="my-2 mx-1 flex flex-row">
             <vue-to-print :content="getComponentToPrint" document-title="تیکتها" :copy-styles="true" :body-class="'vazir-font direction-rtl w-full'">
@@ -8,15 +7,12 @@
                 </template>
             </vue-to-print>
         </div>
-    
     </div>
 
     <div v-if="GetUserReservation.isLoading.value">
         <PrSpinner class="animate-spin block w-full mx-auto text-3xl mt-8" />
     </div>
     <template v-else>
-
-
         <PerfectScrollbar>
             <div ref="componentRef">
                 <template v-for="ticket in data" :key="ticket.id">
@@ -33,17 +29,16 @@
     </div>
 </template>
 <script setup>
-import { VueToPrint } from 'vue-to-print'
-import { PrSpinner } from '@kalimahapps/vue-icons/pr'
-import { sendRequest } from '@/services/service'
 import useUserStore from '@/stores/user'
 import TicketForPrint from '@/views/pages/Public/components/TicketForPrint.vue'
+import { PrSpinner } from '@kalimahapps/vue-icons/pr'
 import { useQuery } from '@tanstack/vue-query'
+import { VueToPrint } from 'vue-to-print'
 
-import { useRoute, useRouter } from 'vue-router'
-import { computed } from 'vue'
+import { ConcertsQueryKeys, get_apiConcertsGetUserReservation } from '@/api/ConcertsService'
 import { Guid } from '@/config/helper'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -51,56 +46,47 @@ function GoToHome() {
     router.push({
         name: 'home'
     })
-};
-const componentRef = ref();
+}
+const componentRef = ref()
 const getComponentToPrint = () => {
     return componentRef.value
-};
-const route = useRoute();
-const reservationId = computed(()=>Guid({}).fromCompressedToFull(route.params.reservationId));
+}
+const route = useRoute()
+const reservationId = computed(() => Guid({}).fromCompressedToFull(route.params.reservationId))
+
 const GetUserReservation = useQuery({
-    queryKey: ['/api/Concerts/GetUserReservation/',reservationId.value],
-    queryFn: async ({ queryKey }) => {
-        return sendRequest({
-            url: queryKey.join(''),
-            method: 'Get',
-            headers: {
-                Authorization: 'Bearer ' + userStore.accessToken
-            }
-        })
-    },
+    queryKey: [ConcertsQueryKeys.get_apiConcertsGetUserReservation(reservationId.value)],
+    queryFn: () => get_apiConcertsGetUserReservation(reservationId.value),
     retry: false,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchInterval: false,
     enabled: !!reservationId.value
-});
+})
 
-const data = computed(()=>{
-    return GetUserReservation.data.value?.seats.map((seat)=>{
-        const [floor,row,column] = seat.name.replace("f","").replace("r","").replace("c","").split("_");
+const data = computed(() => {
+    return GetUserReservation.data.value?.seats.map((seat) => {
+        const [floor, row, column] = seat.name.replace('f', '').replace('r', '').replace('c', '').split('_')
         return {
-            id:seat.id,
-            floor : GetUserReservation.data.value.eventInfo.floors.find(x=>x.displayOrder==floor)?.title,
+            id: seat.id,
+            floor: GetUserReservation.data.value.eventInfo.floors.find((x) => x.displayOrder == floor)?.title,
             row,
             column,
-            amount : seat.price,
-            hall : GetUserReservation.data.value.hall.name,
-            place : {
-                 ...GetUserReservation.data.value.place
-                
+            amount: seat.price,
+            hall: GetUserReservation.data.value.hall.name,
+            place: {
+                ...GetUserReservation.data.value.place
             },
-            OwnerName : userStore.FullName,
-            concert : {
+            OwnerName: userStore.FullName,
+            concert: {
                 ...GetUserReservation.data.value.concertInfo
             },
-            event : {
-                executionDate:GetUserReservation.data.value.eventInfo.executionDate
+            event: {
+                executionDate: GetUserReservation.data.value.eventInfo.executionDate
             },
-            reservationId:GetUserReservation.data.value?.reservationId
-        };
-
+            reservationId: GetUserReservation.data.value?.reservationId
+        }
     })
-});
+})
 </script>
 <style scoped></style>

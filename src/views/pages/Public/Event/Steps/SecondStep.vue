@@ -1,17 +1,17 @@
 <template>
     <div>
         <div class="text-center text-black text-md dark:text-gray-100">
-            کنســــرت <span class="text-xl font-extrabold">{{ GetSpecificConcertServiceCall.data.value?.title }}</span>
+            کنســــرت <span class="text-xl font-extrabold">{{ GetConcertInfoService.data.value?.title }}</span>
         </div>
         <div class="grid grid-cols-1 gap-2 text-center">
             <div class="grid grid-cols-1 px-3 mt-2 text-black dark:text-gray-100 sm:grid-cols-2">
                 <p>
                     <v-icon class="text-black dark:text-white" name="px-calendar-tomorrow" scale="1" />
-                    <span class="font-bold text-md"> تاریخ : </span> <span>{{ new Date(GetSpecificEventServiceCall.data.value?.events[0].executionDate).toLocaleDateString('fa-ir') }}</span>
+                    <span class="font-bold text-md"> تاریخ : </span> <span>{{ new Date(GetSpecificEventService.data.value?.events[0].executionDate).toLocaleDateString('fa-ir') }}</span>
                 </p>
                 <p>
                     <v-icon class="text-black dark:text-white" name="px-clock" scale="1" />
-                    <span class="font-bold text-md">ساعت : </span> <span>{{ new Date(GetSpecificEventServiceCall.data.value?.events[0].executionDate).toLocaleTimeString('fa-ir', { hour: '2-digit', minute: '2-digit', hour12: false }) + ' - ' + new Date(new Date(GetSpecificEventServiceCall.data.value?.events[0].executionDate) * 1 + 90 * 60 * 1000).toLocaleTimeString('fa-ir', { hour: '2-digit', minute: '2-digit', hour12: false }) }}</span>
+                    <span class="font-bold text-md">ساعت : </span> <span>{{ new Date(GetSpecificEventService.data.value?.events[0].executionDate).toLocaleTimeString('fa-ir', { hour: '2-digit', minute: '2-digit', hour12: false }) + ' - ' + new Date(new Date(GetSpecificEventService.data.value?.events[0].executionDate) * 1 + 90 * 60 * 1000).toLocaleTimeString('fa-ir', { hour: '2-digit', minute: '2-digit', hour12: false }) }}</span>
                 </p>
             </div>
 
@@ -97,7 +97,7 @@ import { CRPlacesService } from '@/services/PlacesService'
 import { v4 } from 'uuid'
 import { ConcertsQueryKeys, get_apiConcertsGetConcertInfo, get_apiConcertsGetSpecificEvent } from '@/api/ConcertsService'
 
-const GetSpecificEventServiceCall = useQuery({
+const GetSpecificEventService = useQuery({
     queryKey: [ConcertsQueryKeys.get_apiConcertsGetSpecificEvent( ChosenEvent.value)],
     queryFn: ()=>get_apiConcertsGetSpecificEvent( ChosenEvent.value),
     enabled: SeatMaps.value.length === 0,
@@ -119,9 +119,9 @@ const { mutate } = useMutation({
     mutationFn: CRPlacesService
 })
 
-const GetSpecificConcertServiceCallKey = computed(() => [ConcertsQueryKeys.get_apiConcertsGetConcertInfo(route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id))])
-const GetSpecificConcertServiceCall = useQuery({
-    queryKey: GetSpecificConcertServiceCallKey,
+const GetConcertInfoServiceKey = computed(() => [ConcertsQueryKeys.get_apiConcertsGetConcertInfo(route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id))])
+const GetConcertInfoService = useQuery({
+    queryKey: GetConcertInfoServiceKey,
     queryFn: () => get_apiConcertsGetConcertInfo(route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id)),
 
     enabled: true
@@ -266,22 +266,22 @@ function handleClickOnDeleteSeat(seatId) {
     document.querySelector("[tid='" + seatId + "']").classList.add(TicketsTypes['free-tickets'])
 }
 
-const Floors = computed(() => GetSpecificEventServiceCall.data.value?.events[0].floors.map((x) => x.title))
+const Floors = computed(() => GetSpecificEventService.data.value?.events[0].floors.map((x) => x.title))
 
 const Tickets = computed(() => {
     let res = {}
 
-    GetSpecificEventServiceCall.data.value?.events[0].floors.forEach((floor) => {
+    GetSpecificEventService.data.value?.events[0].floors.forEach((floor) => {
         res[floor.displayOrder] = floor.seatsInfo.items
     })
 
     return res
 })
 
-const currentFloor = computed(() => GetSpecificEventServiceCall.data.value?.events[0].floors.filter((x) => x.title === tab.value)[0]?.displayOrder)
+const currentFloor = computed(() => GetSpecificEventService.data.value?.events[0].floors.filter((x) => x.title === tab.value)[0]?.displayOrder)
 watchEffect(async () => {
-    if (GetSpecificEventServiceCall.data.value?.events[0] !== undefined)
-        for (let floor of GetSpecificEventServiceCall.data.value?.events[0]?.floors ?? []) {
+    if (GetSpecificEventService.data.value?.events[0] !== undefined)
+        for (let floor of GetSpecificEventService.data.value?.events[0]?.floors ?? []) {
             let res = await GetSeatMapService(floor.seatMap_url)
 
             let dom = new DOMParser()
