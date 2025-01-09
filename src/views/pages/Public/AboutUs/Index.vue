@@ -8,20 +8,15 @@
 </template>
 
 <script setup>
-import { sendRequest } from '@/services/service';
-import { useQuery } from '@tanstack/vue-query';
-
+import { BaseInfoQueryKeys, get_apiBaseInfoGetParametersByKey } from '@/api/BaseInfoService'
+import { useQuery } from '@tanstack/vue-query'
 
 const GetAbountUs = useQuery({
-    queryKey: ['/api/BaseInfo/GetParametersByKey/AboutUs'],
-    queryFn: ({ queryKey }) =>
-        sendRequest({
-            url: queryKey[0],
-            method: 'GET'
-        }),
+    queryKey: [BaseInfoQueryKeys.get_apiBaseInfoGetParametersByKey('AboutUs')],
+    queryFn: () => get_apiBaseInfoGetParametersByKey('AboutUs'),
     refetchOnMount: true,
     enabled: true
-});
+})
 </script>
 
 <style></style>

@@ -5,7 +5,7 @@
         </div>
     </div>
     <div class="grid grid-cols-2">
-        <vee-form :validation-schema="schema1" @submit="updateProfile" autocomplete="off" :aria-autocomplete="'off'" :initialValues="formValues" :key="formValues" >
+        <vee-form :validation-schema="schema1" @submit="updateProfile" autocomplete="off" :aria-autocomplete="'off'" :initialValues="formValues" :key="formValues">
             <!-- Name -->
             <div class="grid grid-cols-3 mb-3">
                 <label class="inline-block text-xs leading-9 text-center text-gray-800 md:text-sm dark:text-gray-100">نام </label>
@@ -73,7 +73,7 @@
             </div>
         </vee-form>
 
-        <vee-form :validation-schema="schema2" @submit="updatePassword" autocomplete="off" >
+        <vee-form :validation-schema="schema2" @submit="updatePassword" autocomplete="off">
             <!-- Password -->
             <div class="grid grid-cols-3 mb-3">
                 <label class="inline-block text-xs leading-9 text-center text-gray-800 md:text-sm dark:text-gray-100">رمز فعلی </label>
@@ -117,56 +117,39 @@
 </template>
 
 <script setup>
-import { sendRequest } from '@/services/service'
 import useUserStore from '@/stores/user'
 import { useQuery } from '@tanstack/vue-query'
 import { computed } from 'vue'
 
-import { ErrorMessage } from 'vee-validate'
 import { useMutation } from '@tanstack/vue-query'
+import { ErrorMessage } from 'vee-validate'
 
-import { ref } from 'vue'
 import Swal from 'sweetalert2'
+import { ref } from 'vue'
 
+import { AccountQueryKeys, get_apiAccountGetProfile, put_apiAccountUpdatePassword, put_apiAccountUpdateProfile } from '@/api/AccountService'
+import { AuthenticationQueryKeys, post_apiauthenticationrefresh } from '@/api/AuthenticationService'
 import { sweetAlertAuthConfigure } from '@/config/alertConfigure.js'
 import Splitter from '@/global/Splitter/Splitter.vue'
 
-
 const userStore = useUserStore()
-const queryKey = computed(() => [{ url: '/api/Account/GetProfile' }])
+
+const queryKey = computed(() => [AccountQueryKeys.get_apiAccountGetProfile])
 const GetUserProfile = useQuery({
     queryKey: queryKey,
-    queryFn: ({ queryKey }) =>
-        sendRequest({
-            url: queryKey[0].url,
-            method: 'GET',
-            headers: {
-                Authorization: 'Bearer ' + userStore.accessToken
-            }
-        }),
+    queryFn: () => get_apiAccountGetProfile,
     refetchOnMount: true,
     enabled: true
 })
 
-const dataIdentityToken = computed(() => [
-    '/api/authentication/refresh',
-    {
-        accessToken: userStore.accessToken,
-        refreshToken: userStore.refreshToken,
-        user: null
-    }
-])
+const dataIdentityToken = computed(() => [AuthenticationQueryKeys.post_apiauthenticationrefresh])
 const GetNewIdentity = useQuery({
     queryKey: dataIdentityToken,
-    queryFn: ({ queryKey }) =>
-        sendRequest({
-            url: queryKey[0],
-            method: 'POST',
-            body: JSON.stringify(queryKey[1]),
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + userStore.accessToken
-            }
+    queryFn: () =>
+        post_apiauthenticationrefresh({
+            accessToken: userStore.accessToken,
+            refreshToken: userStore.refreshToken,
+            user: null
         }),
     refetchInterval: false,
     refetchIntervalInBackground: false,
@@ -176,8 +159,6 @@ const GetNewIdentity = useQuery({
     refetchOnMount: false,
     enabled: false
 })
-
-
 
 const schema1 = {
     firstName: 'required|min:3|max:100|persian_text',
@@ -198,107 +179,85 @@ const possibleErrors = {
     DuplicatePhoneNumber: '!کاربری با این شماره موبایل وجود دارد',
     PasswordMismatch: '!رمز عبور را اشتباه وارد کرده‌اید'
 }
-const registerServiceCall = useMutation({
-    mutationKey: 'registerService',
-    mutationFn: sendRequest
+
+const UpdateProfileMutation = useMutation({
+    mutationKey: AccountQueryKeys.put_apiAccountUpdateProfile,
+    mutationFn: put_apiAccountUpdateProfile,
+    onMutate: () => {
+        form_in_progress.value = true
+    },
+    onSuccess: async () => {
+        form_in_progress.value = false
+
+        await GetNewIdentity.refetch()
+        userStore.GetAuthenticated(GetNewIdentity.data.value)
+        await Swal.fire({
+            title: 'موفقیت آمیز',
+            ...sweetAlertAuthConfigure,
+            html: '!عملیات با موفقیت انجام شد'
+        })
+    },
+    onError: (e) => {
+        //possibleErrors
+
+        let messges = JSON.parse(e.message)
+
+        let Error = Object.keys(messges)
+            .map((item) => possibleErrors[item])
+            .join('<br/>')
+        Error = Error === '' ? 'خطا!' : Error
+        form_in_progress.value = false
+        Swal.fire({
+            title: 'خطا',
+            icon: 'error',
+            html: Error,
+            ...sweetAlertAuthConfigure
+        })
+    }
+})
+
+const UpdatePasswordMutation = useMutation({
+    mutationKey: [AccountQueryKeys.put_apiAccountUpdatePassword],
+    mutationFn: put_apiAccountUpdatePassword,
+    onMutate: () => {
+        form_password_in_progress.value = true
+    },
+    onSuccess: async () => {
+        form_password_in_progress.value = false
+        await Swal.fire({
+            title: 'موفقیت آمیز',
+            ...sweetAlertAuthConfigure,
+            html: '!عملیات با موفقیت انجام شد'
+        })
+    },
+    onError: (e) => {
+        //possibleErrors
+
+        let messges = JSON.parse(e.message)
+
+        let Error = messges.map((item) => possibleErrors[item.code]).join('<br/>')
+        Error = Error === '' ? 'خطا!' : Error
+        form_password_in_progress.value = false
+        Swal.fire({
+            title: 'خطا',
+            icon: 'error',
+            html: Error,
+            ...sweetAlertAuthConfigure
+        })
+    }
 })
 
 const form_in_progress = ref(false)
 const form_password_in_progress = ref(false)
 async function updateProfile(values) {
-    console.log(values)
-    registerServiceCall.mutate(
-        {
-            url: '/api/Account/UpdateProfile',
-            body: JSON.stringify(values),
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + userStore.accessToken
-            },
-            method: 'PUT'
-        },
-        {
-            onMutate: () => {
-                form_in_progress.value = true
-            },
-            onSuccess: async () => {
-               
-                form_in_progress.value = false
-
-                await GetNewIdentity.refetch()
-                userStore.GetAuthenticated(GetNewIdentity.data.value)
-                await Swal.fire({
-                    title: 'موفقیت آمیز',
-                    ...sweetAlertAuthConfigure,
-                    html: '!عملیات با موفقیت انجام شد'
-                })
-            },
-            onError: (e) => {
-                //possibleErrors
-
-                let messges = JSON.parse(e.message)
-
-                let Error = Object.keys(messges)
-                    .map((item) => possibleErrors[item])
-                    .join('<br/>')
-                Error = Error === '' ? 'خطا!' : Error
-                form_in_progress.value = false
-                Swal.fire({
-                    title: 'خطا',
-                    icon: 'error',
-                    html: Error,
-                    ...sweetAlertAuthConfigure
-                })
-            }
-        }
-    )
+    UpdateProfileMutation.mutate(values)
 }
 
 async function updatePassword(values) {
-  
-    registerServiceCall.mutate(
-        {
-            url: '/api/Account/UpdatePassword',
-            body: JSON.stringify({
-                password: values.password,
-                currentPassword: values.currentPassword
-            }),
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + userStore.accessToken
-            },
-            method: 'PUT'
-        },
-        {
-            onMutate: () => {
-                form_password_in_progress.value = true
-            },
-            onSuccess: async () => {
-                
-                form_password_in_progress.value = false
-                await Swal.fire({
-                    title: 'موفقیت آمیز',
-                    ...sweetAlertAuthConfigure,
-                    html: '!عملیات با موفقیت انجام شد'
-                })
-            },
-            onError: (e) => {
-                //possibleErrors
-
-                let messges = JSON.parse(e.message)
-          
-                let Error = messges.map((item) => possibleErrors[item.code]).join('<br/>')
-                Error = Error === '' ? 'خطا!' : Error
-                form_password_in_progress.value = false
-                Swal.fire({
-                    title: 'خطا',
-                    icon: 'error',
-                    html: Error,
-                    ...sweetAlertAuthConfigure
-                })
-            }
-        }
-    )
+    UpdatePasswordMutation.mutate({
+        password: values.password,
+        currentPassword: values.currentPassword
+    })
 }
 </script>
 

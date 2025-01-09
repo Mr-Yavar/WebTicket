@@ -1,4 +1,3 @@
-
 <template>
     <template v-if="$route.name === 'MyReservations'">
         <div class="sticky top-0">
@@ -40,7 +39,7 @@
                                 {
                                     title: '-',
                                     key: 'options',
-                                    tdClass:'text-info '
+                                    tdClass: 'text-info '
                                 }
                             ]"
                             :data="GetUserReservation.data.value?.data ?? []"
@@ -53,21 +52,30 @@
                             :trClass="'odd:bg-white even:bg-gray-100'"
                             :scrollBarHeight="'calc(100dvh - 300px)'"
                         >
-                    
                             <template #[`tbodytitle`]="{ data }">{{ data.concertInfo.title }}</template>
                             <template #[`tbodyplace.name`]="{ data }">{{ data.place.name }}</template>
                             <template #[`tbodyreservationDate`]="{ data }">{{ new Date(data.reservationDate).toLocaleString('fa-ir', dateFormat).split(',').reverse().join(' ') }}</template>
-                            
-                             <template #[`tbodybillAmount`]="{ data }">{{ data.transaction.billAmount }}</template>
-                             <template #[`tbodyticketCount`]="{ data }">{{ data.ticketCount}}</template>
-                            <template #[`tbodyoptions`]="{ data }"><div class="text-center !text-blue-900"><span class="!text-info hover:border-b-2 hover:border-gray-700 cursor-pointer" @click.prevent="()=>{
-                            $router.push({
-                                name :'MyReservationTicket',
-                                params :{
-                                    reservationId : Guid({}).fromFullToCompressed(data.reservationId)
-                                }
-                            })
-                            }">مشاهده بلیت‌ها</span></div></template>
+                            <template #[`tbodybillAmount`]="{ data }">{{ data.transaction.billAmount }}</template>
+                            <template #[`tbodyticketCount`]="{ data }">{{ data.ticketCount }}</template>
+                            <template #[`tbodyoptions`]="{ data }">
+                                <div class="text-center !text-blue-900">
+                                    <span
+                                        class="!text-info hover:border-b-2 hover:border-gray-700 cursor-pointer"
+                                        @click.prevent="
+                                            () => {
+                                                $router.push({
+                                                    name: 'MyReservationTicket',
+                                                    params: {
+                                                        reservationId: Guid({}).fromFullToCompressed(data.reservationId)
+                                                    }
+                                                })
+                                            }
+                                        "
+                                    >
+                                        مشاهده بلیت‌ها
+                                    </span>
+                                </div>
+                            </template>
 
                             <template #[`pagination`]>
                                 <nav class="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200 sm:px-6" aria-label="Pagination">
@@ -105,35 +113,27 @@
             </div>
         </div>
     </template>
+
     <template v-else>
-        <router-view/>
+        <router-view />
     </template>
 </template>
 
 <script setup>
-import DataTable_V1 from '@/global/DataTables/DataTable_V1.vue';
+import DataTable_V1 from '@/global/DataTables/DataTable_V1.vue'
 
-import { sendRequest } from '@/services/service'
+import { AccountQueryKeys, get_apiAccountMyReservation } from '@/api/AccountService'
+import { Guid } from '@/config/helper'
+import Splitter from '@/global/Splitter/Splitter.vue'
 import { useQuery } from '@tanstack/vue-query'
-import { computed } from 'vue';
-import { ref } from 'vue';
-import useUserStore from '@/stores/user';
-import Splitter from '@/global/Splitter/Splitter.vue';
-import { Guid } from '@/config/helper';
-const pageIndex = ref(0);
-const pageSize = ref(10);
-const userStore = useUserStore();
-const queryKey = computed(() => [{ url: '/api/Account/MyReservation', pageSize: pageSize.value, currentPage: pageIndex.value + 1 }])
+import { computed, ref } from 'vue'
+const pageIndex = ref(0)
+const pageSize = ref(10)
+
+const queryKey = computed(() => [AccountQueryKeys.get_apiAccountMyReservation(pageSize.value, pageIndex.value + 1)])
 const GetUserReservation = useQuery({
     queryKey: queryKey,
-    queryFn: ({ queryKey }) =>
-        sendRequest({
-            url: queryKey[0].url + '/' + queryKey[0].pageSize + '/' + queryKey[0].currentPage,
-            method: 'GET',
-            headers: {
-                'Authorization'  : "Bearer "+userStore.accessToken
-            }
-        }),
+    queryFn: () => get_apiAccountMyReservation(pageSize.value, pageIndex.value + 1),
     refetchOnMount: true,
     enabled: true
 })
@@ -151,10 +151,6 @@ function action(step) {
 
     pageIndex.value += step
 }
-
-
 </script>
 
-<style>
-
-</style>
+<style></style>

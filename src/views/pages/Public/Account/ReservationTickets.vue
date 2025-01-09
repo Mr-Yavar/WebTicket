@@ -9,10 +9,7 @@
         </div>
         <div class="my-2 mx-1 flex flex-row-reverse col-span-1 col-start-4">
             <button @click="router.push({ name: 'MyReservations' })" class="items-center px-4 py-2 w-fit border border-transparent rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"><CiCircleChevLeft class="scale-125 font-bold" /></button>
-
-
         </div>
-     
     </div>
 
     <div v-if="GetUserReservation.isLoading.value">
@@ -31,19 +28,18 @@
     </template>
 </template>
 <script setup>
-import { VueToPrint } from 'vue-to-print'
-import { sendRequest } from '@/services/service'
 import useUserStore from '@/stores/user'
 import TicketForPrint from '@/views/pages/Public/components/TicketForPrint.vue'
-import { useQuery } from '@tanstack/vue-query'
 import { CiCircleChevLeft } from '@kalimahapps/vue-icons/ci'
+import { useQuery } from '@tanstack/vue-query'
+import { VueToPrint } from 'vue-to-print'
 
-import { useRoute, useRouter } from 'vue-router'
-import { computed } from 'vue'
+import { ConcertsQueryKeys, get_apiConcertsGetUserReservation } from '@/api/ConcertsService'
 import { Guid } from '@/config/helper'
 import { PrSpinner } from '@kalimahapps/vue-icons/pr'
+import { computed, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
-import { ref } from 'vue'
 const componentRef = ref()
 const getComponentToPrint = () => {
     return componentRef.value
@@ -53,17 +49,10 @@ const userStore = useUserStore()
 
 const route = useRoute()
 const reservationId = computed(() => Guid({}).fromCompressedToFull(route.params.reservationId))
+
 const GetUserReservation = useQuery({
-    queryKey: ['/api/Concerts/GetUserReservation/', reservationId.value],
-    queryFn: async ({ queryKey }) => {
-        return sendRequest({
-            url: queryKey.join(''),
-            method: 'Get',
-            headers: {
-                Authorization: 'Bearer ' + userStore.accessToken
-            }
-        })
-    },
+    queryKey: [ConcertsQueryKeys.get_apiConcertsGetUserReservation(reservationId.value)],
+    queryFn: () => get_apiConcertsGetUserReservation(reservationId.value),
     retry: false,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
