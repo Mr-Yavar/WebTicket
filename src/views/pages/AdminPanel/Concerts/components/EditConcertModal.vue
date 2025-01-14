@@ -1,10 +1,12 @@
-<style>
+<style scoped>
+@import "@/assets/main.css";
 .tab-active {
     @apply bg-neutral text-white;
 }
 </style>
 
 <template>
+    <span class="hidden bg-neutral"></span>
     <modal :show="show" :on-close-fn="onCloseFn">
         <template #title>
             <h3 class="font-bold text-lg mb-4 rtl:text-right"> اطلاعات کلی </h3>

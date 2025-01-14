@@ -38,10 +38,10 @@ function onSearchText(value) {
     searchText.value = value
 }
 
-const queryKey = computed(() => [ConcertsQueryKeys.get_apiConcertsGetAllConcerts(cities.value.join(','), categories.value.join(','), searchText)])
+const queryKey = computed(() => [ConcertsQueryKeys.get_apiConcertsGetAllConcerts(cities.value.join(','), categories.value.join(','), searchText.value)])
 const GetAllConcertsServiceCall = useQuery({
     queryKey: queryKey,
-    queryFn: () => get_apiConcertsGetAllConcerts(cities.value.join(','), categories.value.join(','), searchText),
+    queryFn: () => get_apiConcertsGetAllConcerts(cities.value.join(','), categories.value.join(','), searchText.value),
 
     enabled: true
 })

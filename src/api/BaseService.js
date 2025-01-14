@@ -11,7 +11,7 @@ const requestTimeout = 60000 // 60 seconds
 
 
 const getAccessToken = () => {
-    return localStorage.getItem('JWTToken')
+    return localStorage.getItem('TOKEN')
 }
 
 const getRefreshToken = () => {
@@ -38,9 +38,9 @@ const baseFetch = async (baseUrl, url, options = {}) => {
             headers = { 'content-type': 'application/json', ...options.headers }
         }
 
-        if (accessToken) {
-            headers[REQUEST_HEADER_AUTH_KEY] = `${TOKEN_TYPE}${accessToken}`
-        }
+        
+            headers[REQUEST_HEADER_AUTH_KEY] = `${TOKEN_TYPE} ${accessToken}`
+        
         const response = await fetch(`${baseUrl}${url}`, {
             ...options,
             headers: headers,

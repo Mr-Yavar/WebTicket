@@ -473,7 +473,7 @@ function addNewEvent() {
                     <div class="h-fit">
                         <div class="w-full !bg-white">
                             <Splitter v-if="!concertId" border-class="border-black " title="کنسرت جدید" title-class="text-black" type="middle" />
-                            <Splitter v-else border-class="border-black " title="ویرایش یک سالن برگزاری" title-class="text-black" type="middle" />
+                            <Splitter v-else border-class="border-black " title="ویرایش یک کنسرت" title-class="text-black" type="middle" />
                         </div>
                     </div>
                     <div class="flex flex-row-reverse mx-1 my-2">

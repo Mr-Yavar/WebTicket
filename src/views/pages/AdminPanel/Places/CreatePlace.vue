@@ -29,7 +29,11 @@ const marker = new nmp_mapboxgl.Marker({
     draggable: false,
     clickTolerance: 0
 })
-
+const getPlaceServiceCall = useQuery({
+    queryKey: ['api/place/GetPlaceService', route.params.id],
+    queryFn: () => GetPlaceService(route.params.id),
+    enabled: !!route.params.id
+})
 const { resetForm, defineField, handleSubmit, setFieldValue } = useForm({
     initialValues: {
         place: getPlaceServiceCall.data?.value
@@ -43,11 +47,7 @@ const [placeLat] = defineField('place.lat')
 const placeImage = defineField('place.image')
 const [placeLng] = defineField('place.lng')
 
-const getPlaceServiceCall = useQuery({
-    queryKey: ['api/place/GetPlaceService', route.params.id],
-    queryFn: () => GetPlaceService(route.params.id),
-    enabled: !!route.params.id
-})
+
 
 watch([getPlaceServiceCall.data], async () => {
     if (placeId) {
