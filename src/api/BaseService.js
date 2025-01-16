@@ -11,7 +11,7 @@ const requestTimeout = 60000 // 60 seconds
 
 
 const getAccessToken = () => {
-    return localStorage.getItem('TOKEN')
+    return localStorage.getItem('jwt')
 }
 
 const getRefreshToken = () => {
