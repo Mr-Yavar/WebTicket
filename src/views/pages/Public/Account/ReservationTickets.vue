@@ -33,7 +33,6 @@ import TicketForPrint from '@/views/pages/Public/components/TicketForPrint.vue'
 import { CiCircleChevLeft } from '@kalimahapps/vue-icons/ci'
 import { useQuery } from '@tanstack/vue-query'
 import { VueToPrint } from 'vue-to-print'
-
 import { ConcertsQueryKeys, get_apiConcertsGetUserReservation } from '@/api/ConcertsService'
 import { Guid } from '@/config/helper'
 import { PrSpinner } from '@kalimahapps/vue-icons/pr'
@@ -48,7 +47,8 @@ const router = useRouter()
 const userStore = useUserStore()
 
 const route = useRoute()
-const reservationId = computed(() => Guid({}).fromCompressedToFull(route.params.reservationId))
+
+const reservationId = computed(() => route.params.reservationId && Guid({}).fromCompressedToFull(route.params.reservationId))
 
 const GetUserReservation = useQuery({
     queryKey: [ConcertsQueryKeys.get_apiConcertsGetUserReservation(reservationId.value)],
@@ -80,7 +80,7 @@ const data = computed(() => {
             event: {
                 executionDate: GetUserReservation.data.value.eventInfo.executionDate
             },
-            reservationId
+            reservationId:reservationId.value
         }
     })
 })

@@ -1,13 +1,5 @@
 <template>
-    <div class="grid grid-cols-4">
-        <div class="my-2 mx-1 flex flex-row">
-            <vue-to-print :content="getComponentToPrint" document-title="تیکتها" :copy-styles="true" :body-class="'vazir-font direction-rtl w-full'">
-                <template #trigger>
-                    <button class="items-center px-2 py-1 w-fit border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">چاپ</button>
-                </template>
-            </vue-to-print>
-        </div>
-    </div>
+  
 
     <div v-if="GetUserReservation.isLoading.value">
         <PrSpinner class="animate-spin block w-full mx-auto text-3xl mt-8" />
@@ -25,7 +17,12 @@
     </template>
 
     <div class="mx-auto w-fit mt-12 grid grid-cols-2 gap-2">
-        <button class="btn btn-sm btn-primary" @click.prevent="GoToHome">بازگشت به صفحه اصلی</button>
+        <button class="btn btn-sm btn-dark" @click.prevent="GoToHome">بازگشت به صفحه اصلی</button>
+        <vue-to-print :content="getComponentToPrint" document-title="تیکتها" :copy-styles="true" :body-class="'vazir-font direction-rtl w-full'">
+                <template #trigger>
+                    <button class="btn btn-sm btn-dark w-fit">🖨️</button>
+                </template>
+            </vue-to-print>
     </div>
 </template>
 <script setup>

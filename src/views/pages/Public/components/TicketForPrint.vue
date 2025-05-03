@@ -4,7 +4,6 @@
         <div class="flex-row justify-between hidden border rounded-md shadow-md md:flex ">
             <div class="flex flex-col items-center justify-between w-1/4 bg-white border-gray-500 border-dashed lg:w-1/6 ltr:border-r-2 rtl:border-l-2 ltr:rounded-l-md rtl:rounded-r-md">
                 <div class="flex-col">
-                   
                     <vue-qrcode :value="Guid({}).fromFullToCompressed(ticket.reservationId)" :options="{ width: 150,margin:2 }" class="qrcode"></vue-qrcode>
                     <p class="mb-2 text-xs italic font-light text-center text-gray-500">اینجا را اسکن کنید!</p>
                     

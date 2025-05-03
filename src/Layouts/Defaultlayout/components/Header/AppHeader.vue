@@ -33,6 +33,7 @@
                                         </button>
                                     </template>
 
+                                    <DropdownContent>
                                     <!-- contents display in dropdown -->
                                     <div>
                                         <div class="px-2 py-2 w-fit vazir-font direction-rtl">
@@ -63,6 +64,7 @@
                                             </div>
                                         </div>
                                     </div>
+                                </DropdownContent>
                                 </Dropdown>
                             </li>
                         </ul>
@@ -154,7 +156,7 @@
     </header>
 </template>
 <script setup>
-import Dropdown from 'v-dropdown'
+import {Dropdown,DropdownContent} from 'v-dropdown'
 import { ref } from 'vue'
 import { useAuthModalStore } from '@/stores/componentStore/authModal.js'
 import useUserStore from '@/stores/user.js'

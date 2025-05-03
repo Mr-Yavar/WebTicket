@@ -68,6 +68,7 @@ const VerifyMutation = useMutation({
     mutationKey: [BillingQueryKeys.post_apiBillingVerify],
     mutationFn: post_apiBillingVerify,
     onSuccess: async (data) => {
+        console.log(data)
         resultOfVerify.result = { ...data }
         if (data.success) {
             await seatMapService.notifyReservedTickets()
@@ -75,8 +76,8 @@ const VerifyMutation = useMutation({
         }
     }
 })
-
-const isPending = computed(() => VerifyMutation.isPending)
+console.log(VerifyMutation);
+const isPending = computed(() => VerifyMutation.isPending.value)
 
 // const GetSpecificConcertServiceCallKey = computed(() => ['/api/Concerts/GetConcertInfo/', route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id)]);
 // const GetSpecificConcertServiceCall = useQuery({
@@ -167,7 +168,7 @@ watchEffect(async () => {
         return
     }
 
-    await VerifyMutation.mutate(DataToVerify.value)
+    resultOfVerify.result = await VerifyMutation.mutate(DataToVerify.value)
 })
 
 function GoToHome() {

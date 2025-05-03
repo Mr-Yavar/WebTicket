@@ -129,6 +129,7 @@ import { useQuery } from '@tanstack/vue-query'
 import { computed, ref } from 'vue'
 const pageIndex = ref(0)
 const pageSize = ref(10)
+console.log(Guid);
 
 const queryKey = computed(() => [AccountQueryKeys.get_apiAccountMyReservation(pageSize.value, pageIndex.value + 1)])
 const GetUserReservation = useQuery({

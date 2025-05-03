@@ -38,6 +38,7 @@ import Vue3PersianDatetimePicker from 'vue3-persian-datetime-picker'
 addIcons(IoHomeOutline,BiCalendarWeek ,PrUsers,MdLocationonOutlined,LaUsersCogSolid,CoPlus,RiPagesLine,MdDiscountOutlined ,MdReceiptlongSharp,MdReceiptOutlined,HiPencil,MdSettingsOutlined,LaFileInvoiceDollarSolid, IoTicketOutline, MdAttachmoneyOutlined, CoHeart, FaRegularStar, BiChevronLeft, HiChevronDown, BiShieldCheck, HiQuestionMarkCircle, RiMenu2Line, IoGridOutline, IoDocumentsOutline, FaChartPie, IoSettingsOutline, BiPencil, LaTimesSolid, MdDashboardOutlined, HiTable, CoBell, BiBarChartLine, FaSearch, LaUserCircle, MdDiscountTwotone, IoTrashOutline, MdCategoryOutlined, SiOpenstreetmap, OiLocation, RiCalendarEventFill, FaSearch, FaTicketAlt, IoTicketSharp, IoArrowForwardOutline, FaTimes, PrSpinner, PxCalendarTomorrow, PxClock, PxGps, HiSolidCheckCircle,BiChevronDoubleRight,BiChevronRight,BiChevronDoubleLeft,MdSettingssuggestOutlined,FaTrashAlt)
 import VueQrcode from '@chenfengyuan/vue-qrcode';
 import DatePicker from '@alireza-ab/vue3-persian-datepicker'
+import { Dropdown } from 'v-dropdown'
 const app = createApp(App);
 app.component(VueQrcode.name, VueQrcode);
 app.component('AB-Date-Picker', DatePicker);
@@ -92,4 +93,6 @@ app.use(createPinia())
 app.use(router)
 app.use(registerLayouts)
 app.component('v-icon', OhVueIcon)
+// app.component('v-dropdown', Dropdown)
+
 app.mount('#app')
