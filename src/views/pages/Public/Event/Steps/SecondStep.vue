@@ -450,6 +450,9 @@ const currentRegions = computed(() => {
 
         regions.push({
             name: seatName,
+            label: {
+                show: false
+            },
             itemStyle: {
                 areaColor: state.color,
                 color: state.color,
@@ -457,12 +460,20 @@ const currentRegions = computed(() => {
                 borderWidth: 0.8
             },
             emphasis: {
+                label: {
+                    show: false
+                },
                 itemStyle: {
                     areaColor: state.color,
                     borderColor: '#ffffff',
                     borderWidth: 2,
                     shadowBlur: 8,
                     shadowColor: 'rgba(0,0,0,0.4)'
+                }
+            },
+            select: {
+                label: {
+                    show: false
                 }
             }
         })
@@ -571,11 +582,22 @@ const chartOption = computed(() => {
                 borderColor: 'transparent',
                 borderWidth: 0
             },
+            label: {
+                show: false
+            },
             emphasis: {
                 focus: 'self',
+                label: {
+                    show: false
+                },
                 itemStyle: {
                     borderColor: '#ffffff',
                     borderWidth: 2
+                }
+            },
+            select: {
+                label: {
+                    show: false
                 }
             },
             regions: currentRegions.value

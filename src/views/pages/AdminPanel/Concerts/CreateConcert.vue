@@ -308,6 +308,9 @@ function getChartOption(eventId, floorIdx) {
 
         regions.push({
             name: seat.name,
+            label: {
+                show: false
+            },
             itemStyle: {
                 areaColor: color,
                 color: color,
@@ -315,12 +318,20 @@ function getChartOption(eventId, floorIdx) {
                 borderWidth: 0.8
             },
             emphasis: {
+                label: {
+                    show: false
+                },
                 itemStyle: {
                     areaColor: color,
                     borderColor: '#ffffff',
                     borderWidth: 2,
                     shadowBlur: 8,
                     shadowColor: 'rgba(0,0,0,0.3)'
+                }
+            },
+            select: {
+                label: {
+                    show: false
                 }
             }
         })
@@ -391,9 +402,20 @@ function getChartOption(eventId, floorIdx) {
                 borderColor: 'transparent',
                 borderWidth: 0
             },
+            label: {
+                show: false
+            },
             emphasis: {
                 focus: 'self',
+                label: {
+                    show: false
+                },
                 itemStyle: { borderColor: '#ffffff', borderWidth: 2 }
+            },
+            select: {
+                label: {
+                    show: false
+                }
             },
             regions
         }
