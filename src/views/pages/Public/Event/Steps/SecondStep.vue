@@ -1,5 +1,6 @@
 <template>
     <div>
+        <!-- سربرگ اطلاعات رویداد -->
         <div class="text-center text-black text-md dark:text-gray-100">
             کنســــرت <span class="text-xl font-extrabold">{{ GetConcertInfoService.data.value?.title }}</span>
         </div>
@@ -7,47 +8,128 @@
             <div class="grid grid-cols-1 px-3 mt-2 text-black dark:text-gray-100 sm:grid-cols-2">
                 <p>
                     <v-icon class="text-black dark:text-white" name="px-calendar-tomorrow" scale="1" />
-                    <span class="font-bold text-md"> تاریخ : </span> <span>{{ new Date(GetSpecificEventService.data.value?.events[0].executionDate).toLocaleDateString('fa-ir') }}</span>
+                    <span class="font-bold text-md"> تاریخ : </span>
+                    <span>{{ executionDate ? new Date(executionDate).toLocaleDateString('fa-ir') : '-' }}</span>
                 </p>
                 <p>
                     <v-icon class="text-black dark:text-white" name="px-clock" scale="1" />
-                    <span class="font-bold text-md">ساعت : </span> <span>{{ new Date(GetSpecificEventService.data.value?.events[0].executionDate).toLocaleTimeString('fa-ir', { hour: '2-digit', minute: '2-digit', hour12: false }) + ' - ' + new Date(new Date(GetSpecificEventService.data.value?.events[0].executionDate) * 1 + 90 * 60 * 1000).toLocaleTimeString('fa-ir', { hour: '2-digit', minute: '2-digit', hour12: false }) }}</span>
+                    <span class="font-bold text-md"> ساعت : </span>
+                    <span>
+                        {{
+                            executionDate
+                                ? new Date(executionDate).toLocaleTimeString('fa-ir', { hour: '2-digit', minute: '2-digit', hour12: false }) +
+                                  ' - ' +
+                                  new Date(new Date(executionDate) * 1 + 90 * 60 * 1000).toLocaleTimeString('fa-ir', { hour: '2-digit', minute: '2-digit', hour12: false })
+                                : '-'
+                        }}
+                    </span>
                 </p>
             </div>
 
+            <!-- بخش نقشه صندلی‌ها با Apache ECharts -->
             <div class="col-span-full">
-                <div class="p-2 rounded-2xl shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset]">
-                    <div class="tabs grid flex-end align-center tabs-boxed mb-2 !bg-gray-100 dark:bg-gray-600 !text-black dark:!text-white" role="tablist">
-                        <template v-for="floor in Floors" :key="`tab` + floor">
-                            <a :class="{ 'tab-active': tab === floor }" class="tab" role="tab" @click.prevent="changeTab(floor)">{{ floor }}</a>
+                <div class="p-3 rounded-2xl bg-white dark:bg-gray-800 shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset]">
+                    <!-- تب‌های انتخاب طبقه -->
+                    <div class="tabs grid flex-end align-center tabs-boxed mb-3 !bg-gray-100 dark:bg-gray-700 !text-black dark:!text-white" role="tablist">
+                        <template v-for="floor in Floors" :key="`tab-` + floor">
+                            <a :class="{ 'tab-active': tab === floor }" class="tab font-bold" role="tab" @click.prevent="changeTab(floor)">
+                                {{ floor }}
+                            </a>
                         </template>
                     </div>
-                    <div class="body">
-                        <div v-for="(map, index) in SeatMaps" :id="'mapElm' + index" :key="`tabcontent` + Floors[index]" :class="{ hidden: tab !== Floors[index] }" class="p-1 border-2 border-dark-600">
-                            <div :id="'seatMap' + index" @click="handleClickOnSeat" :ref="(el) => panZoomInit(el, index)" class="w-full mx-auto mapContainer" v-html="map"></div>
-                            <div class="flex justify-center">
-                                <div>
-                                    <button class="text-base bg-green-300 btn btn-sm btnZoomIn"><PxZoomIn /></button>
-                                </div>
-                                <div>
-                                    <button class="text-base bg-green-300 btn btn-sm btnZoomReset"><FlFilledZoomFit /></button>
-                                </div>
-                                <div>
-                                    <button class="text-base bg-green-300 btn btn-sm btnZoomOut"><PxZoomOut /></button>
-                                </div>
-                            </div>
+
+                    <!-- ظرف نمایش نقشه با کنترل‌های کامل Apache ECharts -->
+                    <div class="relative w-full h-[540px] md:h-[620px] rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+                        <!-- وضعیت در حال بارگذاری -->
+                        <div v-if="isCurrentMapLoading" class="flex flex-col items-center justify-center text-gray-500 dark:text-gray-300">
+                            <PrSpinner class="animate-spin text-4xl mb-2 text-indigo-500" />
+                            <span class="text-sm font-medium">در حال دریافت و بارگذاری پلان صندلی‌ها...</span>
+                        </div>
+
+                        <!-- کامپوننت Vue-ECharts -->
+                        <v-chart
+                            v-else-if="currentMapRegistered"
+                            ref="chartRef"
+                            class="w-full h-full"
+                            :option="chartOption"
+                            :init-options="{ renderer: 'svg' }"
+                            autoresize
+                            @click="handleChartClick"
+                            @mouseover="handleChartMouseOver"
+                            @mouseout="handleChartMouseOut"
+                        />
+
+                        <!-- پیام در صورت عدم وجود نقشه -->
+                        <div v-else class="text-gray-400 text-sm">
+                            پلان این طبقه در دسترس نیست.
+                        </div>
+
+                        <!-- نوار ابزار کنترل نقشه (Apache ECharts Roam / Map Controls) -->
+                        <div class="absolute bottom-4 left-4 z-10 flex flex-col gap-1.5 p-1.5 bg-white/90 dark:bg-gray-800/90 backdrop-blur rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+                            <!-- دکمه بزرگ‌نمایی -->
+                            <button
+                                type="button"
+                                class="w-9 h-9 flex items-center justify-center rounded-lg bg-gray-100 hover:bg-indigo-50 dark:bg-gray-700 dark:hover:bg-indigo-900/50 text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition shadow-sm"
+                                title="بزرگ‌نمایی (Zoom In)"
+                                @click="zoomIn"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                                </svg>
+                            </button>
+
+                            <!-- دکمه بازنشانی نما -->
+                            <button
+                                type="button"
+                                class="w-9 h-9 flex items-center justify-center rounded-lg bg-gray-100 hover:bg-indigo-50 dark:bg-gray-700 dark:hover:bg-indigo-900/50 text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition shadow-sm text-xs font-bold"
+                                title="بازنشانی اندازه و موقعیت (Reset View)"
+                                @click="resetZoom"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                                </svg>
+                            </button>
+
+                            <!-- دکمه کوچک‌نمایی -->
+                            <button
+                                type="button"
+                                class="w-9 h-9 flex items-center justify-center rounded-lg bg-gray-100 hover:bg-indigo-50 dark:bg-gray-700 dark:hover:bg-indigo-900/50 text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition shadow-sm"
+                                title="کوچک‌نمایی (Zoom Out)"
+                                @click="zoomOut"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- نشانگر راهنمای تعامل روی نقشه -->
+                        <div class="absolute top-3 left-3 z-10 px-2.5 py-1 text-[11px] bg-white/80 dark:bg-gray-800/80 backdrop-blur rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 shadow-sm pointer-events-none">
+                            💡 جابجایی با کشیدن ماوس | زوم با اسکرول ماوس
                         </div>
                     </div>
 
-                    <div class="grid w-full grid-cols-6 text-center text-gray-900 dark:text-gray-100">
-                        <div class="">راهنما:</div>
-                        <div class="mx-2"><span :class="TicketsTypes['free-tickets']" class="w-[10px] h-[10px] inline-block border border-black mx-1"></span>آزاد</div>
-                        <div class="mx-2"><span :class="TicketsTypes['selected-tickets']" class="w-[10px] h-[10px] inline-block border border-black mx-1"></span>انتخاب شما</div>
-                        <div class="mx-2"><span :class="TicketsTypes['waiting-tickets']" class="w-[10px] h-[10px] inline-block border border-black mx-1"></span>در انتظار پرداخت</div>
-                        <div class="mx-2"><span :class="TicketsTypes['reserved-tickets']" class="w-[10px] h-[10px] inline-block border border-black mx-1"></span>رزرو شده</div>
-
-                        <div class="mx-2">
-                            <span :class="TicketsTypes['not-tickets']" class="w-[10px] h-[10px] inline-block border border-black mx-1"></span>
+                    <!-- راهنمای وضعیت صندلی‌ها -->
+                    <div class="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 text-center text-xs md:text-sm text-gray-800 dark:text-gray-200">
+                        <div class="font-bold flex items-center justify-center">راهنما:</div>
+                        <div class="flex items-center justify-center">
+                            <span class="w-3.5 h-3.5 rounded-sm inline-block border border-black/30 mx-1 bg-[#178d17]"></span>
+                            آزاد
+                        </div>
+                        <div class="flex items-center justify-center">
+                            <span class="w-3.5 h-3.5 rounded-sm inline-block border border-black/30 mx-1 bg-[#33b7db]"></span>
+                            انتخاب شما
+                        </div>
+                        <div class="flex items-center justify-center">
+                            <span class="w-3.5 h-3.5 rounded-sm inline-block border border-black/30 mx-1 bg-[#f6b93b]"></span>
+                            در انتظار پرداخت
+                        </div>
+                        <div class="flex items-center justify-center">
+                            <span class="w-3.5 h-3.5 rounded-sm inline-block border border-black/30 mx-1 bg-[#e55039]"></span>
+                            رزرو شده
+                        </div>
+                        <div class="flex items-center justify-center">
+                            <span class="w-3.5 h-3.5 rounded-sm inline-block border border-black/30 mx-1 bg-[#0e0e0e]"></span>
                             غیر قابل خرید
                         </div>
                     </div>
@@ -55,112 +137,655 @@
             </div>
         </div>
 
-        <div class="grid md:grid-cols-2 grid-cols-1 mt-2 gap-2 p-4 rounded-2xl shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset]">
-            <div class="font-bold text-black col-span-full dark:text-gray-200">بلیت های انتخابی شما:</div>
-            <div v-if="TicketStore.Tickets.length === 0" class="font-bold text-center text-black col-span-full dark:text-gray-200 text-md">هیچ بلیتی انتخاب نشده است!</div>
-            <SelectedTicket :concertTitle="concert?.title" v-for="item in TicketStore.Tickets ?? []" :key="item.id" :handleDelete="() => handleClickOnDeleteSeat(item.id)" :has-delete="true" :index="item.id" :seatInfo="item" />
+        <!-- کارت‌های صندلی‌های انتخابی کاربر -->
+        <div class="grid md:grid-cols-2 grid-cols-1 mt-4 gap-2 p-4 rounded-2xl bg-white dark:bg-gray-800 shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset]">
+            <div class="font-bold text-black col-span-full dark:text-gray-200 text-base">
+                بلیت‌های انتخابی شما ({{ TicketStore.Tickets.length }} عدد):
+            </div>
+            <div v-if="TicketStore.Tickets.length === 0" class="font-medium text-center text-gray-500 dark:text-gray-400 col-span-full py-4 text-sm">
+                هیچ بلیتی انتخاب نشده است. از روی نقشه صندلی‌های مورد نظر خود را انتخاب کنید.
+            </div>
+            <SelectedTicket
+                v-for="item in TicketStore.Tickets ?? []"
+                :key="item.id"
+                :concertTitle="concert?.title"
+                :handleDelete="() => handleClickOnDeleteSeat(item.id)"
+                :has-delete="true"
+                :index="item.id"
+                :seatInfo="item"
+            />
         </div>
     </div>
 
+    <!-- دکمه‌های کنترل مراحل -->
     <ControlSteps :to-next="onNext" :to-previous="onPreviuos" />
 </template>
 
 <script setup>
-import 'vue-zoomable/dist/style.css'
-import { FlFilledZoomFit } from '@kalimahapps/vue-icons/fl'
-
-import { computed, ref, useCssModule, watch, watchEffect } from 'vue'
-import SelectedTicket from '@/views/components/Pages/Event/SelectedTicket.vue'
-import useTicketStore from '@/stores/Ticket.js'
-import Panzoom from '@panzoom/panzoom'
-import tippy from 'tippy.js'
-import { Guid } from '@/config/helper'
+import { computed, ref, watch, watchEffect, onMounted, onUnmounted, reactive } from 'vue'
 import { useRoute } from 'vue-router'
-import ControlSteps from './controlSteps.vue'
-import useUserStore from '@/stores/user'
 import { useMutation, useQuery } from '@tanstack/vue-query'
-
-import { GetSeatMapService } from '@/services/ConcertsService.js'
-import useSeatMapStore from '@/stores/seatMap.js'
 import Swal from 'sweetalert2'
-import { onMounted } from 'vue'
 
-const tab = ref(0)
-const route = useRoute()
-const TicketStore = useTicketStore()
-const SeatMaps = ref([])
-const TicketsTypes = useCssModule('TicketsTypes')
-const ChosenEvent = computed(() => Guid({}).fromCompressedToFull(route.params.eventId))
-const seatMapService = useSeatMapStore()
+// کتابخانه Vue-ECharts و ماژول‌های مورد نیاز Apache ECharts
+import VChart from 'vue-echarts'
+import * as echarts from 'echarts'
+import { use } from 'echarts/core'
+import { SVGRenderer, CanvasRenderer } from 'echarts/renderers'
+import { GeoComponent, TooltipComponent, ToolboxComponent } from 'echarts/components'
+import { MapChart } from 'echarts/charts'
+
+// ثبت ماژول‌های ECharts
+use([
+    SVGRenderer,
+    CanvasRenderer,
+    GeoComponent,
+    TooltipComponent,
+    ToolboxComponent,
+    MapChart
+])
+
+// آیکون‌ها و کامپوننت‌های پروژه
+import { PrSpinner } from '@kalimahapps/vue-icons/pr'
+import SelectedTicket from '@/views/components/Pages/Event/SelectedTicket.vue'
+import ControlSteps from './controlSteps.vue'
+
+// Storeها و سرویس‌ها
+import useTicketStore from '@/stores/Ticket.js'
+import useUserStore from '@/stores/user'
+import useSeatMapStore from '@/stores/seatMap.js'
 import { useAuthModalStore } from '@/stores/componentStore/authModal.js'
+import { Guid } from '@/config/helper'
+import { GetSeatMapService } from '@/services/ConcertsService.js'
 import { CRPlacesService } from '@/services/PlacesService'
-import { v4 } from 'uuid'
 import { ConcertsQueryKeys, get_apiConcertsGetConcertInfo, get_apiConcertsGetSpecificEvent } from '@/api/ConcertsService'
 
-const GetSpecificEventService = useQuery({
-    queryKey: [ConcertsQueryKeys.get_apiConcertsGetSpecificEvent( ChosenEvent.value)],
-    queryFn: ()=>get_apiConcertsGetSpecificEvent( ChosenEvent.value),
-    enabled: SeatMaps.value.length === 0,
-    refetchInterval: false,
-    refetchIntervalInBackground: false,
-    refetchOnMount: true,
-    refetchOnReconnect: false,
-    refetchOnWindowFocus: false
-});
-
+// Props و روت
 const props = defineProps({
     stepControls: Object,
     concert: Object,
     toNext: Function,
     toPrevious: Function
 })
+
+const route = useRoute()
+const chartRef = ref(null)
+const tab = ref('')
+const isLoadingMap = ref(false)
+const registeredMaps = ref(new Set())
+
+const TicketStore = useTicketStore()
+const userStore = useUserStore()
+const seatMapService = useSeatMapStore()
+const AuthModalStore = useAuthModalStore()
+
+const ChosenEvent = computed(() => Guid({}).fromCompressedToFull(route.params.eventId))
+
+// دریافت اطلاعات سانس
+const GetSpecificEventService = useQuery({
+    queryKey: [ConcertsQueryKeys.get_apiConcertsGetSpecificEvent(ChosenEvent.value)],
+    queryFn: () => get_apiConcertsGetSpecificEvent(ChosenEvent.value),
+    refetchInterval: false,
+    refetchIntervalInBackground: false,
+    refetchOnMount: true,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false
+})
+
+const executionDate = computed(() => GetSpecificEventService.data.value?.events?.[0]?.executionDate)
+
+// دریافت اطلاعات کلی کنسرت
+const GetConcertInfoServiceKey = computed(() => [
+    ConcertsQueryKeys.get_apiConcertsGetConcertInfo(route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id))
+])
+const GetConcertInfoService = useQuery({
+    queryKey: GetConcertInfoServiceKey,
+    queryFn: () => get_apiConcertsGetConcertInfo(route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id)),
+    enabled: true
+})
+
+// استخراج اطلاعات طبقات و صندلی‌ها
+const Floors = computed(() => GetSpecificEventService.data.value?.events?.[0]?.floors?.map((x) => x.title) ?? [])
+
+const currentFloorObj = computed(() => {
+    const floors = GetSpecificEventService.data.value?.events?.[0]?.floors ?? []
+    return floors.find((x) => x.title === tab.value) || floors[0]
+})
+
+const currentFloorDisplayOrder = computed(() => currentFloorObj.value?.displayOrder ?? 0)
+
+// استخراج تمام بلیت‌های طبقه جاری با نرمال‌سازی نام‌ها و قیمت‌ها
+const currentFloorTickets = computed(() => {
+    const floor = currentFloorObj.value
+    if (!floor) return []
+    const seatsInfo = floor.seatsInfo || floor.SeatsInfo
+    const rawItems = seatsInfo?.items || seatsInfo?.Items || []
+    return rawItems.map((item) => ({
+        ...item,
+        id: item.id || item.Id || item.ticketId || item.TicketId,
+        name: item.name || item.Name,
+        price: item.price ?? item.Price ?? item.amount ?? item.Amount ?? 0,
+        isReserved: Boolean(item.isReserved ?? item.IsReserved)
+    }))
+})
+
+// نقشه جامع تمام بلیت‌ها در همه طبقات بر اساس نام صندلی
+const allTicketsMap = computed(() => {
+    const map = new Map()
+    const floors = GetSpecificEventService.data.value?.events?.[0]?.floors ?? []
+    floors.forEach((fl) => {
+        const seatsInfo = fl.seatsInfo || fl.SeatsInfo
+        const rawItems = seatsInfo?.items || seatsInfo?.Items || []
+        rawItems.forEach((item) => {
+            const name = item.name || item.Name
+            if (name) {
+                map.set(name, {
+                    ...item,
+                    id: item.id || item.Id || item.ticketId || item.TicketId,
+                    name: name,
+                    price: item.price ?? item.Price ?? item.amount ?? item.Amount ?? 0,
+                    isReserved: Boolean(item.isReserved ?? item.IsReserved),
+                    floorTitle: fl.title || fl.Title
+                })
+            }
+        })
+    })
+    return map
+})
+
+// نگه‌داری شناسه تمام صندلی‌های موجود در SVG هر طبقه
+const floorSvgSeatNames = ref({})
+
+// نام نقشه جاری برای Apache ECharts
+const currentMapName = computed(() => `seat_map_floor_${currentFloorDisplayOrder.value}`)
+const currentMapRegistered = computed(() => registeredMaps.value.has(currentMapName.value))
+const isCurrentMapLoading = computed(() => isLoadingMap.value && !currentMapRegistered.value)
+
+// پالت رنگی وضعیت صندلی‌ها
+const COLORS = {
+    free: '#178d17',
+    selected: '#33b7db',
+    waiting: '#f6b93b',
+    reserved: '#e55039',
+    notForSale: '#0e0e0e'
+}
+
+// دانلود، اصلاح اتریبیوت‌ها، پاکسازی استایل‌های پیش‌فرض و ثبت SVG نقشه در Apache ECharts
+watchEffect(async () => {
+    const floors = GetSpecificEventService.data.value?.events?.[0]?.floors ?? []
+    if (floors.length === 0) return
+
+    for (let floor of floors) {
+        const mapName = `seat_map_floor_${floor.displayOrder}`
+        if (registeredMaps.value.has(mapName)) continue
+
+        try {
+            isLoadingMap.value = true
+            const rawSvg = await GetSeatMapService(floor.seatMap_url)
+
+            if (rawSvg) {
+                let processedSvg = rawSvg
+                const detectedSeatIds = []
+
+                try {
+                    const parser = new DOMParser()
+                    const svgDoc = parser.parseFromString(rawSvg, 'image/svg+xml')
+
+                    // حذف تمام تگ‌ها و اتریبیوت‌های title از SVG تا تولتیپ پیش‌فرض مرورگر روی صندلی‌ها باز نشود
+                    svgDoc.querySelectorAll('title').forEach((el) => el.remove())
+                    svgDoc.querySelectorAll('[title]').forEach((el) => el.removeAttribute('title'))
+
+                    // پاکسازی fillهای اجباری از تگ‌های style تا استایل ECharts بازنویسی نشود
+                    svgDoc.querySelectorAll('style').forEach((styleEl) => {
+                        let text = styleEl.textContent || ''
+                        // تبدیل fill در کلاس‌های صندلی به مقدار قابل بازنویسی توسط ویژگی‌های ECharts
+                        text = text.replace(/(\.seat[^{]*\{[^}]*?)fill\s*:[^;]+;/gi, '$1fill: inherit;')
+                        styleEl.textContent = text
+                    })
+
+                    // شناسایی صندلی‌ها صرفاً بر اساس attribute id و پل ارتباطی با ECharts
+                    const elementsWithId = svgDoc.querySelectorAll('[id]')
+                    elementsWithId.forEach((el) => {
+                        const id = el.getAttribute('id')
+                        if (id && /^f\d+[-_]r\d+[-_]c\d+/i.test(id)) {
+                            el.setAttribute('name', id)
+                            // حذف fill صریح المان تا ECharts کنترل کامل داشته باشد
+                            el.removeAttribute('fill')
+                            if (el.style) {
+                                el.style.removeProperty('fill')
+                            }
+                            detectedSeatIds.push(id)
+                        } else {
+                            el.removeAttribute('name')
+                        }
+                    })
+
+                    processedSvg = new XMLSerializer().serializeToString(svgDoc)
+                } catch {
+                    // روش رزرو با regex در صورت عدم دسترسی به DOMParser
+                    processedSvg = rawSvg.replace(/id="(f[0-9]{1,3}_r[0-9]{1,3}_c[0-9]{1,9})"/g, 'id="$1" name="$1"')
+                }
+
+                floorSvgSeatNames.value[floor.displayOrder] = detectedSeatIds
+
+                // ثبت SVG به عنوان نقشه برداری تعاملی در Apache ECharts
+                echarts.registerMap(mapName, { svg: processedSvg })
+                registeredMaps.value.add(mapName)
+                registeredMaps.value = new Set(registeredMaps.value)
+            }
+        } catch (error) {
+            console.error(`خطا در ثبت نقشه طبقه ${floor.title}:`, error)
+        } finally {
+            isLoadingMap.value = false
+        }
+    }
+})
+
+// تعیین وضعیت یک صندلی بر اساس داده‌های استور و SSE
+function getSeatState(seatName) {
+    const ticket = currentFloorTickets.value.find((x) => x.name === seatName) || allTicketsMap.value.get(seatName)
+
+    if (!ticket) {
+        return {
+            status: 'notForSale',
+            label: 'غیر قابل خرید',
+            color: COLORS.notForSale,
+            ticket: null
+        }
+    }
+
+    const ticketId = ticket.id
+
+    // آیا توسط کاربر جاری انتخاب شده؟
+    if (TicketStore.Tickets.some((x) => x.id === ticketId)) {
+        return {
+            status: 'selected',
+            label: 'انتخاب شما',
+            color: COLORS.selected,
+            ticket
+        }
+    }
+
+    // آیا رزرو قطعی شده؟
+    if (ticket.isReserved || seatMapService.Reserved_Tickets?.includes(ticketId)) {
+        return {
+            status: 'reserved',
+            label: 'رزرو شده',
+            color: COLORS.reserved,
+            ticket
+        }
+    }
+
+    // آیا در انتظار پرداخت شخص دیگری است؟
+    if (seatMapService.Locked_Tickets?.includes(ticketId)) {
+        return {
+            status: 'waiting',
+            label: 'در انتظار پرداخت',
+            color: COLORS.waiting,
+            ticket
+        }
+    }
+
+    // صندلی آزاد است
+    return {
+        status: 'free',
+        label: 'آزاد',
+        color: COLORS.free,
+        ticket
+    }
+}
+
+// تولید آرایه regions در Apache ECharts برای رنگ‌آمیزی و استایل‌دهی کامل تمام صندلی‌ها
+const currentRegions = computed(() => {
+    if (!currentMapRegistered.value) return []
+
+    const regions = []
+    // جمع‌آوری تمامی صندلی‌های شناخته شده در SVG و داده‌های بلیت
+    const svgSeats = floorSvgSeatNames.value[currentFloorDisplayOrder.value] || []
+    const ticketSeats = currentFloorTickets.value.map((t) => t.name).filter(Boolean)
+    const allSeatSet = new Set([...svgSeats, ...ticketSeats])
+
+    for (let seatName of allSeatSet) {
+        const state = getSeatState(seatName)
+
+        regions.push({
+            name: seatName,
+            itemStyle: {
+                areaColor: state.color,
+                color: state.color,
+                borderColor: '#1e293b',
+                borderWidth: 0.8
+            },
+            emphasis: {
+                itemStyle: {
+                    areaColor: state.color,
+                    borderColor: '#ffffff',
+                    borderWidth: 2,
+                    shadowBlur: 8,
+                    shadowColor: 'rgba(0,0,0,0.4)'
+                }
+            }
+        })
+    }
+
+    return regions
+})
+
+// پیکربندی آپشن جامع Apache ECharts
+const chartOption = computed(() => {
+    if (!currentMapRegistered.value) return {}
+
+    const tooltipConfig = {
+        show: true,
+        trigger: 'item',
+        renderMode: 'html',
+        confine: true,
+        backgroundColor: 'rgba(15, 23, 42, 0.95)',
+        borderColor: '#334155',
+        borderWidth: 1,
+        padding: [10, 14],
+        textStyle: {
+            color: '#f8fafc',
+            fontFamily: 'Vazir, Tahoma, sans-serif',
+            fontSize: 12
+        },
+        extraCssText: 'box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4); border-radius: 10px; direction: rtl; text-align: right; z-index: 9999;',
+        formatter: (params) => {
+            const p = Array.isArray(params) ? params[0] : params
+            const seatName = p?.name
+            if (!seatName) return ''
+
+            const match = seatName.match(/f(\d+)[-_]r(\d+)[-_]c(\d+)/i)
+            if (!match) return ''
+
+            const floorIdx = match[1]
+            const row = match[2]
+            const column = match[3]
+            const floorTitle = currentFloorObj.value?.title || Floors.value[floorIdx] || tab.value || `طبقه ${floorIdx}`
+
+            const state = getSeatState(seatName)
+
+            // استخراج و فرمت هزینه صندلی
+            const rawPrice =
+                state.ticket?.price ??
+                state.ticket?.Price ??
+                state.ticket?.amount ??
+                state.ticket?.Amount ??
+                GetSpecificEventService.data.value?.events?.[0]?.price ??
+                GetSpecificEventService.data.value?.events?.[0]?.Price
+            const priceNum = Number(rawPrice)
+            const priceFormatted =
+                rawPrice !== undefined && rawPrice !== null && !isNaN(priceNum) && priceNum > 0
+                    ? `${priceNum.toLocaleString('fa-ir')} تومان`
+                    : rawPrice === 0
+                      ? 'رایگان'
+                      : 'تعیین نشده'
+
+            if (!state.ticket) {
+                return `
+                    <div style="direction: rtl; text-align: right; line-height: 1.8;">
+                        <div style="font-size: 13px; font-weight: bold; margin-bottom: 2px;">کنسرت ${GetConcertInfoService.data.value?.title || ''}</div>
+                        <div><strong>طبقه:</strong> ${floorTitle}</div>
+                        <div><strong>ردیف:</strong> ${row} | <strong>ستون:</strong> ${column}</div>
+                        <div><strong>هزینه صندلی:</strong> <span style="color: #94a3b8; font-weight: bold;">غیر قابل خرید</span></div>
+                        <div style="margin-top: 3px;">
+                            <strong>وضعیت:</strong>
+                            <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: ${COLORS.notForSale}; margin-right: 4px;"></span>
+                            <span style="color: #94a3b8; font-weight: bold;">غیر قابل خرید</span>
+                        </div>
+                    </div>
+                `
+            }
+
+            return `
+                <div style="direction: rtl; text-align: right; line-height: 1.8;">
+                    <div style="font-size: 13px; font-weight: bold; margin-bottom: 2px;">کنسرت ${GetConcertInfoService.data.value?.title || ''}</div>
+                    <div><strong>طبقه:</strong> ${floorTitle}</div>
+                    <div><strong>ردیف:</strong> ${row} | <strong>ستون:</strong> ${column}</div>
+                    <div><strong>هزینه صندلی:</strong> <span style="color: #38bdf8; font-weight: bold;">${priceFormatted}</span></div>
+                    <div style="margin-top: 3px;">
+                        <strong>وضعیت:</strong>
+                        <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: ${state.color}; margin-right: 4px;"></span>
+                        <span style="color: ${state.color}; font-weight: bold;">${state.label}</span>
+                    </div>
+                </div>
+            `
+        }
+    }
+
+    return {
+        backgroundColor: 'transparent',
+        tooltip: tooltipConfig,
+        geo: {
+            tooltip: tooltipConfig,
+            map: currentMapName.value,
+            roam: true, // امکان حرکت با درگ و زوم با اسکرول ماوس
+            layoutCenter: ['50%', '50%'],
+            layoutSize: '95%',
+            scaleLimit: {
+                min: 0.5,
+                max: 8
+            },
+            itemStyle: {
+                areaColor: 'transparent',
+                borderColor: 'transparent',
+                borderWidth: 0
+            },
+            emphasis: {
+                focus: 'self',
+                itemStyle: {
+                    borderColor: '#ffffff',
+                    borderWidth: 2
+                }
+            },
+            regions: currentRegions.value
+        }
+    }
+})
+
+// کنترل‌های نقشه Apache ECharts (بزرگ‌نمایی، کوچک‌نمایی و بازنشانی متمرکز)
+function zoomIn() {
+    if (!chartRef.value) return
+    const width = typeof chartRef.value.getWidth === 'function' ? chartRef.value.getWidth() : 600
+    const height = typeof chartRef.value.getHeight === 'function' ? chartRef.value.getHeight() : 400
+    chartRef.value.dispatchAction({
+        type: 'geoRoam',
+        componentType: 'geo',
+        geoIndex: 0,
+        zoom: 1.3,
+        originX: width / 2,
+        originY: height / 2
+    })
+}
+
+function zoomOut() {
+    if (!chartRef.value) return
+    const width = typeof chartRef.value.getWidth === 'function' ? chartRef.value.getWidth() : 600
+    const height = typeof chartRef.value.getHeight === 'function' ? chartRef.value.getHeight() : 400
+    chartRef.value.dispatchAction({
+        type: 'geoRoam',
+        componentType: 'geo',
+        geoIndex: 0,
+        zoom: 0.77,
+        originX: width / 2,
+        originY: height / 2
+    })
+}
+
+function resetZoom() {
+    if (!chartRef.value) return
+    chartRef.value.setOption({
+        geo: {
+            zoom: 1,
+            center: undefined
+        }
+    })
+}
+
+// تغییر مکان‌نما (Cursor) هنگام حرکت روی صندلی‌های قابل کلیک
+function handleChartMouseOver(params) {
+    if (params?.name && /^f\d+_r\d+_c\d+/.test(params.name)) {
+        try {
+            const zr = chartRef.value?.getZr?.()
+            if (zr) zr.setCursor('pointer')
+        } catch {}
+    }
+}
+
+function handleChartMouseOut() {
+    try {
+        const zr = chartRef.value?.getZr?.()
+        if (zr) zr.setCursor('default')
+    } catch {}
+}
+
+// انتخاب و کلیک روی صندلی در نقشه
+function handleChartClick(params) {
+    if (!params || !params.name) return
+    const seatName = params.name
+
+    const regex = /^f[0-9]{1,3}_r[0-9]{1,3}_c[0-9]{1,9}/
+    if (!regex.test(seatName)) return
+
+    const state = getSeatState(seatName)
+    if (!state.ticket) return
+
+    const ticket = state.ticket
+    const ticketId = ticket.id
+
+    // اگر رزرو شده است
+    if (state.status === 'reserved') {
+        Swal.fire({
+            title: 'صندلی رزرو شده',
+            text: 'این صندلی قبلاً رزرو شده و امکان خرید آن وجود ندارد.',
+            icon: 'warning',
+            timer: 2000,
+            showConfirmButton: false,
+            showClass: { popup: 'direction-rtl vazir-font' }
+        })
+        return
+    }
+
+    // اگر در انتظار پرداخت شخص دیگری است
+    if (state.status === 'waiting') {
+        Swal.fire({
+            title: 'در انتظار پرداخت',
+            text: 'این صندلی در حال حاضر توسط کاربر دیگری در دست پرداخت است.',
+            icon: 'info',
+            timer: 2000,
+            showConfirmButton: false,
+            showClass: { popup: 'direction-rtl vazir-font' }
+        })
+        return
+    }
+
+    // اگر قبلاً توسط همین کاربر انتخاب شده بود -> لغو انتخاب
+    if (state.status === 'selected') {
+        handleClickOnDeleteSeat(ticketId)
+        return
+    }
+
+    // انتخاب صندلی آزاد
+    const [floor, row, column] = seatName.replaceAll('f', '').replaceAll('r', '').replaceAll('c', '').split('_')
+    TicketStore.addToTicket({
+        ...ticket,
+        floor,
+        row,
+        column,
+        floorTitle: currentFloorObj.value?.title || Floors.value[floor] || tab.value
+    })
+}
+
+// حذف صندلی از سبد خرید
+function handleClickOnDeleteSeat(seatId) {
+    TicketStore.removeTicket(seatId)
+}
+
+// تغییر طبقه
+function changeTab(selectedTab) {
+    tab.value = selectedTab
+    resetZoom()
+}
+
+// همگام‌سازی طبقه اولیه
+watch(
+    Floors,
+    (newFloors) => {
+        if (newFloors && newFloors.length > 0 && (!tab.value || !newFloors.includes(tab.value))) {
+            tab.value = newFloors[0]
+        }
+    },
+    { immediate: true }
+)
+
+// واکنش به تغییرات صندلی‌های رزرو شده از طریق سرور (SSE)
+watch([() => seatMapService.Reserved_Tickets], () => {
+    if (!seatMapService.Reserved_Tickets) return
+    const userTicketsToLock = []
+    const userSelectedIds = TicketStore.Tickets.map((x) => x.id)
+
+    seatMapService.Reserved_Tickets.forEach((item) => {
+        if (userSelectedIds.includes(item)) {
+            TicketStore.removeTicket(item)
+            userTicketsToLock.push(item)
+        }
+    })
+
+    if (userTicketsToLock.length > 0) {
+        Swal.fire({
+            title: 'توجه',
+            text: 'برخی از صندلی‌های انتخابی شما توسط شخص دیگری رزرو قطعی شد و از سبد خرید شما خارج شد.',
+            icon: 'warning',
+            confirmButtonText: 'متوجه شدم',
+            showClass: { popup: 'direction-rtl vazir-font' }
+        })
+    }
+})
+
+// واکنش به تغییرات صندلی‌های در حال پرداخت از طریق سرور (SSE)
+watch([() => seatMapService.Locked_Tickets], () => {
+    if (!seatMapService.Locked_Tickets) return
+    const userTicketsToLock = []
+    const userSelectedIds = TicketStore.Tickets.map((x) => x.id)
+
+    seatMapService.Locked_Tickets.forEach((item) => {
+        if (userSelectedIds.includes(item)) {
+            TicketStore.removeTicket(item)
+            userTicketsToLock.push(item)
+        }
+    })
+
+    if (userTicketsToLock.length > 0) {
+        Swal.fire({
+            title: 'توجه',
+            text: 'برخی از صندلی‌های انتخابی شما توسط شخص دیگری به مرحله پرداخت رفت و از سبد خرید شما حذف شد.',
+            icon: 'info',
+            confirmButtonText: 'متوجه شدم',
+            showClass: { popup: 'direction-rtl vazir-font' }
+        })
+    }
+})
+
+// ارسال درخواست رزرو و رفتن به مرحله بعدی
 const { mutate } = useMutation({
     mutationKey: ['Reservation'],
     mutationFn: CRPlacesService
 })
 
-const GetConcertInfoServiceKey = computed(() => [ConcertsQueryKeys.get_apiConcertsGetConcertInfo(route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id))])
-const GetConcertInfoService = useQuery({
-    queryKey: GetConcertInfoServiceKey,
-    queryFn: () => get_apiConcertsGetConcertInfo(route?.params?.id && Guid({}).fromCompressedToFull(route?.params?.id)),
-
-    enabled: true
-})
-
-const AuthModalStore = useAuthModalStore()
-const userStore = useUserStore()
 async function onNext() {
     if (!userStore.isAuthenticated && userStore.expireTime <= new Date()) {
         userStore.logOut()
         AuthModalStore.setTitle('برای ادامه حساب کاربری لازمه!')
         AuthModalStore.toggleMenu()
-
         return false
     }
 
-    // if (TicketStore.selectedShowing.length === 0) {
-    //     Swal.fire({
-    //         title: 'خطا جانم!',
-    //         text: 'اینجا بدون انتخاب سانس چیکار میکنی؟',
-    //         icon: 'info',
-    //         showConfirmButton: false,
-    //         showCloseButton: true,
-    //         timer: 2000,
-    //         timerProgressBar: true,
-    //         showClass: { popup: 'direction-rtl vazir-font' }
-    //     })
-    //     return false
-    // }
-
     if (TicketStore.Tickets.length === 0) {
         Swal.fire({
-            title: 'خطا جانم!',
-            text: 'حداقل یدونه بلیت انتخاب کن!',
+            title: 'خطا!',
+            text: 'لطفاً حداقل یک بلیت را از روی نقشه انتخاب کنید.',
             icon: 'info',
-            showConfirmButton: false,
-            showCloseButton: true,
-            timer: 2000,
-            timerProgressBar: true,
+            confirmButtonText: 'باشه',
             showClass: { popup: 'direction-rtl vazir-font' }
         })
         return false
@@ -193,28 +818,27 @@ async function onNext() {
                 }
 
                 await seatMapService.LeaveGroup()
-
                 props.toNext()
             }
         }
     )
 }
 
+// بازگشت به مرحله قبلی
 async function onPreviuos() {
     if (TicketStore.Tickets.length !== 0) {
         const { isConfirmed } = await Swal.fire({
-            title: 'سوال',
-            html: 'با برگشتن به مرحله قبل بلیت های انتخاب شده حذف میشن!' + '<br/>' + 'از این عمل مطمئن هستی؟',
-            icon: 'info',
+            title: 'هشدار',
+            html: 'با برگشت به مرحله قبل، صندلی‌های انتخاب‌شده شما حذف خواهند شد.<br/>آیا مطمئن هستید؟',
+            icon: 'warning',
             showConfirmButton: true,
             showCancelButton: true,
-            showCloseButton: true,
-            confirmButtonText: 'مطمئنم',
-            cancelButtonText: 'لغو',
+            confirmButtonText: 'بله، بازگرد',
+            cancelButtonText: 'انصراف',
             customClass: {
                 actions: 'flex justify-around w-full flex-row-reverse'
             },
-            showClass: { popup: 'direction-rtl vazir-font ' }
+            showClass: { popup: 'direction-rtl vazir-font' }
         })
 
         if (!isConfirmed) {
@@ -222,390 +846,22 @@ async function onPreviuos() {
             return false
         }
     }
-    TicketStore.removeAllTickets()
 
+    TicketStore.removeAllTickets()
     props.toPrevious()
 }
 
-function changeTab(selectedTab) {
-    tab.value = selectedTab
-}
-
-function handleClickOnSeat($event) {
-    const regex = /f[0-9]{1,3}_r[0-9]{1,3}_c[0-9]{1,9}/gm
-
-    if ($event.target.closest("[id*='seatMap']") !== null && $event.target.id.match(regex) !== null) {
-        let ticketId = $event.target.getAttribute('tid')
-        let Ticket = Tickets.value[currentFloor.value].filter((x) => x.id === ticketId)[0]
-
-        //یعنی این تیکت در حالت قفل است
-        if (seatMapService.Locked_Tickets.indexOf(ticketId) !== -1) return
-
-        if (!$event.target.classList.contains(TicketsTypes['reserved-tickets']) && !$event.target.classList.contains(TicketsTypes['waiting-tickets']) && !$event.target.classList.contains(TicketsTypes['not-tickets'])) {
-            if (!$event.target.classList.contains(TicketsTypes['selected-tickets'])) {
-                let [floor, row, column] = $event.target.id.replaceAll('f', '').replaceAll('r', '').replaceAll('c', '').split('_')
-                $event.target.classList.remove(TicketsTypes['free-tickets'])
-                $event.target.classList.add(TicketsTypes['selected-tickets'])
-                TicketStore.addToTicket({
-                    ...Ticket,
-                    floor,
-                    row,
-                    column,
-                    floorTitle: Floors.value[floor]
-                })
-            } else {
-                handleClickOnDeleteSeat($event.target.getAttribute('tid'))
-            }
-        }
-    }
-}
-
-function handleClickOnDeleteSeat(seatId) {
-    TicketStore.removeTicket(seatId)
-    document.querySelector("[tid='" + seatId + "']").classList.remove(TicketsTypes['selected-tickets'])
-    document.querySelector("[tid='" + seatId + "']").classList.add(TicketsTypes['free-tickets'])
-}
-
-const Floors = computed(() => GetSpecificEventService.data.value?.events[0].floors.map((x) => x.title))
-
-const Tickets = computed(() => {
-    let res = {}
-
-    GetSpecificEventService.data.value?.events[0].floors.forEach((floor) => {
-        res[floor.displayOrder] = floor.seatsInfo.items
-    })
-
-    return res
-})
-
-const currentFloor = computed(() => GetSpecificEventService.data.value?.events[0].floors.filter((x) => x.title === tab.value)[0]?.displayOrder)
-watchEffect(async () => {
-    if (GetSpecificEventService.data.value?.events[0] !== undefined)
-        for (let floor of GetSpecificEventService.data.value?.events[0]?.floors ?? []) {
-            let res = await GetSeatMapService(floor.seatMap_url)
-
-            let dom = new DOMParser()
-            let tempDoc = dom.parseFromString(res, 'text/html')
-
-            let CriticalIds = []
-            tempDoc.body.querySelector('svg').classList.add('w-full', 'mx-auto')
-            tempDoc.body.querySelectorAll('defs').forEach((def) => {
-                def.querySelectorAll('[id]').forEach((item) => CriticalIds.push(item.id))
-            })
-
-            CriticalIds.forEach((id) => {
-                let newId = v4().replaceAll('-', '_')
-                tempDoc.body.innerHTML = tempDoc.body.innerHTML.replaceAll('id="' + id + '"', 'id="' + newId + '"')
-                tempDoc.body.innerHTML = tempDoc.body.innerHTML.replaceAll('#' + id, '#' + newId)
-            })
-
-            // نوشتن آیدی های بلیت روی صندلی ها و در صورت رزرو بودن قفل کردن آنها
-            Tickets.value[floor.displayOrder].forEach((item) => {
-                let temp = tempDoc?.querySelector(`#${item.name}`)
-                temp?.setAttribute('tid', item.id)
-                if (item.isReserved) temp.classList.add(TicketsTypes['reserved-tickets'])
-            })
-            console.log(seatMapService.Locked_Tickets)
-            //قفل کردن صندلی ها انتخاب شده و درحال پرداخت
-            seatMapService.Locked_Tickets.forEach((item) => {
-                let elem = tempDoc?.querySelector(`[tid='${item}']`)
-                if (!elem) return
-
-                if (!elem.classList.contains(TicketsTypes['reserved-tickets'])) elem?.classList.add(TicketsTypes['waiting-tickets'])
-            })
-
-            tempDoc?.querySelectorAll(`*[id^="f"]:not([tid])`).forEach((item) => {
-                item?.classList.add(TicketsTypes['not-tickets'])
-            })
-
-            //نوشتن صندلی ها انتخابی توسط کاربر
-            TicketStore.Tickets.forEach((item) => {
-                let elem = tempDoc?.querySelector(`[tid='${item.id}']`)
-                if (!elem) return
-
-                if (!elem.classList.contains(TicketsTypes['reserved-tickets'])) elem?.classList.add(TicketsTypes['selected-tickets'])
-            })
-
-            let exception = Object.keys(TicketsTypes)
-                .map((x) => TicketsTypes[x])
-                .join(',.')
-            tempDoc?.querySelectorAll(`*[id^="f"]:not(.${exception})`).forEach((seat) => {
-                seat.classList.add(TicketsTypes['free-tickets'])
-            })
-
-            tempDoc.body.querySelector('svg').id = floor.floorId
-
-            SeatMaps.value = [...SeatMaps.value, tempDoc.body.innerHTML]
-        }
-})
-
-watch([() => seatMapService.Reserved_Tickets], () => {
-    console.log(seatMapService.Reserved_Tickets)
-    let userTicketsToLock = []
-    let classesToRemove = Object.keys(TicketsTypes).map((x) => TicketsTypes[x])
-    let tickets = TicketStore.Tickets.map((x) => x.id)
-    seatMapService.Reserved_Tickets.forEach((item) => {
-        let chair = document.querySelector(`[tid='${item}']`)
-        if (!chair) return
-
-        if (tickets.indexOf(item) !== -1) {
-            TicketStore.removeTicket(item)
-            userTicketsToLock.push(item)
-        }
-
-        if (chair.classList.contains(TicketsTypes['reserved-tickets'])) return
-
-        chair?.classList.remove(...classesToRemove)
-        chair?.classList.add(TicketsTypes['reserved-tickets'])
-    })
-
-    if (userTicketsToLock.length !== 0) {
-        let floors = Object.keys(Tickets.value)
-        let msg = userTicketsToLock.map((ticket) => {
-            for (let i = 0; i < floors.length; i++) {
-                let temp = Tickets.value[floors[i]].filter((item) => {
-                    return item.id === ticket
-                })
-
-                if (!!temp && temp.length === 1) {
-                    let [floor, row, column] = temp[0].name.replace('f', '').replace('r', '').replace('c', '').split('_')
-
-                    let txt = `<br/><p class="">
-                      <span>طبقه :</span>  <span>${Floors.value[floors[i]]}</span>
-                          <span>ردیف :</span> <span>  ${row}</span>
-                        <span> ستون :</span><span> ${column}</span>
-                     `
-                    txt += '   </p>'
-                    return txt
-                }
-            }
-        })
-
-        Swal.fire({
-            title: '',
-            html: 'برخی از صندلیها انتخابی شما توسط شخص دیگری رزرو شده‌اند!<br/>' + msg,
-            icon: 'info',
-            showConfirmButton: false,
-            showCloseButton: true,
-            showClass: { popup: 'direction-rtl vazir-font' }
-        })
-    }
-})
-
-watch([() => seatMapService.Locked_Tickets], () => {
-    console.log(seatMapService.Locked_Tickets)
-    let userTicketsToLock = []
-    let classesToRemove = Object.keys(TicketsTypes).map((x) => TicketsTypes[x])
-    let tickets = TicketStore.Tickets.map((x) => x.id)
-    seatMapService.Locked_Tickets.forEach((item) => {
-        let chair = document.querySelector(`[tid='${item}']`)
-        if (!chair) return
-
-        if (tickets.indexOf(item) !== -1) {
-            TicketStore.removeTicket(item)
-            userTicketsToLock.push(item)
-        }
-
-        if (chair.classList.contains(TicketsTypes['reserved-tickets'])) return
-
-        chair?.classList.remove(...classesToRemove)
-        chair?.classList.add(TicketsTypes['waiting-tickets'])
-    })
-
-    if (userTicketsToLock.length !== 0) {
-        let floors = Object.keys(Tickets.value)
-        let msg = userTicketsToLock.map((ticket) => {
-            for (let i = 0; i < floors.length; i++) {
-                let temp = Tickets.value[floors[i]].filter((item) => {
-                    return item.id === ticket
-                })
-
-                if (!!temp && temp.length === 1) {
-                    let [floor, row, column] = temp[0].name.replace('f', '').replace('r', '').replace('c', '').split('_')
-
-                    let txt = `<br/><p class="">
-                        <span>طبقه :</span>  <span>${Floors.value[floors[i]]}</span> 
-                          <span>ردیف :</span> <span>  ${row}</span>
-                        <span> ستون :</span><span> ${column}</span>
-                      
-                         
-                     `
-
-                    txt += '   </p>'
-                    return txt
-                }
-            }
-        })
-
-        Swal.fire({
-            title: '',
-            html: 'برخی از صندلیها انتخابی شما توسط شخص دیگری به مرحله پرداخت رفته اند!<br/>' + msg,
-            icon: 'info',
-            showConfirmButton: false,
-            showCloseButton: true,
-            showClass: { popup: 'direction-rtl vazir-font' }
-        })
-    }
-})
-
-watch([() => seatMapService.UnLocked_Tickets], () => {
-    console.log(seatMapService.UnLocked_Tickets)
-    seatMapService.UnLocked_Tickets.forEach((item) => {
-        let chair = document.querySelector(`[tid='${item}']`)
-        if (!!chair && chair.classList.contains(TicketsTypes['waiting-tickets'])) {
-            chair.classList.remove(TicketsTypes['waiting-tickets'])
-        }
-
-        if (chair.classList.contains(TicketsTypes['reserved-tickets'])) return
-
-        chair?.classList.add(TicketsTypes['free-tickets'])
-    })
-})
-
-function panZoomInit(map, index) {
-    if (!map || !document.querySelector('#seatMap' + index)) return
-
-    if (map.getAttribute('setup')) return
-
-    const pzoom = Panzoom(map, {
-        maxScale: 5,
-
-        cursor: 'default'
-    })
-    pzoom.pan(10, 10)
-    pzoom.zoom(1, { animate: true })
-
-    // Panning and pinch zooming are bound automatically (unless disablePan is true).
-    // There are several available methods for zooming
-    // that can be bound on button clicks or mousewheel.
-    map.closest('#mapElm' + index)
-        .querySelector('.btnZoomIn')
-        .addEventListener('click', pzoom.zoomIn)
-    map.closest('#mapElm' + index)
-        .querySelector('.btnZoomOut')
-        .addEventListener('click', pzoom.zoomOut)
-    map.closest('#mapElm' + index).addEventListener('wheel', pzoom.zoomWithWheel)
-    map.setAttribute('setup', 'true')
-    map.querySelectorAll(`*[id^="f"][tid]`).forEach((item) => {
-        tippy(item, {
-            allowHTML: true,
-            onTrigger(instance, event) {
-                let ticket = Tickets.value[currentFloor.value].find((x) => x.id === item.getAttribute('tid'))
-
-                let [floor, row, column] = item.id.replaceAll('f', '').replaceAll('r', '').replaceAll('c', '').split('_')
-                instance.setContent(` <div class="text-right direction-rtl vazir-font">
-                <p>طبقه : ${Floors.value[floor]}</p>
-                <p>ردیف : ${row}</p>
-                <p>ستون :${column}</p>
-                     <p>قیمت :${ticket.price} تومان</p>
-                <p><span class="${instance.reference.className.baseVal} block text-center ">${tellMeStatus(instance.reference.className.baseVal)}</span> </p>
-</div>`)
-            }
-        })
-    })
-
-    map.querySelectorAll(`*[id^="f"][id*="_r"][id*="_c"]:not([tid])`).forEach((item) => {
-        let [floor, row, column] = item.id.replaceAll('f', '').replaceAll('r', '').replaceAll('c', '').split('_')
-
-        tippy(item, {
-            content: `
-                <div class="text-right direction-rtl vazir-font">
-                <p>طبقه : ${Floors.value[floor]}</p>
-                <p>ردیف : ${row}</p>
-                <p>ستون :${column}</p>
-                <p>قیمت : <span class="inline-block w-[20px] text-center">-</span> تومان</p>
-                <p><span class="${item.className.baseVal} block text-center ">${tellMeStatus(item.className.baseVal)}</span> </p>
-</div>
-                `,
-            allowHTML: true
-        })
-    })
-}
-
-watch(Floors, () => {
-    let index = Floors.value.indexOf(tab.value)
-    if (index === -1) tab.value = Floors.value[0]
-})
-
-watch([TicketStore.Tickets], () => {
-    TicketStore.Tickets.forEach((item) => {
-        document.querySelector(`[tid='${item.id}']`)?.classList.add(TicketsTypes['selected-tickets'])
-    })
-    document.querySelectorAll(`.${TicketsTypes['selected-tickets']}`).forEach((item) => {
-        if (TicketStore.Tickets.filter((x) => x.id === item.getAttribute('tid'))[0] === undefined) {
-            item.classList.remove(TicketsTypes['selected-tickets'])
-            item.classList.add(TicketsTypes['free-tickets'])
-        }
-    })
-})
-
+// هوک اتصال و آغاز به کار
 onMounted(() => {
     TicketStore.setSelectedShowing(ChosenEvent.value)
     seatMapService.notifyUnLockTickets()
-
-    //TicketStore.removeAllTickets()
-
-    // if (TicketStore.selectedShowing.length === 0) {
-    //     Swal.fire({
-    //         title: 'خطا جانم!',
-    //         text: 'اینجا بدون انتخاب سانس چیکار میکنی؟',
-    //         icon: 'info',
-    //         showConfirmButton: false,
-    //         showCloseButton: true,
-    //         timer: 2000,
-    //         timerProgressBar: true,
-    //         showClass: { popup: 'direction-rtl vazir-font' }
-    //     })
-    // }
-
     seatMapService.JoinGroup(ChosenEvent.value)
 
-    if (!Floors.value) return
-    tab.value = Floors.value[0]
-})
-
-function tellMeStatus(ticketType) {
-    switch (ticketType) {
-        case TicketsTypes['free-tickets']:
-            return 'آزاد'
-        case TicketsTypes['selected-tickets']:
-            return 'انتخاب شما'
-        case TicketsTypes['waiting-tickets']:
-            return 'در انتظار پرداخت'
-        case TicketsTypes['reserved-tickets']:
-            return 'رزرو شده'
-        case TicketsTypes['not-tickets']:
-            return 'غیر قابل خرید'
+    if (Floors.value && Floors.value.length > 0) {
+        tab.value = Floors.value[0]
     }
-}
+})
 </script>
-
-<style module="TicketsTypes">
-.free-tickets {
-    fill: #178d17 !important;
-    background-color: #178d17 !important;
-}
-
-.selected-tickets {
-    fill: #33b7db !important;
-    background-color: #33b7db !important;
-}
-
-.reserved-tickets {
-    fill: #e55039 !important;
-    background-color: #e55039 !important;
-}
-
-.waiting-tickets {
-    fill: #f6b93b !important;
-    background-color: #f6b93b !important;
-}
-
-.not-tickets {
-    fill: #0e0e0e !important;
-    background-color: #0e0e0e !important;
-}
-</style>
 
 <style scoped>
 .tab {
@@ -613,33 +869,21 @@ function tellMeStatus(ticketType) {
     position: relative;
     grid-row-start: 1;
     display: block;
-    height: 2rem;
+    height: 2.25rem;
     cursor: pointer;
-    -webkit-user-select: none;
     user-select: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
     text-align: center;
     font-size: 0.875rem;
-    line-height: 1.25rem;
-    line-height: 2;
-
+    line-height: 2.25rem;
+    transition: all 0.2s ease-in-out;
     @apply bg-transparent rounded-lg;
 }
 
 .tab-active {
-    @apply dark:!text-white !text-white !bg-indigo-400;
+    @apply dark:!text-white !text-white !bg-indigo-600 shadow-md;
 }
 
 .tabs {
-    @apply bg-gray-50 p-1 rounded-md shadow-inner;
-}
-
-*[id*='seatMap'] svg {
-    @apply !w-full mx-auto;
+    @apply p-1 rounded-xl shadow-inner;
 }
 </style>
